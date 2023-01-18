@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="2767781d-8ee1-4880-800c-51e249e78541" name="变更" comment="">
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/idea/verlif/mock/data/MockDataCreator.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/idea/verlif/mock/data/annotation/MockData.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/idea/verlif/mock/data/config/MockDataConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/idea/verlif/mock/data/creator/DataCreator.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/idea/verlif/mock/data/creator/InstanceCreator.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/idea/verlif/mock/data/creator/data/ByteRandomCreator.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/idea/verlif/mock/data/creator/data/CharacterRandomCreator.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/idea/verlif/mock/data/creator/data/DictDataCreator.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/idea/verlif/mock/data/creator/data/DoubleRandomCreator.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/idea/verlif/mock/data/creator/data/FloatRandomCreator.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/idea/verlif/mock/data/creator/data/IntegerRandomCreator.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/idea/verlif/mock/data/creator/data/ListCreator.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/idea/verlif/mock/data/creator/data/LongRandomCreator.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/idea/verlif/mock/data/creator/data/ShortRandomCreator.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/idea/verlif/mock/data/creator/data/StringRandomCreator.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/idea/verlif/mock/data/domain/Counter.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/idea/verlif/mock/data/domain/MockField.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/idea/verlif/mock/data/domain/MockObject.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/idea/verlif/mock/data/domain/SFunction.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/idea/verlif/mock/data/domain/TypeGetter.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/idea/verlif/mock/data/domain/counter/MockFieldCounter.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/idea/verlif/mock/data/domain/counter/StringCounter.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/idea/verlif/mock/data/exception/NoMatchedCreatorException.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/idea/verlif/mock/data/util/NamingUtil.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/idea/verlif/mock/data/util/ReflectUtil.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/idea/verlif/mock/data/BaseTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/idea/verlif/mock/data/FieldTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/idea/verlif/mock/data/annotation/TestMockData.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/idea/verlif/mock/data/domain/A.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/idea/verlif/mock/data/domain/B.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/idea/verlif/mock/data/domain/IList.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/idea/verlif/mock/data/domain/IListExtend.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/idea/verlif/mock/data/domain/Person.java" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="AnnotationType" />
+        <option value="Interface" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="importingSettings">
+      <MavenImportingSettings>
+        <option name="workspaceImportEnabled" value="true" />
+      </MavenImportingSettings>
+    </option>
+  </component>
+  <component name="ProjectId" id="2KPLoWUmPzC7t3Yyq0wyP61nYn4" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;F:/Code/JAVA/loader-jar&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;模块&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.17&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2857143&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="idea.verlif.mock.data.creator.data" />
+      <recent name="idea.verlif.mock.data.domain" />
+    </key>
+  </component>
+  <component name="RunManager" selected="JUnit.BaseTest.mockTest">
+    <configuration name="BaseTest.charNumberPrint" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="mock-data" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="idea.verlif.mock.data.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="idea.verlif.mock.data" />
+      <option name="MAIN_CLASS_NAME" value="idea.verlif.mock.data.BaseTest" />
+      <option name="METHOD_NAME" value="charNumberPrint" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="BaseTest.fieldTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="mock-data" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="idea.verlif.mock.data.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="idea.verlif.mock.data" />
+      <option name="MAIN_CLASS_NAME" value="idea.verlif.mock.data.BaseTest" />
+      <option name="METHOD_NAME" value="fieldTest" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="BaseTest.mockTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="mock-data" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="idea.verlif.mock.data.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="idea.verlif.mock.data" />
+      <option name="MAIN_CLASS_NAME" value="idea.verlif.mock.data.BaseTest" />
+      <option name="METHOD_NAME" value="mockTest" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="BaseTest.randomTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="mock-data" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="idea.verlif.mock.data.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="idea.verlif.mock.data" />
+      <option name="MAIN_CLASS_NAME" value="idea.verlif.mock.data.BaseTest" />
+      <option name="METHOD_NAME" value="randomTest" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="FieldTest.annotation" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="mock-data" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="idea.verlif.mock.data.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="idea.verlif.mock.data" />
+      <option name="MAIN_CLASS_NAME" value="idea.verlif.mock.data.FieldTest" />
+      <option name="METHOD_NAME" value="annotation" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="JUnit.BaseTest.mockTest" />
+        <item itemvalue="JUnit.BaseTest.randomTest" />
+        <item itemvalue="JUnit.FieldTest.annotation" />
+        <item itemvalue="JUnit.BaseTest.charNumberPrint" />
+        <item itemvalue="JUnit.BaseTest.fieldTest" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="应用程序级" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="默认任务">
+      <changelist id="2767781d-8ee1-4880-800c-51e249e78541" name="变更" comment="" />
+      <created>1673871448751</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1673871448751</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/test/java/idea/verlif/mock/data/BaseTest.java</url>
+          <line>47</line>
+          <option name="timeStamp" value="46" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>
