@@ -2,7 +2,6 @@ package idea.verlif.mock.data;
 
 import idea.verlif.mock.data.config.MockDataConfig;
 import idea.verlif.mock.data.creator.DataCreator;
-import idea.verlif.mock.data.creator.InstanceCreator;
 import idea.verlif.mock.data.creator.data.*;
 import idea.verlif.mock.data.domain.*;
 import org.junit.After;
@@ -11,9 +10,10 @@ import org.junit.Test;
 import stopwatch.Stopwatch;
 
 import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Random;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -32,6 +32,8 @@ public class BaseTest {
         MockDataCreator creator = new MockDataCreator();
         // 使用基础数据包
         creator.useBaseData();
+        // 使用拓展包
+        creator.useExtendData();
         // 获取构造器的当前配置
         MockDataConfig config = creator.getConfig();
         // 添加需要级联构造的类
@@ -65,6 +67,11 @@ public class BaseTest {
                 }
             }
         });
+//        System.out.println("------>>> 关闭private属性构建");
+//        config.setAllowPrivate(true);
+//        System.out.println("------>>> 关闭public属性构建");
+//        config.setAllowPublic(false);
+        Person[][] personArray = creator.mock(new Person[2][5]);
         for (int i = 0; i < 10; i++) {
             System.out.println(creator.mock(Person.class));
         }
@@ -98,20 +105,12 @@ public class BaseTest {
     @Test
     public void randomTest() throws IllegalAccessException {
         MockDataCreator creator = new MockDataCreator();
-        creator.useBaseData();
-        long min = Long.MAX_VALUE, max = Long.MIN_VALUE;
+        creator.addDefaultCreator(new LocalDateCreator());
+        creator.useExtendData();
         for (int i = 0; i < 100; i++) {
-            Date date = creator.mock(Date.class);
-            long time = date.getTime();
-            if (time < min) {
-                min = time;
-            } else if (time > max) {
-                max = time;
-            }
-            System.out.println(date);
+            List data = creator.mock(new ArrayList<Person>());
+            System.out.println(data);
         }
-        System.out.println("min - " + new Date(min));
-        System.out.println("max - " + new Date(max));
     }
 
     @Before

@@ -56,6 +56,19 @@ public class MockDataCreator {
         addDefaultCreator(new StringRandomCreator());
         addDefaultCreator(new ListCreator());
         addDefaultCreator(new DateRandomCreator());
+        addDefaultCreator(new EnumRandomCreator());
+    }
+
+    /**
+     * 使用拓展数据
+     */
+    public void useExtendData() {
+        addDefaultCreator(new BigIntegerCreator());
+        addDefaultCreator(new BigDecimalCreator());
+        addDefaultCreator(new LocalDateCreator());
+        addDefaultCreator(new LocalTimeCreator());
+        addDefaultCreator(new LocalDateTimeCreator());
+        addDefaultCreator(new MapRandomCreator());
     }
 
     /**
@@ -68,6 +81,9 @@ public class MockDataCreator {
             do {
                 defaultCreatorMap.put(NamingUtil.getKeyName(cla), creator);
                 cla = cla.getSuperclass();
+                if (cla == Object.class) {
+                    break;
+                }
             } while (cla != null);
         }
     }
@@ -84,6 +100,36 @@ public class MockDataCreator {
             creator = defaultCreatorMap.get(key);
         }
         return creator;
+    }
+
+    /**
+     * 获取数据构造器
+     *
+     * @param field 目标类型
+     * @return 目标类型对应的数据构造器
+     */
+    public DataCreator<?> getDataCreator(Field field) {
+        // 优先从配置中获取属性构造器
+        DataCreator<?> creator = getDataCreator(NamingUtil.getKeyName(field));
+        if (creator != null) {
+            return creator;
+        }
+        // 获取属性类构造器
+        Class<?> cla = field.getType();
+        String key;
+        // 向类上级求取构造器
+        do {
+            key = NamingUtil.getKeyName(cla);
+            creator = config.getDataCreator(key);
+            if (creator == null) {
+                creator = defaultCreatorMap.get(key);
+            }
+            if (creator != null) {
+                return creator;
+            }
+            cla = cla.getSuperclass();
+        } while (cla != null);
+        return null;
     }
 
     /**
@@ -124,6 +170,7 @@ public class MockDataCreator {
             if (config.isIgnoredFiled(claKey)) {
                 return null;
             }
+            T t;
             // 检测是否存在自定义构建器
             DataCreator<?> dataCreator = getDataCreator(claKey);
             // 不存在则直接mock
@@ -136,19 +183,17 @@ public class MockDataCreator {
                     Object o = Array.newInstance(realCla, size);
                     fillArray(o, cla);
                     return (T) o;
-                } else if (cla.isEnum()) {
-                    // TODO: 枚举类型构建
                 }
-                T t = newInstance(cla, params);
+                t = newInstance(cla, params);
                 // 如果此类允许级联构造则进行mock或者是非java.lang包下的类
                 if (config.isCascadeCreate(claKey)) {
-                    return mock(t, cla);
-                } else {
-                    return t;
+                    fillField(t, cla);
                 }
             } else {
-                return (T) dataCreator.mock(null, MockDataCreator.this);
+                t = (T) dataCreator.mock(null, MockDataCreator.this);
             }
+            counter.clearAll();
+            return t;
         }
 
         /**
@@ -176,6 +221,13 @@ public class MockDataCreator {
             return t;
         }
 
+        /**
+         * 填充数组
+         *
+         * @param o   数组引用对象
+         * @param cla 数组类型
+         * @throws IllegalAccessException
+         */
         private void fillArray(Object o, Class<?> cla) throws IllegalAccessException {
             // 当前的实际类
             Class<?> realCla = cla.getComponentType();
@@ -211,7 +263,7 @@ public class MockDataCreator {
             for (Field field : allFields) {
                 // 判断是否忽略
                 String key = NamingUtil.getKeyName(field);
-                if (config.isIgnoredFiled(key)) {
+                if (config.isIgnoredFiled(key) || !config.isAllowField(field)) {
                     continue;
                 }
                 MockField mockField = new MockField(field);
@@ -224,14 +276,14 @@ public class MockDataCreator {
                 // 判定属性引用次数
                 if (counter.getCount(key) < max) {
                     Object o;
+                    // TODO 枚举类判定
                     // 判定类是否存在构造器
-                    DataCreator<?> configCreator = getDataCreator(key);
+                    DataCreator<?> configCreator = getDataCreator(field);
                     if (configCreator != null) {
                         o = configCreator.mock(field, MockDataCreator.this);
                     } else {
                         // 级联构造的类则进行递归构造
                         String claKey = NamingUtil.getKeyName(field.getType());
-                        // TODO: 自定义构造器没有使用到
                         if (config.isCascadeCreate(claKey)) {
                             o = newInstance(field.getType());
                             counter.count(key);

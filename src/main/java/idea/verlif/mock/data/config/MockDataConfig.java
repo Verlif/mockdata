@@ -8,6 +8,8 @@ import idea.verlif.mock.data.util.NamingUtil;
 import idea.verlif.mock.data.util.ReflectUtil;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Member;
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -58,6 +60,26 @@ public class MockDataConfig {
      */
     private final Set<String> ignoredFiledSet;
 
+    /**
+     * 允许构建private关键字
+     */
+    private boolean allowPrivate = true;
+
+    /**
+     * 允许构建public关键字
+     */
+    private boolean allowPublic = true;
+
+    /**
+     * 允许构建protect关键字
+     */
+    private boolean allowProtect = true;
+
+    /**
+     * 允许构建static关键字
+     */
+    private boolean allowStatic = false;
+
     public MockDataConfig() {
         fieldCreatorMap = new HashMap<>();
         instanceCreatorMap = new HashMap<>();
@@ -86,6 +108,38 @@ public class MockDataConfig {
 
     public void setTryNoParamsConstructor(boolean tryNoParamsConstructor) {
         this.tryNoParamsConstructor = tryNoParamsConstructor;
+    }
+
+    public boolean isAllowPrivate() {
+        return allowPrivate;
+    }
+
+    public void setAllowPrivate(boolean allowPrivate) {
+        this.allowPrivate = allowPrivate;
+    }
+
+    public boolean isAllowPublic() {
+        return allowPublic;
+    }
+
+    public void setAllowPublic(boolean allowPublic) {
+        this.allowPublic = allowPublic;
+    }
+
+    public boolean isAllowProtect() {
+        return allowProtect;
+    }
+
+    public void setAllowProtect(boolean allowProtect) {
+        this.allowProtect = allowProtect;
+    }
+
+    public boolean isAllowStatic() {
+        return allowStatic;
+    }
+
+    public void setAllowStatic(boolean allowStatic) {
+        this.allowStatic = allowStatic;
     }
 
     public boolean isTryNoParamsConstructor() {
@@ -234,5 +288,23 @@ public class MockDataConfig {
      */
     public boolean isIgnoredFiled(String key) {
         return ignoredFiledSet.contains(key);
+    }
+
+    public boolean isAllowField(Field field) {
+        int modifiers = field.getModifiers();
+        // 无法设定的属性
+        if (Modifier.isFinal(modifiers) || Modifier.isNative(modifiers)) {
+            return false;
+        }
+        if (!Modifier.isStatic(modifiers) || allowStatic) {
+            if (Modifier.isPublic(modifiers) && allowPublic) {
+                return true;
+            }
+            if (Modifier.isPrivate(modifiers) && allowPrivate) {
+                return true;
+            }
+            return Modifier.isProtected(modifiers) && allowProtect;
+        }
+        return false;
     }
 }
