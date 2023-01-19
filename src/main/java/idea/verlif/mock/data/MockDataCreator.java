@@ -1,6 +1,5 @@
 package idea.verlif.mock.data;
 
-import idea.verlif.mock.data.annotation.MockData;
 import idea.verlif.mock.data.config.MockDataConfig;
 import idea.verlif.mock.data.creator.DataCreator;
 import idea.verlif.mock.data.creator.InstanceCreator;
@@ -89,63 +88,50 @@ public class MockDataCreator {
     }
 
     /**
-     * 获取数据构造器
+     * mock数据
      *
-     * @param key 构造器key
-     * @return key对应的数据构造器
+     * @param t   对象实例
+     * @param <T> 目标泛型
+     * @return 返回对象本身
      */
-    public DataCreator<?> getDataCreator(String key) {
-        DataCreator<?> creator = config.getDataCreator(key);
-        if (creator == null) {
-            creator = defaultCreatorMap.get(key);
-        }
-        return creator;
-    }
-
-    /**
-     * 获取数据构造器
-     *
-     * @param field 目标类型
-     * @return 目标类型对应的数据构造器
-     */
-    public DataCreator<?> getDataCreator(Field field) {
-        // 优先从配置中获取属性构造器
-        DataCreator<?> creator = getDataCreator(NamingUtil.getKeyName(field));
-        if (creator != null) {
-            return creator;
-        }
-        // 获取属性类构造器
-        Class<?> cla = field.getType();
-        String key;
-        // 向类上级求取构造器
-        do {
-            key = NamingUtil.getKeyName(cla);
-            creator = config.getDataCreator(key);
-            if (creator == null) {
-                creator = defaultCreatorMap.get(key);
-            }
-            if (creator != null) {
-                return creator;
-            }
-            cla = cla.getSuperclass();
-        } while (cla != null);
-        return null;
+    public <T> T mock(T t) throws IllegalAccessException {
+        return mock(t, config);
     }
 
     /**
      * mock数据
      *
-     * @param t   实例类或对象实例
-     * @param <T> 目标泛型
-     * @return 若参数是类则返回新实例，否则返回对象本身
+     * @param t      对象实例
+     * @param config 使用的配置
+     * @param <T>    目标泛型
+     * @return 返回对象本身
      */
-    public <T> T mock(T t) throws IllegalAccessException {
-        Creator creator = new Creator();
+    public <T> T mock(T t, MockDataConfig config) throws IllegalAccessException {
+        Creator creator = new Creator(config);
         return creator.mock(t, (Class<T>) t.getClass());
     }
 
+    /**
+     * mock数据
+     *
+     * @param cla 实例类
+     * @param <T> 目标泛型
+     * @return 返回新实例
+     */
     public <T> T mock(Class<T> cla) throws IllegalAccessException {
-        Creator creator = new Creator();
+        return mock(cla, config);
+    }
+
+    /**
+     * mock数据
+     *
+     * @param cla    实例类
+     * @param config 使用的配置
+     * @param <T>    目标泛型
+     * @return 返回新实例
+     */
+    public <T> T mock(Class<T> cla, MockDataConfig config) throws IllegalAccessException {
+        Creator creator = new Creator(config);
         return creator.mockClass(cla);
     }
 
@@ -153,21 +139,23 @@ public class MockDataCreator {
 
         private final StringCounter counter;
 
-        public Creator() {
-            counter = new StringCounter();
+        private final MockDataConfig mockConfig;
+
+        public Creator(MockDataConfig config) {
+            this.counter = new StringCounter();
+            this.mockConfig = config;
         }
 
         /**
          * mock数据
          *
-         * @param cla    目标类
-         * @param params 构造方法参数
-         * @param <T>    目标类泛型
+         * @param cla 目标类
+         * @param <T> 目标类泛型
          * @return 目标类
          */
-        public <T> T mockClass(Class<T> cla, Object... params) throws IllegalAccessException {
+        public <T> T mockClass(Class<T> cla) throws IllegalAccessException {
             String claKey = NamingUtil.getKeyName(cla);
-            if (config.isIgnoredFiled(claKey)) {
+            if (mockConfig.isIgnoredFiled(claKey)) {
                 return null;
             }
             T t;
@@ -177,16 +165,16 @@ public class MockDataCreator {
             if (dataCreator == null) {
                 // 特殊类型处理
                 if (cla.isArray()) {
-                    int size = config.getArraySize();
+                    int size = mockConfig.getArraySize();
                     Class<?> realCla = cla.getComponentType();
                     // 构建数组对象
                     Object o = Array.newInstance(realCla, size);
                     fillArray(o, cla);
                     return (T) o;
                 }
-                t = newInstance(cla, params);
+                t = newInstance(cla);
                 // 如果此类允许级联构造则进行mock或者是非java.lang包下的类
-                if (config.isCascadeCreate(claKey)) {
+                if (mockConfig.isCascadeCreate(claKey)) {
                     fillField(t, cla);
                 }
             } else {
@@ -205,7 +193,7 @@ public class MockDataCreator {
          * @return 目标类
          */
         public <T> T mock(T t, Class<T> cla) throws IllegalAccessException {
-            if (config.isIgnoredFiled(NamingUtil.getKeyName(cla))) {
+            if (mockConfig.isIgnoredFiled(NamingUtil.getKeyName(cla))) {
                 return null;
             }
             // 数组
@@ -263,20 +251,14 @@ public class MockDataCreator {
             for (Field field : allFields) {
                 // 判断是否忽略
                 String key = NamingUtil.getKeyName(field);
-                if (config.isIgnoredFiled(key) || !config.isAllowField(field)) {
+                if (mockConfig.isIgnoredFiled(key) || !mockConfig.isAllowField(field)) {
                     continue;
                 }
                 MockField mockField = new MockField(field);
-                // 获取引用深度
-                MockData mockData = mockField.getMock();
-                int max = config.getCircleCount();
-                if (mockData != null && mockData.circleCount() >= 0) {
-                    max = mockData.circleCount();
-                }
+                int max = mockConfig.getCircleCount();
                 // 判定属性引用次数
                 if (counter.getCount(key) < max) {
                     Object o;
-                    // TODO 枚举类判定
                     // 判定类是否存在构造器
                     DataCreator<?> configCreator = getDataCreator(field);
                     if (configCreator != null) {
@@ -284,7 +266,7 @@ public class MockDataCreator {
                     } else {
                         // 级联构造的类则进行递归构造
                         String claKey = NamingUtil.getKeyName(field.getType());
-                        if (config.isCascadeCreate(claKey)) {
+                        if (mockConfig.isCascadeCreate(claKey)) {
                             o = newInstance(field.getType());
                             counter.count(key);
                             fillField(o, field.getType());
@@ -314,7 +296,7 @@ public class MockDataCreator {
          * @return 实例对象
          */
         private <T> T newInstance(Class<T> cla, Object... params) {
-            InstanceCreator<T> instanceCreator = config.getInstanceCreator(cla);
+            InstanceCreator<T> instanceCreator = mockConfig.getInstanceCreator(cla);
             // 实例构造器不存在时，尝试进行参数构造
             if (instanceCreator == null) {
                 try {
@@ -328,6 +310,50 @@ public class MockDataCreator {
         }
 
         /**
+         * 获取数据构造器
+         *
+         * @param key 构造器key
+         * @return key对应的数据构造器
+         */
+        public DataCreator<?> getDataCreator(String key) {
+            DataCreator<?> creator = mockConfig.getDataCreator(key);
+            if (creator == null) {
+                creator = defaultCreatorMap.get(key);
+            }
+            return creator;
+        }
+
+        /**
+         * 获取数据构造器
+         *
+         * @param field 目标类型
+         * @return 目标类型对应的数据构造器
+         */
+        public DataCreator<?> getDataCreator(Field field) {
+            // 优先从配置中获取属性构造器
+            DataCreator<?> creator = getDataCreator(NamingUtil.getKeyName(field));
+            if (creator != null) {
+                return creator;
+            }
+            // 获取属性类构造器
+            Class<?> cla = field.getType();
+            String key;
+            // 向类上级求取构造器
+            do {
+                key = NamingUtil.getKeyName(cla);
+                creator = mockConfig.getDataCreator(key);
+                if (creator == null) {
+                    creator = defaultCreatorMap.get(key);
+                }
+                if (creator != null) {
+                    return creator;
+                }
+                cla = cla.getSuperclass();
+            } while (cla != null);
+            return null;
+        }
+
+        /**
          * 通过Mock属性创建数据
          *
          * @param field 目标属性
@@ -336,12 +362,12 @@ public class MockDataCreator {
          */
         private <T> T create(MockField field) {
             String key = field.getKey();
-            DataCreator<T> creator = config.getDataCreator(key);
+            DataCreator<T> creator = mockConfig.getDataCreator(key);
             if (creator == null) {
                 String tmpKey = NamingUtil.getKeyName(field.getField().getType());
                 creator = (DataCreator<T>) defaultCreatorMap.get(tmpKey);
                 if (creator == null) {
-                    if (config.isIgnoredUnknownField()) {
+                    if (mockConfig.isIgnoredUnknownField()) {
                         return null;
                     } else {
                         throw new NoMatchedCreatorException(key);
@@ -360,9 +386,9 @@ public class MockDataCreator {
          */
         private <T> T create(Class<?> cla) {
             String key = NamingUtil.getKeyName(cla);
-            DataCreator<T> creator = config.getDataCreator(key);
+            DataCreator<T> creator = mockConfig.getDataCreator(key);
             if (creator == null) {
-                if (config.isIgnoredUnknownField()) {
+                if (mockConfig.isIgnoredUnknownField()) {
                     return null;
                 } else {
                     throw new NoMatchedCreatorException(key);

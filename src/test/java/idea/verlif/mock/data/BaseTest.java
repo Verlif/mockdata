@@ -79,6 +79,36 @@ public class BaseTest {
     }
 
     @Test
+    public void configTest() throws IllegalAccessException {
+        MockDataCreator creator = new MockDataCreator();
+        creator.useBaseData();
+        creator.useExtendData();
+        MockDataConfig config = creator.getConfig();
+        config.addCascadeCreateKey(Person.class);
+        config.addFieldCreator(Person::getId, new DataCreator<Long>() {
+            @Override
+            public Long mock(Field field, MockDataCreator creator) {
+                return 1L;
+            }
+        });
+        config.setCircleCount(0);
+        for (int i = 0; i < 5; i++) {
+            System.out.println(creator.mock(Person.class));
+        }
+        System.out.println("------>>> 使用自定义配置");
+        MockDataConfig mockDataConfig = new MockDataConfig();
+        mockDataConfig.addCascadeCreateKey(Person.class);
+        config.addCascadeCreateKey(Person.class);
+        for (int i = 0; i < 5; i++) {
+            System.out.println(creator.mock(Person.class, mockDataConfig));
+        }
+        System.out.println("------>>> 使用原始配置");
+        for (int i = 0; i < 5; i++) {
+            System.out.println(creator.mock(Person.class));
+        }
+    }
+
+    @Test
     public void mockTest() throws IllegalAccessException {
         MockDataCreator creator = new MockDataCreator();
         creator.useBaseData();
