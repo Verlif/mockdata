@@ -8,7 +8,10 @@ import idea.verlif.mock.data.util.NamingUtil;
 import idea.verlif.mock.data.util.ReflectUtil;
 
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Verlif
@@ -50,10 +53,16 @@ public class MockDataConfig {
      */
     private final Set<String> cascadeCreateSet;
 
+    /**
+     * 构造时忽略的属性
+     */
+    private final Set<String> ignoredFiledSet;
+
     public MockDataConfig() {
         fieldCreatorMap = new HashMap<>();
         instanceCreatorMap = new HashMap<>();
         cascadeCreateSet = new HashSet<>();
+        ignoredFiledSet = new HashSet<>();
     }
 
     public int getCircleCount() {
@@ -100,12 +109,6 @@ public class MockDataConfig {
     }
 
     /**
-     * 使用基础数据
-     */
-    public void useBaseData() {
-    }
-
-    /**
      * 添加或替换属性数据创造器
      *
      * @param function 属性获取表达式
@@ -142,16 +145,23 @@ public class MockDataConfig {
     }
 
     /**
+     * 是否拥有独立属性构造器
+     *
+     * @param key 属性key
+     */
+    public boolean hasFiledCreator(String key) {
+        return fieldCreatorMap.containsKey(key);
+    }
+
+    /**
      * 添加实例构造器
      *
      * @param creator 实例构造器
      */
     public void addInstanceCreator(InstanceCreator<?> creator) {
-        for (Class<?> cla : creator.types()) {
-            do {
-                instanceCreatorMap.put(NamingUtil.getKeyName(cla), creator);
-                cla = cla.getSuperclass();
-            } while (cla != null);
+        Class<?> cla = creator.matched();
+        if (cla != null) {
+            instanceCreatorMap.put(NamingUtil.getKeyName(cla), creator);
         }
     }
 
@@ -201,5 +211,28 @@ public class MockDataConfig {
      */
     public boolean isCascadeCreate(String key) {
         return cascadeCreateSet.contains(key);
+    }
+
+    /**
+     * 增加忽略的属性
+     */
+    public <T> void addIgnoredField(SFunction<T, ?> function) {
+        ignoredFiledSet.add(NamingUtil.getKeyName(ReflectUtil.getFieldFromLambda(function)));
+    }
+
+    /**
+     * 增加忽略的属性
+     */
+    public void addIgnoredField(Class<?> cla) {
+        ignoredFiledSet.add(NamingUtil.getKeyName(cla));
+    }
+
+    /**
+     * 判断该属性是否是被忽略的
+     *
+     * @param key 属性key
+     */
+    public boolean isIgnoredFiled(String key) {
+        return ignoredFiledSet.contains(key);
     }
 }

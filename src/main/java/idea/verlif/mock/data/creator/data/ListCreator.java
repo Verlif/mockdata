@@ -16,6 +16,16 @@ import java.util.List;
  */
 public class ListCreator implements DataCreator<List<?>> {
 
+    private final int size;
+
+    public ListCreator() {
+        this(5);
+    }
+
+    public ListCreator(int size) {
+        this.size = size;
+    }
+
     @Override
     public List<?> mock(Field field, MockDataCreator creator) {
         List<Object> list = new ArrayList<>();
@@ -23,8 +33,10 @@ public class ListCreator implements DataCreator<List<?>> {
         Type[] arguments = type.getActualTypeArguments();
         if (arguments.length > 0) {
             try {
-                Object o = creator.mock(Class.forName(arguments[0].getTypeName()));
-                list.add(o);
+                for (int i = 0; i < size; i++) {
+                    Object o = creator.mock(Class.forName(arguments[0].getTypeName()));
+                    list.add(o);
+                }
             } catch (ClassNotFoundException | IllegalAccessException e) {
                 throw new RuntimeException(e);
             }

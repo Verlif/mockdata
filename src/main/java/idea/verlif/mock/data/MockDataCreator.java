@@ -4,6 +4,7 @@ import idea.verlif.mock.data.annotation.MockData;
 import idea.verlif.mock.data.config.MockDataConfig;
 import idea.verlif.mock.data.creator.DataCreator;
 import idea.verlif.mock.data.creator.InstanceCreator;
+import idea.verlif.mock.data.creator.data.*;
 import idea.verlif.mock.data.domain.MockField;
 import idea.verlif.mock.data.domain.counter.StringCounter;
 import idea.verlif.mock.data.exception.NoMatchedCreatorException;
@@ -38,6 +39,23 @@ public class MockDataCreator {
 
     public MockDataConfig getConfig() {
         return config;
+    }
+
+    /**
+     * 使用基础数据
+     */
+    public void useBaseData() {
+        addDefaultCreator(new ByteRandomCreator());
+        addDefaultCreator(new BooleanRandomCreator());
+        addDefaultCreator(new ShortRandomCreator());
+        addDefaultCreator(new IntegerRandomCreator());
+        addDefaultCreator(new LongRandomCreator());
+        addDefaultCreator(new FloatRandomCreator());
+        addDefaultCreator(new DoubleRandomCreator());
+        addDefaultCreator(new CharacterRandomCreator());
+        addDefaultCreator(new StringRandomCreator());
+        addDefaultCreator(new ListCreator());
+        addDefaultCreator(new DateRandomCreator());
     }
 
     /**
@@ -102,37 +120,31 @@ public class MockDataCreator {
          * @return 目标类
          */
         public <T> T mockClass(Class<T> cla, Object... params) throws IllegalAccessException {
-            // 特殊类型处理
-            if (cla.isArray()) {
-                int size = config.getArraySize();
-                Class<?> realCla = cla.getComponentType();
-                // 构建数组对象
-                Object o = Array.newInstance(realCla, size);
-                fillArray(o, cla);
-                return (T) o;
-            } else if (cla.isEnum()) {
-
-            }
             String claKey = NamingUtil.getKeyName(cla);
+            if (config.isIgnoredFiled(claKey)) {
+                return null;
+            }
             // 检测是否存在自定义构建器
             DataCreator<?> dataCreator = getDataCreator(claKey);
             // 不存在则直接mock
             if (dataCreator == null) {
+                // 特殊类型处理
+                if (cla.isArray()) {
+                    int size = config.getArraySize();
+                    Class<?> realCla = cla.getComponentType();
+                    // 构建数组对象
+                    Object o = Array.newInstance(realCla, size);
+                    fillArray(o, cla);
+                    return (T) o;
+                } else if (cla.isEnum()) {
+                    // TODO: 枚举类型构建
+                }
+                T t = newInstance(cla, params);
                 // 如果此类允许级联构造则进行mock或者是非java.lang包下的类
                 if (config.isCascadeCreate(claKey)) {
-                    T t;
-                    try {
-                        t = ReflectUtil.newInstance(cla, params);
-                    } catch (InvocationTargetException | InstantiationException | IllegalAccessException e) {
-                        throw new RuntimeException(e);
-                    }
                     return mock(t, cla);
                 } else {
-                    try {
-                        return ReflectUtil.newInstance(cla, params);
-                    } catch (InvocationTargetException | InstantiationException ignored) {
-                        return null;
-                    }
+                    return t;
                 }
             } else {
                 return (T) dataCreator.mock(null, MockDataCreator.this);
@@ -148,6 +160,9 @@ public class MockDataCreator {
          * @return 目标类
          */
         public <T> T mock(T t, Class<T> cla) throws IllegalAccessException {
+            if (config.isIgnoredFiled(NamingUtil.getKeyName(cla))) {
+                return null;
+            }
             // 数组
             if (cla.isArray()) {
                 fillArray(t, cla);
@@ -185,20 +200,6 @@ public class MockDataCreator {
             }
         }
 
-        private <T> T preHandle(Class<T> cla) throws IllegalAccessException {
-            // 数组
-            if (cla.isArray()) {
-                int size = config.getArraySize();
-                Class<?> componentClass = cla.getComponentType();
-                Object result = Array.newInstance(componentClass, size);
-                for (int index = 0; index < size; index++) {
-                    Array.set(result, index, MockDataCreator.this.mock(componentClass));
-                }
-                return (T) result;
-            }
-            return null;
-        }
-
         /**
          * 为对象填充属性
          *
@@ -208,34 +209,46 @@ public class MockDataCreator {
         private void fillField(Object t, Class<?> cla) throws IllegalAccessException {
             List<Field> allFields = ReflectUtil.getAllFields(cla);
             for (Field field : allFields) {
-                // 获取属性key
+                // 判断是否忽略
                 String key = NamingUtil.getKeyName(field);
+                if (config.isIgnoredFiled(key)) {
+                    continue;
+                }
                 MockField mockField = new MockField(field);
-                // 获取属性注解
+                // 获取引用深度
                 MockData mockData = mockField.getMock();
                 int max = config.getCircleCount();
                 if (mockData != null && mockData.circleCount() >= 0) {
                     max = mockData.circleCount();
                 }
-                // 判定属性设定次数
+                // 判定属性引用次数
                 if (counter.getCount(key) < max) {
-                    // 级联构造的类则进行递归构造
-                    String claKey = NamingUtil.getKeyName(field.getType());
                     Object o;
-                    if (config.isCascadeCreate(claKey)) {
-                        o = newInstance(field.getType());
-                        counter.count(key);
-                        fillField(o, field.getType());
+                    // 判定类是否存在构造器
+                    DataCreator<?> configCreator = getDataCreator(key);
+                    if (configCreator != null) {
+                        o = configCreator.mock(field, MockDataCreator.this);
                     } else {
-                        o = create(mockField);
+                        // 级联构造的类则进行递归构造
+                        String claKey = NamingUtil.getKeyName(field.getType());
+                        // TODO: 自定义构造器没有使用到
+                        if (config.isCascadeCreate(claKey)) {
+                            o = newInstance(field.getType());
+                            counter.count(key);
+                            fillField(o, field.getType());
+                        } else {
+                            o = create(mockField);
+                        }
                     }
-                    boolean oldAcc = field.isAccessible();
-                    if (!oldAcc) {
-                        field.setAccessible(true);
-                    }
-                    field.set(t, o);
-                    if (!oldAcc) {
-                        field.setAccessible(false);
+                    if (o != null) {
+                        boolean oldAcc = field.isAccessible();
+                        if (!oldAcc) {
+                            field.setAccessible(true);
+                        }
+                        field.set(t, o);
+                        if (!oldAcc) {
+                            field.setAccessible(false);
+                        }
                     }
                 }
             }
@@ -248,13 +261,13 @@ public class MockDataCreator {
          * @param <T> 目标类
          * @return 实例对象
          */
-        private <T> T newInstance(Class<T> cla) {
+        private <T> T newInstance(Class<T> cla, Object... params) {
             InstanceCreator<T> instanceCreator = config.getInstanceCreator(cla);
-            // 实例构造器不存在时，尝试进行无参构造
+            // 实例构造器不存在时，尝试进行参数构造
             if (instanceCreator == null) {
                 try {
-                    return cla.newInstance();
-                } catch (IllegalAccessException | InstantiationException e) {
+                    return ReflectUtil.newInstance(cla, params);
+                } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
                     throw new RuntimeException(e);
                 }
             } else {

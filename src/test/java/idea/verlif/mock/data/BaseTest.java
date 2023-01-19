@@ -1,17 +1,19 @@
 package idea.verlif.mock.data;
 
 import idea.verlif.mock.data.config.MockDataConfig;
-import idea.verlif.mock.data.creator.data.ByteRandomCreator;
-import idea.verlif.mock.data.creator.data.IntegerRandomCreator;
-import idea.verlif.mock.data.creator.data.ListCreator;
-import idea.verlif.mock.data.creator.data.LongRandomCreator;
+import idea.verlif.mock.data.creator.DataCreator;
+import idea.verlif.mock.data.creator.InstanceCreator;
+import idea.verlif.mock.data.creator.data.*;
 import idea.verlif.mock.data.domain.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import stopwatch.Stopwatch;
 
+import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -25,11 +27,54 @@ public class BaseTest {
     }
 
     @Test
-    public void mockTest() throws IllegalAccessException, InstantiationException {
+    public void baseUseTest() throws IllegalAccessException {
+        // 创建数据构造器
         MockDataCreator creator = new MockDataCreator();
-        creator.addDefaultCreator(new IntegerRandomCreator());
-        creator.addDefaultCreator(new LongRandomCreator());
-        creator.addDefaultCreator(new ListCreator());
+        // 使用基础数据包
+        creator.useBaseData();
+        // 获取构造器的当前配置
+        MockDataConfig config = creator.getConfig();
+        // 添加需要级联构造的类
+        config.addCascadeCreateKey(Person.class);
+        // 构造测试
+        for (int i = 0; i < 10; i++) {
+            System.out.println(creator.mock(Person.class));
+        }
+
+        System.out.println("------>>> 使用字典生成name属性");
+        config.addFieldCreator(Person::getName, new DictDataCreator<>(new String[]{
+                "小明", "小红", "小王", "小赵", "小李", "小周", "小强"
+        }));
+        System.out.println("------>>> 限制id属性生成范围");
+        config.addFieldCreator(Person::getId, new LongRandomCreator(0L, 9999L));
+        System.out.println("------>>> 限制age属性生成范围");
+        config.addFieldCreator(Person::getAge, new IntegerRandomCreator(0, 200));
+        System.out.println("------>>> 忽略birthday属性");
+        config.addIgnoredField(Person::getBirthday);
+        System.out.println("------>>> 自定义secondChild属性");
+        config.addFieldCreator(Person::getSecondChild, new DataCreator<Person>() {
+
+            private final Random random = new Random();
+
+            @Override
+            public Person mock(Field field, MockDataCreator creator) {
+                if (random.nextBoolean()) {
+                    return new Person("啊哈");
+                } else {
+                    return null;
+                }
+            }
+        });
+        for (int i = 0; i < 10; i++) {
+            System.out.println(creator.mock(Person.class));
+        }
+
+    }
+
+    @Test
+    public void mockTest() throws IllegalAccessException {
+        MockDataCreator creator = new MockDataCreator();
+        creator.useBaseData();
         MockDataConfig config = new MockDataConfig();
         config.addCascadeCreateKey(A.class);
         config.addCascadeCreateKey(B.class);
@@ -53,21 +98,20 @@ public class BaseTest {
     @Test
     public void randomTest() throws IllegalAccessException {
         MockDataCreator creator = new MockDataCreator();
-        creator.addDefaultCreator(new ByteRandomCreator());
-        MockDataConfig config = creator.getConfig();
-        int min = 0, max = 0;
+        creator.useBaseData();
+        long min = Long.MAX_VALUE, max = Long.MIN_VALUE;
         for (int i = 0; i < 100; i++) {
-            byte b = creator.mock(byte.class);
-            System.out.println(b);
-            if (b < min) {
-                min = b;
+            Date date = creator.mock(Date.class);
+            long time = date.getTime();
+            if (time < min) {
+                min = time;
+            } else if (time > max) {
+                max = time;
             }
-            if (b > max) {
-                max = b;
-            }
+            System.out.println(date);
         }
-        System.out.println("min - " + min);
-        System.out.println("max - " + max);
+        System.out.println("min - " + new Date(min));
+        System.out.println("max - " + new Date(max));
     }
 
     @Before

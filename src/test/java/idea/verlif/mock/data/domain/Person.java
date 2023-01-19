@@ -1,7 +1,5 @@
 package idea.verlif.mock.data.domain;
 
-import idea.verlif.mock.data.annotation.MockData;
-
 import java.util.Date;
 
 /**
@@ -11,12 +9,21 @@ public class Person {
 
     private Long id;
 
-    @MockData
     private String name;
 
     private Date birthday;
 
-    private Person mother;
+    private Integer age;
+
+    private Person firstChild;
+
+    private Person secondChild;
+
+    public Person() {}
+
+    public Person(String name) {
+        this.name = name;
+    }
 
     public Long getId() {
         return id;
@@ -42,12 +49,28 @@ public class Person {
         this.birthday = birthday;
     }
 
-    public Person getMother() {
-        return mother;
+    public Integer getAge() {
+        return age;
     }
 
-    public void setMother(Person mother) {
-        this.mother = mother;
+    public void setAge(Integer age) {
+        this.age = age;
+    }
+
+    public Person getFirstChild() {
+        return firstChild;
+    }
+
+    public void setFirstChild(Person firstChild) {
+        this.firstChild = firstChild;
+    }
+
+    public Person getSecondChild() {
+        return secondChild;
+    }
+
+    public void setSecondChild(Person secondChild) {
+        this.secondChild = secondChild;
     }
 
     @Override
@@ -56,7 +79,9 @@ public class Person {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", birthday=" + birthday +
-                ", mother=" + mother +
+                ", age=" + age +
+                ", firstChild=" + firstChild +
+                ", secondChild=" + secondChild +
                 '}';
     }
 }
