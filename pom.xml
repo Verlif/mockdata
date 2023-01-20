@@ -15,12 +15,6 @@
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>com.github.Verlif</groupId>
-            <artifactId>param-parser</artifactId>
-            <version>1.1</version>
-        </dependency>
-
         <!-- https://mvnrepository.com/artifact/com.alibaba.fastjson2/fastjson2 -->
         <dependency>
             <groupId>com.alibaba.fastjson2</groupId>
