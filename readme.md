@@ -116,3 +116,52 @@ __！！！注意，目前自动构建暂不支持非静态内部类，有需要
    - 如果想要由创建器来构造属性，但又想要指定构造器来新建实例，可以通过`MockConfig.addInstanceCreator()`来添加指定的实例构建器
 - __配置独立__
    - 每次mock都可使用不同的配置，便于快速切换配置。例如`MockDataCreator.mock(Class|Object, config)`
+
+## 添加依赖
+
+1. 添加Jitpack仓库源
+
+   maven
+
+    ```xml
+    <repositories>
+       <repository>
+           <id>jitpack.io</id>
+           <url>https://jitpack.io</url>
+       </repository>
+    </repositories>
+    ```
+
+   Gradle
+
+    ```text
+    allprojects {
+      repositories {
+          maven { url 'https://jitpack.io' }
+      }
+    }
+    ```
+
+2. 添加依赖
+
+   __lastVersion__ [![](https://jitpack.io/v/Verlif/mock-data.svg)](https://jitpack.io/#Verlif/mock-data)
+
+   maven
+
+   ```xml
+      <dependencies>
+          <dependency>
+              <groupId>com.github.Verlif</groupId>
+              <artifactId>mock-data</artifactId>
+              <version>lastVersion</version>
+          </dependency>
+      </dependencies>
+   ```
+
+   Gradle
+
+   ```text
+   dependencies {
+     implementation 'com.github.Verlif:mock-data:lastVersion'
+   }
+   ```
