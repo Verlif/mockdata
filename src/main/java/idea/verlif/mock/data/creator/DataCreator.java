@@ -19,5 +19,5 @@ public interface DataCreator<R> extends TypeGetter<R> {
      * @param creator 当前所使用的数据创建器。
      * @return 生成的数据
      */
-    R mock(Field field, MockDataCreator creator);
+    R mock(Field field, MockDataCreator.Creator creator);
 }

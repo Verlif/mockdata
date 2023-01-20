@@ -1,6 +1,9 @@
 package idea.verlif.mock.data.domain;
 
+import com.alibaba.fastjson2.JSONObject;
+
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -30,12 +33,21 @@ public class Person {
 
     private Person secondChild;
 
-    private Map<String, Integer> personMap;
+    private Map<String, Long> personMap;
 
-    public Person() {}
+    private String[][] strings;
+
+    private List<A> aList;
+
+    private PersonInner inner;
+
+    public Person() {
+        this(null);
+    }
 
     public Person(String name) {
         this.name = name;
+        this.birthday = new Date();
     }
 
     public Long getId() {
@@ -122,29 +134,61 @@ public class Person {
         Person.staticInt = staticInt;
     }
 
-    public Map<String, Integer> getPersonMap() {
+    public Map<String, Long> getPersonMap() {
         return personMap;
     }
 
-    public void setPersonMap(Map<String, Integer> personMap) {
+    public void setPersonMap(Map<String, Long> personMap) {
         this.personMap = personMap;
+    }
+
+    public String[][] getStrings() {
+        return strings;
+    }
+
+    public void setStrings(String[][] strings) {
+        this.strings = strings;
+    }
+
+    public List<A> getAList() {
+        return aList;
+    }
+
+    public void setAList(List<A> aList) {
+        this.aList = aList;
+    }
+
+    public List<A> getaList() {
+        return aList;
+    }
+
+    public void setaList(List<A> aList) {
+        this.aList = aList;
+    }
+
+    public PersonInner getInner() {
+        return inner;
+    }
+
+    public void setInner(PersonInner inner) {
+        this.inner = inner;
     }
 
     @Override
     public String toString() {
-        return "Person{" +
-                "finalInt=" + finalInt +
-                ", protectInt=" + protectInt +
-                ", publicInt=" + publicInt +
-                ", staticInt=" + staticInt +
-                ", id=" + id +
-                ", name='" + name + '\'' +
-                ", birthday=" + birthday +
-                ", age=" + age +
-                ", iEnum=" + iEnum +
-                ", firstChild=" + firstChild +
-                ", secondChild=" + secondChild +
-                ", personMap=" + personMap +
-                '}';
+        return JSONObject.toJSONString(this);
+    }
+
+    public static class PersonInner {
+
+        private String name;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
     }
 }

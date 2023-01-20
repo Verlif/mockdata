@@ -2,14 +2,11 @@ package idea.verlif.mock.data.creator.data;
 
 import idea.verlif.mock.data.MockDataCreator;
 import idea.verlif.mock.data.creator.DataCreator;
-import idea.verlif.mock.data.util.ReflectUtil;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -28,7 +25,7 @@ public class MapRandomCreator implements DataCreator<Map<?, ?>> {
     }
 
     @Override
-    public Map<?, ?> mock(Field field, MockDataCreator creator) {
+    public Map<?, ?> mock(Field field, MockDataCreator.Creator creator) {
         ParameterizedType genericType = (ParameterizedType) field.getGenericType();
         Type[] arguments = genericType.getActualTypeArguments();
         Map<Object, Object> map = new HashMap<>();
@@ -36,7 +33,7 @@ public class MapRandomCreator implements DataCreator<Map<?, ?>> {
             Class<?> keyCla = Class.forName(arguments[0].getTypeName());
             Class<?> valueCla = Class.forName(arguments[1].getTypeName());
             for (int i = 0; i < size; i++) {
-                map.put(creator.mock(keyCla), creator.mock(valueCla));
+                map.put(creator.mockClass(keyCla), creator.mockClass(valueCla));
             }
         } catch (ClassNotFoundException | IllegalAccessException e) {
             throw new RuntimeException(e);

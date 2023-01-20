@@ -17,7 +17,7 @@ public class BooleanRandomCreator implements DataCreator<Boolean> {
     }
 
     @Override
-    public Boolean mock(Field field, MockDataCreator creator) {
+    public Boolean mock(Field field, MockDataCreator.Creator creator) {
         return random.nextBoolean();
     }
 

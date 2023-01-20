@@ -31,8 +31,8 @@ public abstract class Counter<T> {
      *
      * @param t 目标key
      */
-    public void count(T t) {
-        count(t, 1);
+    public int count(T t) {
+        return count(t, 1);
     }
 
     /**
@@ -41,8 +41,20 @@ public abstract class Counter<T> {
      * @param t     目标key
      * @param count 增加的计数
      */
-    public synchronized void count(T t, int count) {
-        countMap.put(t, getCount(t) + count);
+    public synchronized int count(T t, int count) {
+        int c = getCount(t) + count;
+        countMap.put(t, c);
+        return c;
+    }
+
+    /**
+     * 设定计数
+     *
+     * @param t     目标key
+     * @param count 设定的计数
+     */
+    public synchronized void setCount(T t, int count) {
+        countMap.put(t, count);
     }
 
     /**

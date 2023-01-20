@@ -50,7 +50,7 @@ public class StringRandomCreator implements DataCreator<String> {
     }
 
     @Override
-    public String mock(Field field, MockDataCreator creator) {
+    public String mock(Field field, MockDataCreator.Creator creator) {
         StringBuilder sb = new StringBuilder();
         int size;
         if (min == max) {

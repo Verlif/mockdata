@@ -38,7 +38,7 @@ public class LongRandomCreator implements DataCreator<Long> {
     }
 
     @Override
-    public Long mock(Field field, MockDataCreator creator) {
+    public Long mock(Field field, MockDataCreator.Creator creator) {
         long num = (long) (Math.random() * offset);
         if (random.nextBoolean()) {
             return point - num;

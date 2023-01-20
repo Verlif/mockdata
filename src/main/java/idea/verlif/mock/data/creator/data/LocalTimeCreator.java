@@ -4,7 +4,6 @@ import idea.verlif.mock.data.MockDataCreator;
 import idea.verlif.mock.data.creator.DataCreator;
 
 import java.lang.reflect.Field;
-import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Random;
 
@@ -20,7 +19,7 @@ public class LocalTimeCreator implements DataCreator<LocalTime> {
     }
 
     @Override
-    public LocalTime mock(Field field, MockDataCreator creator) {
+    public LocalTime mock(Field field, MockDataCreator.Creator creator) {
         return LocalTime.of(random.nextInt(24), random.nextInt(60));
     }
 }

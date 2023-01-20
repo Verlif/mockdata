@@ -8,7 +8,6 @@ import idea.verlif.mock.data.util.NamingUtil;
 import idea.verlif.mock.data.util.ReflectUtil;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Member;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -23,22 +22,12 @@ public class MockDataConfig {
     /**
      * 属性填充的循环次数
      */
-    private int circleCount = 1;
-
-    /**
-     * 忽略未知的属性
-     */
-    private boolean ignoredUnknownField = false;
-
-    /**
-     * 在没有数据构造器时尝试进行无参构造对象
-     */
-    private boolean tryNoParamsConstructor = true;
+    private int creatingDepth = 3;
 
     /**
      * 构建数组时的填充长度
      */
-    private int arraySize = 10;
+    private int arraySize = 5;
 
     /**
      * 属性创造器表
@@ -63,22 +52,12 @@ public class MockDataConfig {
     /**
      * 允许构建private关键字
      */
-    private boolean allowPrivate = true;
+    private int modifiers = Modifier.PRIVATE;
 
     /**
-     * 允许构建public关键字
+     * 强制生成新对象
      */
-    private boolean allowPublic = true;
-
-    /**
-     * 允许构建protect关键字
-     */
-    private boolean allowProtect = true;
-
-    /**
-     * 允许构建static关键字
-     */
-    private boolean allowStatic = false;
+    private boolean forceNew = false;
 
     public MockDataConfig() {
         fieldCreatorMap = new HashMap<>();
@@ -87,63 +66,74 @@ public class MockDataConfig {
         ignoredFiledSet = new HashSet<>();
     }
 
-    public int getCircleCount() {
-        return circleCount;
+    public int getCreatingDepth() {
+        return creatingDepth;
     }
 
-    public void setCircleCount(int circleCount) {
-        this.circleCount = circleCount;
-    }
-
-    /**
-     * 忽略未知的属性
-     */
-    public void ignoredUnknownField() {
-        ignoredUnknownField = true;
-    }
-
-    public boolean isIgnoredUnknownField() {
-        return ignoredUnknownField;
-    }
-
-    public void setTryNoParamsConstructor(boolean tryNoParamsConstructor) {
-        this.tryNoParamsConstructor = tryNoParamsConstructor;
+    public void setCreatingDepth(int circleCount) {
+        this.creatingDepth = circleCount;
     }
 
     public boolean isAllowPrivate() {
-        return allowPrivate;
+        return Modifier.isPrivate(modifiers);
     }
 
     public void setAllowPrivate(boolean allowPrivate) {
-        this.allowPrivate = allowPrivate;
+        this.modifiers = allowPrivate ? this.modifiers & Modifier.PRIVATE : this.modifiers ^ Modifier.PRIVATE;
     }
 
     public boolean isAllowPublic() {
-        return allowPublic;
+        return Modifier.isPublic(modifiers);
     }
 
     public void setAllowPublic(boolean allowPublic) {
-        this.allowPublic = allowPublic;
+        this.modifiers = allowPublic ? this.modifiers | Modifier.PUBLIC : this.modifiers ^ Modifier.PUBLIC;
     }
 
     public boolean isAllowProtect() {
-        return allowProtect;
+        return Modifier.isProtected(modifiers);
     }
 
     public void setAllowProtect(boolean allowProtect) {
-        this.allowProtect = allowProtect;
+        this.modifiers = allowProtect ? this.modifiers | Modifier.PROTECTED : this.modifiers ^ Modifier.PROTECTED;
     }
 
     public boolean isAllowStatic() {
-        return allowStatic;
+        return Modifier.isStatic(modifiers);
     }
 
     public void setAllowStatic(boolean allowStatic) {
-        this.allowStatic = allowStatic;
+        this.modifiers = allowStatic ? this.modifiers | Modifier.STATIC : this.modifiers ^ Modifier.STATIC;
     }
 
-    public boolean isTryNoParamsConstructor() {
-        return tryNoParamsConstructor;
+    public void setAllowedModifiers(int modifiers) {
+        this.modifiers = modifiers;
+    }
+
+    /**
+     * 添加允许的属性修饰符
+     *
+     * @param modifiers 属性修饰符
+     */
+    public void addAllowedModifiers(int... modifiers) {
+        for (int modifier : modifiers) {
+            this.modifiers |= modifier;
+        }
+    }
+
+    /**
+     * 移除允许的属性修饰符
+     *
+     * @param modifiers 属性修饰符
+     */
+    public void removeAllowedModifiers(int... modifiers) {
+        for (int modifier : modifiers) {
+            this.modifiers -= modifier;
+        }
+    }
+
+    public boolean isAllowedModifier(int mod) {
+        return (mod & modifiers) != 0;
     }
 
     public int getArraySize() {
@@ -152,6 +142,14 @@ public class MockDataConfig {
 
     public void setArraySize(int arraySize) {
         this.arraySize = arraySize;
+    }
+
+    public boolean isForceNew() {
+        return forceNew;
+    }
+
+    public void setForceNew(boolean forceNew) {
+        this.forceNew = forceNew;
     }
 
     public <T> DataCreator<T> getDataCreator(MockField field) {
@@ -258,6 +256,33 @@ public class MockDataConfig {
     }
 
     /**
+     * 移除级联构造的类
+     *
+     * @param cla 需要级联构造的类
+     */
+    public void removeCascadeCreateKey(Class<?> cla) {
+        removeCascadeCreateKey(NamingUtil.getKeyName(cla));
+    }
+
+    /**
+     * 移除级联构造的属性
+     *
+     * @param function 需要级联构造的属性
+     */
+    public void removeCascadeCreateKey(SFunction<?, ?> function) {
+        removeCascadeCreateKey(NamingUtil.getKeyName(ReflectUtil.getFieldFromLambda(function, true)));
+    }
+
+    /**
+     * 移除级联构造的key
+     *
+     * @param key 需要级联构造的key
+     */
+    public void removeCascadeCreateKey(String key) {
+        cascadeCreateSet.remove(key);
+    }
+
+    /**
      * 查询属性是否级联构造
      *
      * @param key 目标key
@@ -290,21 +315,12 @@ public class MockDataConfig {
         return ignoredFiledSet.contains(key);
     }
 
+    /**
+     * 属性是否被允许构建
+     *
+     * @param field 属性对象
+     */
     public boolean isAllowField(Field field) {
-        int modifiers = field.getModifiers();
-        // 无法设定的属性
-        if (Modifier.isFinal(modifiers) || Modifier.isNative(modifiers)) {
-            return false;
-        }
-        if (!Modifier.isStatic(modifiers) || allowStatic) {
-            if (Modifier.isPublic(modifiers) && allowPublic) {
-                return true;
-            }
-            if (Modifier.isPrivate(modifiers) && allowPrivate) {
-                return true;
-            }
-            return Modifier.isProtected(modifiers) && allowProtect;
-        }
-        return false;
+        return (field.getModifiers() | modifiers) == modifiers;
     }
 }

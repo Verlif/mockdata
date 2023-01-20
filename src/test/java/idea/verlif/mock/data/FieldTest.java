@@ -1,14 +1,12 @@
 package idea.verlif.mock.data;
 
-import idea.verlif.mock.data.annotation.MockData;
-import idea.verlif.mock.data.domain.Person;
-import idea.verlif.mock.data.util.ReflectUtil;
+import idea.verlif.mock.data.config.MockDataConfig;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import stopwatch.Stopwatch;
 
-import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -18,11 +16,18 @@ public class FieldTest {
 
     @Test
     public void annotation() {
-        Stopwatch stopwatch = Stopwatch.get("this");
-        stopwatch.pin();
-        Field field1 = ReflectUtil.getFieldFromLambda(Person::getName);
-        Field field2 = ReflectUtil.getFieldFromLambda(Person::getName);
-        stopwatch.pin();
+        MockDataConfig config = new MockDataConfig();
+        System.out.println("预期 - true - " + config.isAllowedModifier(Modifier.PRIVATE));
+        System.out.println("预期 - false - " + config.isAllowedModifier(Modifier.PUBLIC));
+        config.setAllowPublic(true);
+        System.out.println("预期 - true - " + config.isAllowedModifier(Modifier.PRIVATE));
+        System.out.println("预期 - true - " + config.isAllowedModifier(Modifier.PUBLIC));
+        config.setAllowPrivate(false);
+        System.out.println("预期 - false - " + config.isAllowedModifier(Modifier.PRIVATE));
+        System.out.println("预期 - true - " + config.isAllowedModifier(Modifier.PUBLIC));
+        config.setAllowPublic(false);
+        System.out.println("预期 - false - " + config.isAllowedModifier(Modifier.PRIVATE));
+        System.out.println("预期 - false - " + config.isAllowedModifier(Modifier.PUBLIC));
     }
 
     @Before

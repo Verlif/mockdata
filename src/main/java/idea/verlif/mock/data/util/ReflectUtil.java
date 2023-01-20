@@ -158,7 +158,11 @@ public class ReflectUtil {
                     }
                 }
                 if (flag == types.length) {
-                    return (T) constructor.newInstance(params);
+                    if (flag == 0) {
+                        return cla.newInstance();
+                    } else {
+                        return (T) constructor.newInstance(params);
+                    }
                 }
             }
         }

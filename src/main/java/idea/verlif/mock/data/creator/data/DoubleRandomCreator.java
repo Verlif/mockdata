@@ -38,7 +38,7 @@ public class DoubleRandomCreator implements DataCreator<Double> {
     }
 
     @Override
-    public Double mock(Field field, MockDataCreator creator) {
+    public Double mock(Field field, MockDataCreator.Creator creator) {
         double num = Math.random() * offset;
         if (random.nextBoolean()) {
             return point - num;

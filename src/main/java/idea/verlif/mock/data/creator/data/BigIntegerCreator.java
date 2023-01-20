@@ -19,7 +19,7 @@ public class BigIntegerCreator implements DataCreator<BigInteger> {
     }
 
     @Override
-    public BigInteger mock(Field field, MockDataCreator creator) {
+    public BigInteger mock(Field field, MockDataCreator.Creator creator) {
         long ran = random.nextLong();
         return BigInteger.valueOf(ran);
     }
