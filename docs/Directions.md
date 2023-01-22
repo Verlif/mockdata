@@ -11,10 +11,6 @@ __mock-data__ 的使用其实很简单，与大部分工具一样，只需要三
 2. 对`MockDataCreator`进行自定义的初始化
 
    ```java
-   // 使用基础数据包
-   creator.useBaseData();
-   // 使用拓展包
-   creator.useExtendData();
    // 添加需要级联构造的类，让创造器可以对其内部属性进行构造
    config.addCascadeCreateKey(Person.class);
    // 以及一些其他的例如构建值的生成规则等设定
@@ -29,8 +25,33 @@ __mock-data__ 的使用其实很简单，与大部分工具一样，只需要三
    Person selfPerson = creator.mock(new Person());
    // 使用Lambda的方式构建类的某个属性，返回值是此属性的实例
    Long id = creator.mock(Person::getId());
+   // 构建指定大小的对象数组
+   Person[][] personArray = creator.mock(new Person[2][5]);
    ```
-   
+
+## 功能
+
+__mock-data__ 并不提供类似 __JavaFaker__ 这种字典库使用，实际上，__mock-data__ 是提供了一个构造框架，开发者可以为每一个类的每一个属性给予不同的字典库，生成出“虚拟的真实数据”。
+
+不过mock-data同样提供了数个随机构造器，包括：
+
+- 8种基本类型
+  - `ByteRandomCreator`、`BooleanRandomCreator`、`CharacterRandomCreator`、`ShortRandomCreator`、`IntegerRandomCreator`、`LongRandomCreator`、`FloatRandomCreator`、`DoubleRandomCreator`
+- 字符串类型
+  - `StringRandomCreator`
+- 枚举类型
+  - `EnumRandomCreator`
+- List与Map
+  - `ListCreator`、`MapRandomCreator`
+- 大数类型
+  - `BigIntegerCreator`、`BigDecimalCreator`
+- 日期类型
+  - `DateRandomCreator`、`LocalDateCreator`、`LocalTimeCreator`、`LocalDateTimeCreator`
+
+另外也提供了字典构造器`DictDataCreator`，方便开发者使用自己的数据池来构造对象。
+
+## 其他
+
 对于数据的生成规则来说，每个业务或是每个人或是每个类甚至是每个属性都可能有不同的定义，所以我们才需要有契合自己需要的数据构建工具来帮助我们做数据生成工作。
 
 在这里，__mock-data__ 就提供了很多自定义的功能，方便开发者根据自己的实际需要去调整，例如以下功能：

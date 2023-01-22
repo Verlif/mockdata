@@ -13,7 +13,7 @@
 ## 特点
 
 - __上手简单__
-- __支持复杂类型和自定义类型__
+- __支持定位到特定类的特定属性__
 - __生成数据规则完全自定义__
 - __零三方依赖__
 
@@ -24,47 +24,46 @@
    ```java
    // 创建数据构造器
    MockDataCreator creator = new MockDataCreator();
-   // 使用基础数据包
-   creator.useBaseData();
-   // 使用拓展包
-   creator.useExtendData();
-   // 添加需要级联构造的类，让创造器可以对其内部属性进行构造
-   config.addCascadeCreateKey(Person.class);
-   // 使用类的方式构建Person实例
-   Person claPerson = creator.mock(Person.class);
-   // 使用对象的方式构建其中的属性，返回值是其对象自身
-   Person selfPerson = creator.mock(new Person());
-   // 使用Lambda的方式构建类的某个属性，返回值是此属性的实例
-   Long id = creator.mock(Person::getId());
+           // 获取构造器的当前配置
+           MockDataConfig config = creator.getConfig()
+           // 添加需要级联构造的类
+           .cascadeCreateKey(Student.class)
+           .cascadeCreateKey(Person.class)
+           .cascadeCreateKey(Person.PersonInner.class)
+           .cascadeCreateKey(A.class)
+           .cascadeCreateKey(B.class)
+           // 将构造深度设置为1
+           .creatingDepth(1);
    ```
 
 ### 拓展用法
 
    ```java
-   // 设置默认的Long值构造器，将Long的构建值范围设定在-100到200之间
-   creator.addDefaultCreator(new LongRandomCreator(-100, 200));
-   // 将构造深度设置为1，避免在进行递归构造循环引用时数据过大
-   config.setCreatingDepth(1);
-   // 让person中的name属性使用字典类型构造
-   config.addFieldCreator(Person::getName, new DictDataCreator<>(new String[]{
-        "小明", "小红", "小王", "小赵", "小李", "小周", "小强"
-       }));
-   // 让person的secondChild属性使用自定义构造器
-   config.addFieldCreator(Person::getSecondChild, new DataCreator<Student>() {
+   config
+        // 使用字典生成name属性
+        .fieldCreator(Student::getName, new DictDataCreator<>(new String[]{
+            "小明", "小红", "小王", "小赵", "小李", "小周", "小强"
+        }))
+        // 限制id属性生成范围
+        .fieldCreator(Student::getId, new LongRandomCreator(0L, 9999L))
+        // 限制age属性生成范围
+        .fieldCreator(Student::getAge, new IntegerRandomCreator(0, 200))
+        // 限制score属性生成范围
+        .fieldCreator(Student::getScore, new DoubleRandomCreator(0, 100D))
+        // 自定义secondChild属性
+        .fieldCreator(Student::getSecondChild, new DataCreator<Student>() {
 
-        private final Random random = new Random();
+            private final Random random = new Random();
 
-        @Override
-        public Student mock(Field field, MockDataCreator.Creator creator) {
-            if (random.nextBoolean()) {
-                return new Student("这是自定义的构造");
-            } else {
-                return null;
+            @Override
+            public Student mock(Field field, MockDataCreator.Creator creator) {
+                if (random.nextBoolean()) {
+                    return new Student("这是自定义的构造");
+                } else {
+                    return null;
+                }
             }
-        }
-   });
-   // 开启public属性构建
-   config.addAllowedModifiers(Modifier.PUBLIC);
+        });
    ```
 
 更多用法请参考 [使用手册](docs/Directions.md)

@@ -29,6 +29,8 @@ public class MockDataCreator {
         this.defaultCreatorMap = new HashMap<>();
 
         this.config = new MockDataConfig();
+        useBaseData();
+        useExtendData();
     }
 
     public void setConfig(MockDataConfig config) {
@@ -76,15 +78,20 @@ public class MockDataCreator {
      */
     public void addDefaultCreator(DataCreator<?> creator) {
         for (Class<?> cla : creator.types()) {
-            do {
-                defaultCreatorMap.put(NamingUtil.getKeyName(cla), creator);
-                cla = cla.getSuperclass();
-                if (cla == Object.class) {
-                    break;
-                }
-            } while (cla != null);
+            defaultCreatorMap.put(NamingUtil.getKeyName(cla), creator);
         }
     }
+
+    /**
+     * 添加或是替换数据创造器
+     *
+     * @param creator 数据创造器
+     */
+    public MockDataCreator defaultCreator(DataCreator<?> creator) {
+        addDefaultCreator(creator);
+        return this;
+    }
+
 
     /**
      * mock数据
@@ -260,6 +267,9 @@ public class MockDataCreator {
          * @param cla 目标对象类
          */
         private void fillField(Object t, Class<?> cla) throws IllegalAccessException {
+            if (t == null) {
+                return;
+            }
             // 判断填充对象是否是数组
             if (cla.isArray()) {
                 // 填充数组

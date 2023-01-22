@@ -10,8 +10,10 @@ import org.junit.Test;
 import stopwatch.Stopwatch;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -28,57 +30,77 @@ public class BaseTest {
     public void baseUseTest() throws IllegalAccessException {
         // 创建数据构造器
         MockDataCreator creator = new MockDataCreator();
-        // 使用基础数据包
-        creator.useBaseData();
-        // 使用拓展包
-        creator.useExtendData();
         // 获取构造器的当前配置
-        MockDataConfig config = creator.getConfig();
-        // 添加需要级联构造的类
-        config.addCascadeCreateKey(Student.class);
-        config.addCascadeCreateKey(Person.class);
-        config.addCascadeCreateKey(Person.PersonInner.class);
-        config.addCascadeCreateKey(A.class);
-        config.addCascadeCreateKey(B.class);
-        // 将构造深度设置为1
-        config.setCreatingDepth(1);
+        MockDataConfig config = creator.getConfig()
+                // 添加需要级联构造的类
+                .cascadeCreateKey(Student.class)
+                .cascadeCreateKey(Person.class)
+                .cascadeCreateKey(Person.PersonInner.class)
+                .cascadeCreateKey(A.class)
+                .cascadeCreateKey(B.class)
+                .cascadeCreateKey(Pet.class)
+                .cascadeCreateKey(Dog.class)
+                // 将构造深度设置为1
+                .creatingDepth(1);
         // 构造测试
         for (int i = 0; i < 10; i++) {
             System.out.println(creator.mock(Student.class));
         }
 
         System.out.println("------>>> 使用字典生成name属性");
-        config.addFieldCreator(Student::getName, new DictDataCreator<>(new String[]{
-                "小明", "小红", "小王", "小赵", "小李", "小周", "小强"
-        }));
         System.out.println("------>>> 限制id属性生成范围");
-        config.addFieldCreator(Student::getId, new LongRandomCreator(0L, 9999L));
         System.out.println("------>>> 限制age属性生成范围");
-        config.addFieldCreator(Student::getAge, new IntegerRandomCreator(0, 200));
         System.out.println("------>>> 限制score属性生成范围");
-        config.addFieldCreator(Student::getScore, new DoubleRandomCreator(0, 100D));
         System.out.println("------>>> 自定义secondChild属性");
-        config.addFieldCreator(Student::getSecondChild, new DataCreator<Student>() {
+        config
+                // 使用字典生成name属性
+                .fieldCreator(Student::getName, new DictDataCreator<>(new String[]{
+                        "小明", "小红", "小王", "小赵", "小李", "小周", "小强"
+                }))
+                // 限制id属性生成范围
+                .fieldCreator(Student::getId, new LongRandomCreator(0L, 9999L))
+                // 限制age属性生成范围
+                .fieldCreator(Student::getAge, new IntegerRandomCreator(0, 200))
+                // 限制score属性生成范围
+                .fieldCreator(Student::getScore, new DoubleRandomCreator(0, 100D))
+                // 自定义secondChild属性
+                .fieldCreator(Student::getSecondChild, new DataCreator<Student>() {
 
-            private final Random random = new Random();
+                    private final Random random = new Random();
 
-            @Override
-            public Student mock(Field field, MockDataCreator.Creator creator) {
-                if (random.nextBoolean()) {
-                    return new Student("这是自定义的构造");
-                } else {
-                    return null;
-                }
-            }
-        });
+                    @Override
+                    public Student mock(Field field, MockDataCreator.Creator creator) {
+                        if (random.nextBoolean()) {
+                            return new Student("这是自定义的构造");
+                        } else {
+                            return null;
+                        }
+                    }
+                })
+                .fieldCreator(new DataCreator<Person>() {
+                    @Override
+                    public Person mock(Field field, MockDataCreator.Creator creator) {
+                        return new Person("Person");
+                    }
+                })
+                .fieldCreator(Dog.class, new DataCreator<Dog>() {
+                    @Override
+                    public Dog mock(Field field, MockDataCreator.Creator creator) {
+                        return new Dog("Dog");
+                    }
+                })
+                .fieldCreator(Pet.class, new DataCreator<Pet>() {
+                    @Override
+                    public Pet mock(Field field, MockDataCreator.Creator creator) {
+                        return new Pet("Pet");
+                    }
+                });
         System.out.println("------>>> 强制新建对象");
         config.setForceNew(true);
-        System.out.println("------>>> 关闭private属性构建");
-//        config.setAllowPrivate(false);
-        config.removeAllowedModifiers(Modifier.PRIVATE);
-        System.out.println("------>>> 开启public属性构建");
-//        config.setAllowPublic(true);
-        config.addAllowedModifiers(Modifier.PUBLIC);
+//        System.out.println("------>>> 关闭private属性构建");
+//        config.allowedModifiers(Modifier.PRIVATE);
+//        System.out.println("------>>> 开启public属性构建");
+//        config.blockedModifiers(Modifier.PUBLIC);
         Student[][] personArray = creator.mock(new Student[2][5]);
         for (int i = 0; i < 10; i++) {
             System.out.println(creator.mock(Student.class));

@@ -41,6 +41,10 @@ public class Person {
 
     private PersonInner inner;
 
+    private Pet pet;
+
+    private Dog dog;
+
     public Person() {
         this(null);
     }
@@ -172,6 +176,22 @@ public class Person {
 
     public void setInner(PersonInner inner) {
         this.inner = inner;
+    }
+
+    public Pet getPet() {
+        return pet;
+    }
+
+    public void setPet(Pet pet) {
+        this.pet = pet;
+    }
+
+    public Dog getDog() {
+        return dog;
+    }
+
+    public void setDog(Dog dog) {
+        this.dog = dog;
     }
 
     @Override

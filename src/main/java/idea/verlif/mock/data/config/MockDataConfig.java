@@ -70,8 +70,13 @@ public class MockDataConfig {
         return creatingDepth;
     }
 
-    public void setCreatingDepth(int circleCount) {
-        this.creatingDepth = circleCount;
+    public void setCreatingDepth(int creatingDepth) {
+        this.creatingDepth = creatingDepth;
+    }
+
+    public MockDataConfig creatingDepth(int creatingDepth) {
+        this.creatingDepth = creatingDepth;
+        return this;
     }
 
     public boolean isAllowPrivate() {
@@ -115,10 +120,11 @@ public class MockDataConfig {
      *
      * @param modifiers 属性修饰符
      */
-    public void addAllowedModifiers(int... modifiers) {
+    public MockDataConfig allowedModifiers(int... modifiers) {
         for (int modifier : modifiers) {
             this.modifiers |= modifier;
         }
+        return this;
     }
 
     /**
@@ -126,10 +132,11 @@ public class MockDataConfig {
      *
      * @param modifiers 属性修饰符
      */
-    public void removeAllowedModifiers(int... modifiers) {
+    public MockDataConfig blockedModifiers(int... modifiers) {
         for (int modifier : modifiers) {
             this.modifiers -= modifier;
         }
+        return this;
     }
 
     public boolean isAllowedModifier(int mod) {
@@ -144,12 +151,22 @@ public class MockDataConfig {
         this.arraySize = arraySize;
     }
 
+    public MockDataConfig arraySize(int arraySize) {
+        this.arraySize = arraySize;
+        return this;
+    }
+
     public boolean isForceNew() {
         return forceNew;
     }
 
     public void setForceNew(boolean forceNew) {
         this.forceNew = forceNew;
+    }
+
+    public MockDataConfig forceNew(boolean forceNew) {
+        this.forceNew = forceNew;
+        return this;
     }
 
     public <T> DataCreator<T> getDataCreator(MockField field) {
@@ -175,10 +192,21 @@ public class MockDataConfig {
     /**
      * 添加或替换属性数据创造器
      *
+     * @param function 属性获取表达式
+     * @param creator  数据创造器
+     */
+    public <T> MockDataConfig fieldCreator(SFunction<T, ?> function, DataCreator<?> creator) {
+        addFieldCreator(function, creator);
+        return this;
+    }
+
+    /**
+     * 添加或替换属性数据创造器
+     *
      * @param key     属性key值
      * @param creator 数据创造器
      */
-    public <T> void addFieldCreator(String key, DataCreator<?> creator) {
+    public void addFieldCreator(String key, DataCreator<?> creator) {
         fieldCreatorMap.put(
                 key,
                 creator);
@@ -187,13 +215,58 @@ public class MockDataConfig {
     /**
      * 添加或替换属性数据创造器
      *
+     * @param key     属性key值
+     * @param creator 数据创造器
+     */
+    public MockDataConfig fieldCreator(String key, DataCreator<?> creator) {
+        addFieldCreator(key, creator);
+        return this;
+    }
+
+    /**
+     * 添加或替换属性数据创造器
+     *
      * @param cla     目标类
      * @param creator 数据创造器
      */
-    public <T> void addFieldCreator(Class<?> cla, DataCreator<?> creator) {
+    public void addFieldCreator(Class<?> cla, DataCreator<?> creator) {
         fieldCreatorMap.put(
                 NamingUtil.getKeyName(cla),
                 creator);
+    }
+
+    /**
+     * 添加或替换属性数据创造器
+     *
+     * @param creator 数据创造器
+     */
+    public void addFieldCreator(DataCreator<?> creator) {
+        for (Class<?> cla : creator.types()) {
+            fieldCreatorMap.put(
+                    NamingUtil.getKeyName(cla),
+                    creator);
+        }
+    }
+
+    /**
+     * 添加或替换属性数据创造器
+     *
+     * @param cla     目标类
+     * @param creator 数据创造器
+     */
+    public MockDataConfig fieldCreator(Class<?> cla, DataCreator<?> creator) {
+        addFieldCreator(cla, creator);
+        return this;
+    }
+
+    /**
+     * 添加或替换属性数据创造器
+     *
+     * @param creator 数据创造器
+     */
+    public MockDataConfig fieldCreator(DataCreator<?> creator) {
+        addFieldCreator(creator);
+        return this;
     }
 
     /**
@@ -218,6 +291,16 @@ public class MockDataConfig {
     }
 
     /**
+     * 添加实例构造器
+     *
+     * @param creator 实例构造器
+     */
+    public MockDataConfig instanceCreator(InstanceCreator<?> creator) {
+        addInstanceCreator(creator);
+        return this;
+    }
+
+    /**
      * 获取实例构造器
      *
      * @param cla 实例类
@@ -238,6 +321,16 @@ public class MockDataConfig {
     }
 
     /**
+     * 添加级联构造的类
+     *
+     * @param cla 需要级联构造的类
+     */
+    public MockDataConfig cascadeCreateKey(Class<?> cla) {
+        addCascadeCreateKey(cla);
+        return this;
+    }
+
+    /**
      * 添加级联构造的属性
      *
      * @param function 需要级联构造的属性
@@ -247,12 +340,32 @@ public class MockDataConfig {
     }
 
     /**
+     * 添加级联构造的属性
+     *
+     * @param function 需要级联构造的属性
+     */
+    public MockDataConfig cascadeCreateKey(SFunction<?, ?> function) {
+        addCascadeCreateKey(function);
+        return this;
+    }
+
+    /**
      * 添加级联构造的key
      *
      * @param key 需要级联构造的key
      */
     public void addCascadeCreateKey(String key) {
         cascadeCreateSet.add(key);
+    }
+
+    /**
+     * 添加级联构造的key
+     *
+     * @param key 需要级联构造的key
+     */
+    public MockDataConfig cascadeCreateKey(String key) {
+        addCascadeCreateKey(key);
+        return this;
     }
 
     /**
@@ -302,8 +415,24 @@ public class MockDataConfig {
     /**
      * 增加忽略的属性
      */
+    public <T> MockDataConfig ignoredField(SFunction<T, ?> function) {
+        addIgnoredField(function);
+        return this;
+    }
+
+    /**
+     * 增加忽略的属性
+     */
     public void addIgnoredField(Class<?> cla) {
         ignoredFiledSet.add(NamingUtil.getKeyName(cla));
+    }
+
+    /**
+     * 增加忽略的属性
+     */
+    public MockDataConfig ignoredField(Class<?> cla) {
+        addIgnoredField(cla);
+        return this;
     }
 
     /**

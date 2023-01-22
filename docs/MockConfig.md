@@ -41,7 +41,7 @@
 
 需要对特定的属性进行单独处理时可以通过此方法进行构建器绑定。
 
-- `addFieldCreator(SFunction|String|Class, DataCreator)`
+- `addFieldCreator([SFunction|String|Class,], DataCreator)`
 
 ## 添加实例构建器
 
