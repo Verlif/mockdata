@@ -9,6 +9,8 @@ import java.lang.reflect.Field;
  */
 public class NamingUtil {
 
+    public static final String KEY_SUFFIX_CLASS = ".class";
+
     /**
      * 获取属性的key值
      *
@@ -26,6 +28,6 @@ public class NamingUtil {
      * @return 属性的key值
      */
     public static String getKeyName(Class<?> cla) {
-        return cla.getName() + ".class";
+        return cla.getName() + KEY_SUFFIX_CLASS;
     }
 }

@@ -1,6 +1,8 @@
 package idea.verlif.mock.data.domain;
 
 import com.alibaba.fastjson2.JSONObject;
+import idea.verlif.mock.data.domain.test.A;
+import idea.verlif.mock.data.domain.test.Dog;
 
 import java.util.Date;
 import java.util.List;
@@ -51,7 +53,6 @@ public class Person {
 
     public Person(String name) {
         this.name = name;
-        this.birthday = new Date();
     }
 
     public Long getId() {

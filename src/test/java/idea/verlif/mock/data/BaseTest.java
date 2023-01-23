@@ -4,16 +4,16 @@ import idea.verlif.mock.data.config.MockDataConfig;
 import idea.verlif.mock.data.creator.DataCreator;
 import idea.verlif.mock.data.creator.data.*;
 import idea.verlif.mock.data.domain.*;
+import idea.verlif.mock.data.domain.test.A;
+import idea.verlif.mock.data.domain.B;
+import idea.verlif.mock.data.domain.test.Dog;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import stopwatch.Stopwatch;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -33,13 +33,15 @@ public class BaseTest {
         // 获取构造器的当前配置
         MockDataConfig config = creator.getConfig()
                 // 添加需要级联构造的类
-                .cascadeCreateKey(Student.class)
-                .cascadeCreateKey(Person.class)
-                .cascadeCreateKey(Person.PersonInner.class)
-                .cascadeCreateKey(A.class)
-                .cascadeCreateKey(B.class)
-                .cascadeCreateKey(Pet.class)
-                .cascadeCreateKey(Dog.class)
+//                .cascadeCreateKey(Student.class)
+//                .cascadeCreateKey(Person.class)
+//                .cascadeCreateKey(Person.PersonInner.class)
+//                .cascadeCreateKey(A.class)
+//                .cascadeCreateKey(B.class)
+//                .cascadeCreateKey(Pet.class)
+//                .cascadeCreateKey(Dog.class)
+                .cascadeCreatePattern(".*Student.*")
+//                .cascadeCreatePattern(A.class.getPackage().getName())
                 // 将构造深度设置为1
                 .creatingDepth(1);
         // 构造测试
@@ -110,32 +112,32 @@ public class BaseTest {
 
     @Test
     public void configTest() throws IllegalAccessException {
+        // 创建数据构造器
         MockDataCreator creator = new MockDataCreator();
-        creator.useBaseData();
-        creator.useExtendData();
-        MockDataConfig config = creator.getConfig();
-        config.addCascadeCreateKey(Person.class);
-        config.addFieldCreator(Person::getId, new DataCreator<Long>() {
-            @Override
-            public Long mock(Field field, MockDataCreator.Creator creator) {
-                return 1L;
-            }
-        });
-        config.setCreatingDepth(0);
-        for (int i = 0; i < 5; i++) {
-            System.out.println(creator.mock(Person.class));
-        }
-        System.out.println("------>>> 使用自定义配置");
-        MockDataConfig mockDataConfig = new MockDataConfig();
-        mockDataConfig.addCascadeCreateKey(Person.class);
-        config.addCascadeCreateKey(Person.class);
-        for (int i = 0; i < 5; i++) {
-            System.out.println(creator.mock(Person.class, mockDataConfig));
-        }
-        System.out.println("------>>> 使用原始配置");
-        for (int i = 0; i < 5; i++) {
-            System.out.println(creator.mock(Person.class));
-        }
+        // 获取构造器的当前配置
+        MockDataConfig config = creator.getConfig()
+                .fieldCreator(Student::getSecondChild, new DataCreator<Student>() {
+                    @Override
+                    public Student mock(Field field, MockDataCreator.Creator creator) {
+                        return new Student("这是自定义的构造");
+                    }
+                })
+                // 添加需要级联构造的类
+//                .cascadeCreateKey(Student.class)
+//                .cascadeCreateKey(Person.class)
+//                .cascadeCreateKey(Person.PersonInner.class)
+//                .cascadeCreateKey(A.class)
+//                .cascadeCreateKey(B.class)
+//                .cascadeCreateKey(Pet.class)
+//                .cascadeCreateKey(Dog.class)
+                .cascadeCreatePackage(B.class.getPackage().getName())
+                .ignoredFieldRegex(".*secondChild.*")
+                // 将构造深度设置为1
+                .creatingDepth(1);
+        System.out.println(creator.mock(Student.class));
+        config.ignoredFieldPackage(Person.class.getPackage().getName());
+        config.ignoredFieldPackage(Integer.class.getPackage().getName());
+        System.out.println(creator.mock(Student.class));
     }
 
     @Test

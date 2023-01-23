@@ -1,5 +1,7 @@
 package idea.verlif.mock.data.domain;
 
+import idea.verlif.mock.data.domain.test.A;
+
 /**
  * @author Verlif
  */

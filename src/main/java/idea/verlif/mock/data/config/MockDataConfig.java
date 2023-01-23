@@ -9,10 +9,8 @@ import idea.verlif.mock.data.util.ReflectUtil;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * @author Verlif
@@ -45,9 +43,19 @@ public class MockDataConfig {
     private final Set<String> cascadeCreateSet;
 
     /**
+     * 级联构造正则列表
+     */
+    private final List<Pattern> cascadeCreatePattern;
+
+    /**
      * 构造时忽略的属性
      */
     private final Set<String> ignoredFiledSet;
+
+    /**
+     * 构造时忽略的属性正则列表
+     */
+    private final List<Pattern> ignoredFiledPattern;
 
     /**
      * 允许构建private关键字
@@ -63,7 +71,9 @@ public class MockDataConfig {
         fieldCreatorMap = new HashMap<>();
         instanceCreatorMap = new HashMap<>();
         cascadeCreateSet = new HashSet<>();
+        cascadeCreatePattern = new ArrayList<>();
         ignoredFiledSet = new HashSet<>();
+        ignoredFiledPattern = new ArrayList<>();
     }
 
     public int getCreatingDepth() {
@@ -359,6 +369,48 @@ public class MockDataConfig {
     }
 
     /**
+     * 添加级联构造的属性key的正则表达
+     *
+     * @param regex 需要级联构造的属性key的正则表达
+     */
+    public MockDataConfig cascadeCreatePattern(String... regex) {
+        for (String s : regex) {
+            addCascadeCreatePattern(s);
+        }
+        return this;
+    }
+
+    /**
+     * 添加级联构造的属性key的正则表达
+     *
+     * @param regex 需要级联构造的属性key的正则表达
+     */
+    public void addCascadeCreatePattern(String regex) {
+        cascadeCreatePattern.add(Pattern.compile(regex));
+    }
+
+    /**
+     * 添加级联构造的属性key的包名
+     *
+     * @param packName 需要级联构造的包名
+     */
+    public MockDataConfig cascadeCreatePackage(String... packName) {
+        for (String s : packName) {
+            addCascadeCreatePackage(s);
+        }
+        return this;
+    }
+
+    /**
+     * 添加级联构造的属性key的包名
+     *
+     * @param packName 需要级联构造的包名
+     */
+    public void addCascadeCreatePackage(String packName) {
+        addCascadeCreatePattern(packName + ".*" + NamingUtil.KEY_SUFFIX_CLASS);
+    }
+
+    /**
      * 添加级联构造的key
      *
      * @param key 需要级联构造的key
@@ -402,7 +454,21 @@ public class MockDataConfig {
      * @return 目标key是否级联构造
      */
     public boolean isCascadeCreate(String key) {
-        return cascadeCreateSet.contains(key);
+        return checkContains(key, cascadeCreateSet, cascadeCreatePattern);
+    }
+
+    private boolean checkContains(String key, Set<String> stringSet, List<Pattern> patternList) {
+        if (stringSet.contains(key)) {
+            return true;
+        }
+        if (patternList.size() != 0) {
+            for (Pattern pattern : patternList) {
+                if (pattern.matcher(key).matches()) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
@@ -436,12 +502,50 @@ public class MockDataConfig {
     }
 
     /**
+     * 增加忽略的属性key的正则表达
+     */
+    public void addIgnoredFieldRegex(String regex) {
+        ignoredFiledPattern.add(Pattern.compile(regex));
+    }
+
+    /**
+     * 增加忽略的属性key的正则表达
+     */
+    public MockDataConfig ignoredFieldRegex(String... regex) {
+        for (String s : regex) {
+            addIgnoredFieldRegex(s);
+        }
+        return this;
+    }
+
+    /**
+     * 增加忽略的属性key的类包名
+     *
+     * @param packName 忽略的属性key的类包名
+     */
+    public MockDataConfig ignoredFieldPackage(String... packName) {
+        for (String s : packName) {
+            addIgnoredFieldPackage(s);
+        }
+        return this;
+    }
+
+    /**
+     * 增加忽略的属性key的类包名
+     *
+     * @param packName 忽略的属性key的类包名
+     */
+    public void addIgnoredFieldPackage(String packName) {
+        addIgnoredFieldRegex(packName + ".*" + NamingUtil.KEY_SUFFIX_CLASS);
+    }
+
+    /**
      * 判断该属性是否是被忽略的
      *
      * @param key 属性key
      */
     public boolean isIgnoredFiled(String key) {
-        return ignoredFiledSet.contains(key);
+        return checkContains(key, ignoredFiledSet, ignoredFiledPattern);
     }
 
     /**

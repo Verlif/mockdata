@@ -2,6 +2,9 @@
 
 `MockConfig`是构造器的配置，用来控制数据构造流程。合理地使用`MockConfig`可以最大程度地满足开发者的需求。
 
+需要注意的是，在构建流程中，__忽略设置__ 优先度 __最高__，哪怕已经指定了数据构建器也不会执行构建。
+__级联设定__ 优先度 __最低__，如果有对应的数据构建器，则会执行构建器的构建而不会进行级联构建。
+
 ## 引用深度
 
 为了避免在循环引用导致的栈溢出问题，这里使用了引用深度设置，用来控制创建深度。
@@ -54,9 +57,17 @@
 级联构建表示在创建此对象后，会继续构建此对象的内部属性
 
 - `addCascadeCreateKey(SFunction|String|Class)`
+- `addCascadeCreatePackage(String)`
+  - 级联构建包下的所有类
+- `addCascadeCreatePattern(String)`
+  - 级联构建与正则表达式匹配的所有属性或类全名
 
 ## 添加需要忽略的属性
 
 某些属性不需要或是不想要构建时可以通过此方法进行忽略
 
 - `addIgnoredField(SFunction|Class)`
+- `addIgnoredFieldPackage(String)`
+  - 忽略包名下的所有类的构建
+- `addIgnoredFieldRegex(String)`
+  - 忽略与表达式相同的属性或类全名key

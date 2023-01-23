@@ -64,5 +64,9 @@ __mock-data__ 并不提供类似 __JavaFaker__ 这种字典库使用，实际上
   - 使用`MockConfig`的`addFieldCreator(Person::getHeight, new HeightCreator())`和`addFieldCreator(Person::getWeight, new WeightCreator())`即可将两个属性分别做构建控制。
 - __存在循环引用的值需要递归创建__
   - __mock-data__ 本身是支持循环引用的，但为了避免生成的数据过大，开发这可以使用`setCreatingDepth(int)`进行循环引用的构建深度设定。
+- __忽略属性__
+  - 开发者可以通过属性key、Lambda表达式、类、包名甚至正则表达式来过滤掉不需要构建的属性或类。
+- __指定级联构建__
+  - 开发者可以通过属性key、Lambda表达式、类、包名甚至正则表达式来设定需要构建的属性或类。
 
 更多的设置在 [MockConfig方法说明](MockConfig.md) 中有说明。
