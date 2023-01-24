@@ -196,7 +196,7 @@ public class MockDataCreator {
             // 不存在则尝试新建对象
             if (dataCreator == null) {
                 t = newInstance(cla);
-                // 如果此类允许级联构造则进行mock或者是非java.lang包下的类
+                // 如果此类允许级联构造则进行mock
                 if (mockConfig.isCascadeCreate(claKey)) {
                     mock(t, cla);
                 }
@@ -239,6 +239,13 @@ public class MockDataCreator {
         private void fillArray(Object o, Class<?> cla) throws IllegalAccessException {
             // 当前的实际类
             Class<?> realCla = cla.getComponentType();
+            // 判断是否是基础数据类型，则直接返回构建
+            if (cla.getName().length() == 2) {
+                for (int i = 0, size = mockConfig.getArraySize(); i < size; i++) {
+                    Array.set(o, i, MockDataCreator.this.mock(realCla));
+                }
+                return;
+            }
             // 当前的多维数组
             Object[] arr = (Object[]) o;
             int size = arr.length;
@@ -297,6 +304,7 @@ public class MockDataCreator {
                         Object o = field.get(t);
                         // 如果对象已存在则判断是否重新创建
                         if (o == null || mockConfig.isForceNew()) {
+                            int count = counter.count(key);
                             // 判定类是否存在构造器
                             DataCreator<?> configCreator = getDataCreator(field);
                             // 构造器存在则使用构造器进行构造
@@ -307,14 +315,13 @@ public class MockDataCreator {
                                 o = newInstance(fieldCla);
                                 if (mockConfig.isCascadeCreate(claKey) || mockConfig.isCascadeCreate(key) || fieldCla.isArray()) {
                                     // 进行级联构造
-                                    int count = counter.count(key);
                                     fillField(o, field.getType());
-                                    counter.setCount(key, count - 1);
                                 }
                             }
                             if (o != null) {
                                 field.set(t, o);
                             }
+                            counter.setCount(key, count - 1);
                         }
                         // 还原权限
                         if (!oldAcc) {

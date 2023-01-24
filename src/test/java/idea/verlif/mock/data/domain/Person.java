@@ -35,7 +35,15 @@ public class Person {
 
     private Person secondChild;
 
-    private Map<String, Long> personMap;
+    private Map<String, Person> personMap;
+
+    public Map<String, Person> getPersonMap() {
+        return personMap;
+    }
+
+    public void setPersonMap(Map<String, Person> personMap) {
+        this.personMap = personMap;
+    }
 
     private String[][] strings;
 
@@ -137,14 +145,6 @@ public class Person {
 
     public static void setStaticInt(Integer staticInt) {
         Person.staticInt = staticInt;
-    }
-
-    public Map<String, Long> getPersonMap() {
-        return personMap;
-    }
-
-    public void setPersonMap(Map<String, Long> personMap) {
-        this.personMap = personMap;
     }
 
     public String[][] getStrings() {

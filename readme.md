@@ -32,6 +32,10 @@
            .cascadeCreateKey(Person.PersonInner.class)
            .cascadeCreateKey(A.class)
            .cascadeCreateKey(B.class)
+           // 或是直接通过正则表达式添加
+           .cascadeCreatePattern(".*Student.*")
+           // 或是通过包名进行添加允许的包下的所有类
+           .cascadeCreatePackage(Student.class.getPackage().getName())
            // 将构造深度设置为1
            .creatingDepth(1);
    ```
@@ -80,15 +84,11 @@
 - __List__
 - __Date__
 
-__!!! 以上类型都可以通过`MockDataCreator.useBaseData()`进行初始化，或自行按需添加。__
-
 ### 常用对象
 
 - `Map`
 - `LocalDate`、`LocalTime`、`LocalDateTime`
 - `BigInteger`、`BigDecimal`
-
-__!!! 以上类型都可以通过`MockDataCreator.useExtendData()`进行初始化，或自行按需添加。__
 
 ### 其他
 
@@ -116,6 +116,12 @@ __！！！注意，目前自动构建暂不支持非静态内部类，有需要
    - 如果想要由创建器来构造属性，但又想要指定构造器来新建实例，可以通过`MockConfig.addInstanceCreator()`来添加指定的实例构建器
 - __配置独立__
    - 每次mock都可使用不同的配置，便于快速切换配置。例如`MockDataCreator.mock(Class|Object, config)`
+
+## 注意事项
+
+- __mock__ 无法实例化的类（例如接口或是抽象类）时，请给予实例构建器。
+- __mock__ 基础类型的数组时，数组的大小暂时依据配置中的设定，不能像类似`new Integer[2][3]`一样指定大小。
+- __mock__ 未指定泛型的类时，大概率无法构建成功，请指定泛型类型或实例构建器。
 
 ## 添加依赖
 

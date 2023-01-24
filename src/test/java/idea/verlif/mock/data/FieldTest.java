@@ -30,6 +30,19 @@ public class FieldTest {
         System.out.println("预期 - false - " + config.isAllowedModifier(Modifier.PUBLIC));
     }
 
+    @Test
+    public void classNameTest() {
+        System.out.println(int[].class.getName());
+        System.out.println(short[].class.getName());
+        System.out.println(long[].class.getName());
+        System.out.println(byte[].class.getName());
+        System.out.println(boolean[].class.getName());
+        System.out.println(char[].class.getName());
+        System.out.println(float[].class.getName());
+        System.out.println(long[].class.getName());
+        System.out.println(Long[].class.getName());
+    }
+
     @Before
     public void startStopwatch() {
         Stopwatch.start("this");

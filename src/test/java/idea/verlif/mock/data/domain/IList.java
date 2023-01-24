@@ -7,13 +7,13 @@ import java.util.List;
  */
 public class IList<T> {
 
-    private List<Person> list;
+    private List<IList<T>> list;
 
-    public List<Person> getList() {
+    public List<IList<T>> getList() {
         return list;
     }
 
-    public void setList(List<Person> list) {
+    public void setList(List<IList<T>> list) {
         this.list = list;
     }
 }
