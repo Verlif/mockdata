@@ -1,11 +1,7 @@
 package idea.verlif.mock.data.domain.test;
 
 import com.alibaba.fastjson2.JSONObject;
-import idea.verlif.mock.data.domain.IEnum;
 import idea.verlif.mock.data.domain.Person;
-
-import java.util.List;
-import java.util.Map;
 
 public class DeepObject {
 
@@ -43,17 +39,15 @@ public class DeepObject {
 
     private String stringT;
 
-    private List<DeepObject> list;
+    private DeepObject deepObject;
 
-    public List<DeepObject> getList() {
-        return list;
+    public DeepObject getDeepObject() {
+        return deepObject;
     }
 
-    public void setList(List<DeepObject> list) {
-        this.list = list;
+    public void setDeepObject(DeepObject deepObject) {
+        this.deepObject = deepObject;
     }
-
-    private Map<Integer, IEnum> enumMap;
 
     private Person person;
 
@@ -63,16 +57,6 @@ public class DeepObject {
 
     public void setPerson(Person person) {
         this.person = person;
-    }
-
-    private DeepObject deepObject;
-
-    public DeepObject getDeepObject() {
-        return deepObject;
-    }
-
-    public void setDeepObject(DeepObject deepObject) {
-        this.deepObject = deepObject;
     }
 
     private int[] sia;
@@ -243,14 +227,6 @@ public class DeepObject {
 
     public void setStringT(String stringT) {
         this.stringT = stringT;
-    }
-
-    public Map<Integer, IEnum> getEnumMap() {
-        return enumMap;
-    }
-
-    public void setEnumMap(Map<Integer, IEnum> enumMap) {
-        this.enumMap = enumMap;
     }
 
     public int[] getSia() {

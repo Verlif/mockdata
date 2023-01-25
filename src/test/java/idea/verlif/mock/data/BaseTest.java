@@ -187,6 +187,7 @@ public class BaseTest {
                 .cascadeCreatePackage(B.class.getPackage().getName())
                 .arraySize(2)
                 .creatingDepth(1);
+        Person person = creator.mock(Person.class);
         DeepObject mock = creator.mock(DeepObject.class);
         System.out.println(mock);
     }

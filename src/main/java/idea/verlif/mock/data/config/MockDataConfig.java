@@ -76,6 +76,22 @@ public class MockDataConfig {
         ignoredFiledPattern = new ArrayList<>();
     }
 
+    public MockDataConfig copy() {
+        MockDataConfig config = new MockDataConfig();
+        config.creatingDepth = this.creatingDepth;
+        config.arraySize = this.arraySize;
+        config.fieldCreatorMap.putAll(this.fieldCreatorMap);
+        config.instanceCreatorMap.putAll(this.instanceCreatorMap);
+        config.cascadeCreateSet.addAll(this.cascadeCreateSet);
+        config.cascadeCreatePattern.addAll(this.cascadeCreatePattern);
+        config.ignoredFiledSet.addAll(this.ignoredFiledSet);
+        config.ignoredFiledPattern.addAll(this.ignoredFiledPattern);
+        config.modifiers = this.modifiers;
+        config.forceNew = this.forceNew;
+
+        return config;
+    }
+
     public int getCreatingDepth() {
         return creatingDepth;
     }
