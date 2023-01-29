@@ -6,6 +6,7 @@ import idea.verlif.mock.data.creator.DataCreator;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * 字典型数据构建器
@@ -18,8 +19,11 @@ public class DictDataCreator<T> implements DataCreator<T> {
 
     private final T[] arrays;
 
+    private final Random random;
+
     public DictDataCreator(T[] arrays) {
         this.arrays = arrays;
+        this.random = new Random();
     }
 
     @Override
@@ -27,7 +31,7 @@ public class DictDataCreator<T> implements DataCreator<T> {
         if (arrays.length == 0) {
             return null;
         }
-        return arrays[(int) (arrays.length * Math.random())];
+        return arrays[random.nextInt(arrays.length)];
     }
 
     @Override

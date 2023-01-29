@@ -103,7 +103,10 @@ public class ReflectUtil {
 
         // 从序列化方法中获取Lambda表达式信息
         boolean isAccessible = writeReplaceMethod.isAccessible();
-        writeReplaceMethod.setAccessible(true);
+        // 如果isAccessible为false则进行设定
+        if (!isAccessible) {
+            writeReplaceMethod.setAccessible(true);
+        }
         SerializedLambda serializedLambda;
         try {
             serializedLambda = (SerializedLambda) writeReplaceMethod.invoke(function);
@@ -111,7 +114,9 @@ public class ReflectUtil {
             throw new RuntimeException(e);
         }
         // 还原access设定
-        writeReplaceMethod.setAccessible(isAccessible);
+        if (!isAccessible) {
+            writeReplaceMethod.setAccessible(false);
+        }
 
         // 从Lambda表达式中获取属性名
         String implMethodName = serializedLambda.getImplMethodName();
@@ -147,23 +152,24 @@ public class ReflectUtil {
      * @return 实例对象
      */
     public static <T> T newInstance(Class<T> cla, Object... params) throws InvocationTargetException, InstantiationException, IllegalAccessException {
+        // 当没有参数是直接调用无参构造器方法
+        if (params.length == 0) {
+            return cla.newInstance();
+        }
+        // 遍历构造器查询对应参数的构造器方法
         Constructor<?>[] constructors = cla.getConstructors();
-        for (Constructor<?> constructor : constructors) {
+        LOOP_constructor: for (Constructor<?> constructor : constructors) {
+            // 如果构造器参数数量相同则进一步验证
             if (constructor.getParameterCount() == params.length) {
                 Class<?>[] types = constructor.getParameterTypes();
-                int flag = 0;
+                // 遍历构造器参数并逐一校验参数类型是否相同
                 for (int i = 0; i < types.length; i++) {
-                    if (recalculate(types[i]).isAssignableFrom(params[i].getClass())) {
-                        flag++;
+                    // 参数不相同则跳过此构造器
+                    if (!recalculate(types[i]).isAssignableFrom(params[i].getClass())) {
+                        continue LOOP_constructor;
                     }
                 }
-                if (flag == types.length) {
-                    if (flag == 0) {
-                        return cla.newInstance();
-                    } else {
-                        return (T) constructor.newInstance(params);
-                    }
-                }
+                return (T) constructor.newInstance(params);
             }
         }
         return null;
@@ -172,23 +178,31 @@ public class ReflectUtil {
     private static Class<?> recalculate(Class<?> cl) {
         switch (cl.getSimpleName()) {
             case "int":
-                return Integer.class;
+                cl = Integer.class;
+                break;
             case "double":
-                return Double.class;
+                cl = Double.class;
+                break;
             case "float":
-                return Float.class;
+                cl = Float.class;
+                break;
             case "byte":
-                return Byte.class;
+                cl = Byte.class;
+                break;
             case "short":
-                return Short.class;
+                cl = Short.class;
+                break;
             case "long":
-                return Long.class;
+                cl = Long.class;
+                break;
             case "boolean":
-                return Boolean.class;
+                cl = Boolean.class;
+                break;
             case "char":
-                return Character.class;
+                cl = Character.class;
+                break;
             default:
-                return cl;
         }
+        return cl;
     }
 }
