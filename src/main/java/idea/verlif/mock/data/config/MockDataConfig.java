@@ -2,7 +2,6 @@ package idea.verlif.mock.data.config;
 
 import idea.verlif.mock.data.creator.DataCreator;
 import idea.verlif.mock.data.creator.InstanceCreator;
-import idea.verlif.mock.data.domain.MockField;
 import idea.verlif.mock.data.domain.SFunction;
 import idea.verlif.mock.data.util.NamingUtil;
 import idea.verlif.mock.data.util.ReflectUtil;
@@ -195,10 +194,6 @@ public class MockDataConfig {
         return this;
     }
 
-    public <T> DataCreator<T> getDataCreator(MockField field) {
-        return getDataCreator(field.getKey());
-    }
-
     public <T> DataCreator<T> getDataCreator(String key) {
         return (DataCreator<T>) fieldCreatorMap.get(key);
     }
@@ -211,8 +206,7 @@ public class MockDataConfig {
      */
     public <T> void addFieldCreator(SFunction<T, ?> function, DataCreator<?> creator) {
         Field field = ReflectUtil.getFieldFromLambda(function, true);
-        MockField mf = new MockField(field);
-        addFieldCreator(mf.getKey(), creator);
+        addFieldCreator(NamingUtil.getKeyName(field), creator);
     }
 
     /**
