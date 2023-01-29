@@ -25,19 +25,26 @@
    // 创建数据构造器
    MockDataCreator creator = new MockDataCreator();
            // 获取构造器的当前配置
-           MockDataConfig config = creator.getConfig()
-           // 添加需要级联构造的类
+   MockDataConfig config = creator.getConfig()
+           // 手动添加需要级联构造的类
            .cascadeCreateKey(Student.class)
            .cascadeCreateKey(Person.class)
            .cascadeCreateKey(Person.PersonInner.class)
-           .cascadeCreateKey(A.class)
-           .cascadeCreateKey(B.class)
            // 或是直接通过正则表达式添加
            .cascadeCreatePattern(".*Student.*")
            // 或是通过包名进行添加允许的包下的所有类
            .cascadeCreatePackage(Student.class.getPackage().getName())
-           // 将构造深度设置为1
+           // 或是使用自动级联构建
+           .autoCascade(true)
+           // 将构造深度设置为1，避免构建出的数据过大
            .creatingDepth(1);
+   // 通过类来实例化对象
+   Person person = creator.mock(Person.class);
+   // 或是手动实例化对象，然后填充数据
+   Person person = new Person();
+   creator.mock(person);
+   // 如果你只要其中的某个属性也可以
+   Pet pet = creator.mock(Person::getPet);
    ```
 
 ### 拓展用法
@@ -52,8 +59,10 @@
         .fieldCreator(Student::getId, new LongRandomCreator(0L, 9999L))
         // 限制age属性生成范围
         .fieldCreator(Student::getAge, new IntegerRandomCreator(0, 200))
-        // 限制score属性生成范围
-        .fieldCreator(Student::getScore, new DoubleRandomCreator(0, 100D))
+        // 忽略成绩属性的构造
+        .ignoredField(Student::getScore)
+        // 允许构建public或static标记的属性
+        .allowedModifiers(Modifier.PUBLIC, Modifier.STATIC)
         // 自定义secondChild属性
         .fieldCreator(Student::getSecondChild, new DataCreator<Student>() {
 
@@ -95,7 +104,11 @@
 - __数组__
    - 支持任意维度数数组。
 
-__！！！注意，目前自动构建暂不支持非静态内部类，有需要请使用添加自定义构建器__
+### 注意
+
+__目前自动构建暂不支持非静态内部类，有需要请使用添加自定义构建器__
+
+__目前暂不支持基础数据类型数组维度大小手动指定，如有需要请使用包装类型，例如`mock(new Integer[3][5])`__
 
 ## 支持的特性
 

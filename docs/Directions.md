@@ -13,6 +13,8 @@ __mock-data__ 的使用其实很简单，与大部分工具一样，只需要三
    ```java
    // 添加需要级联构造的类，让创造器可以对其内部属性进行构造
    config.addCascadeCreateKey(Person.class);
+   // 或者使用自动级联构建
+   config.autoCascade(true)
    // 以及一些其他的例如构建值的生成规则等设定
    ```
 

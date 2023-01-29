@@ -37,6 +37,11 @@ public class MockDataConfig {
     private final Map<String, InstanceCreator<?>> instanceCreatorMap;
 
     /**
+     * 自动级联构建
+     */
+    private boolean autoCascade;
+
+    /**
      * 级联构造列表
      */
     private final Set<String> cascadeCreateSet;
@@ -81,6 +86,7 @@ public class MockDataConfig {
         config.arraySize = this.arraySize;
         config.fieldCreatorMap.putAll(this.fieldCreatorMap);
         config.instanceCreatorMap.putAll(this.instanceCreatorMap);
+        config.autoCascade = this.autoCascade;
         config.cascadeCreateSet.addAll(this.cascadeCreateSet);
         config.cascadeCreatePattern.addAll(this.cascadeCreatePattern);
         config.ignoredFiledSet.addAll(this.ignoredFiledSet);
@@ -458,13 +464,32 @@ public class MockDataConfig {
     }
 
     /**
+     * 设置自动级联构造标识
+     *
+     * @param autoCascade 是否自动级联构造
+     */
+    public void setAutoCascade(boolean autoCascade) {
+        this.autoCascade = autoCascade;
+    }
+
+    /**
+     * 设置自动级联构造标识
+     *
+     * @param autoCascade 是否自动级联构造
+     */
+    public MockDataConfig autoCascade(boolean autoCascade) {
+        setAutoCascade(autoCascade);
+        return this;
+    }
+
+    /**
      * 查询属性是否级联构造
      *
      * @param key 目标key
      * @return 目标key是否级联构造
      */
     public boolean isCascadeCreate(String key) {
-        return checkContains(key, cascadeCreateSet, cascadeCreatePattern);
+        return autoCascade || checkContains(key, cascadeCreateSet, cascadeCreatePattern);
     }
 
     private boolean checkContains(String key, Set<String> stringSet, List<Pattern> patternList) {

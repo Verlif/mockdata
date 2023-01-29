@@ -100,8 +100,8 @@ public class MockDataCreator {
      * @param <T>      目标泛型
      * @return 返回对象本身
      */
-    public <T> T mock(SFunction<T, ?> function) throws IllegalAccessException {
-        return (T) mock(ReflectUtil.getFieldFromLambda(function).getType());
+    public <T, V> V mock(SFunction<T, V> function) throws IllegalAccessException {
+        return (V) mock(ReflectUtil.getFieldFromLambda(function).getType());
     }
 
     /**
@@ -125,7 +125,7 @@ public class MockDataCreator {
      */
     public <T> T mock(T t, MockDataConfig config) throws IllegalAccessException {
         Creator creator = new Creator(config);
-        t = creator.mock(t, (Class<T>) t.getClass());
+        creator.mock(t, (Class<T>) t.getClass());
         creator.counterClear();
         return t;
     }

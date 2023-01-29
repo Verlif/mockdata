@@ -13,6 +13,7 @@ import org.junit.Test;
 import stopwatch.Stopwatch;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -184,11 +185,22 @@ public class BaseTest {
     public void simpleTest() throws IllegalAccessException {
         MockDataCreator creator = new MockDataCreator();
         creator.getConfig()
-                .cascadeCreatePackage(B.class.getPackage().getName())
+                .autoCascade(true)
+//                .cascadeCreatePackage(B.class.getPackage().getName())
+//                .cascadeCreateKey(Integer.class)
                 .arraySize(2)
+                .allowedModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                .ignoredField(Student::getScore)
                 .creatingDepth(1);
-        Person person = creator.mock(Person.class);
+//        System.out.println("int -- " + Arrays.deepToString(creator.mock(new int[2][3])));
+        Pet pet = creator.mock(Person::getPet);
+        System.out.println("pet -- " + pet);
+        Person person = new Person();
+        System.out.println(person);
+        Person personMocked = creator.mock(person);
+        System.out.println("person -- " + personMocked);
         DeepObject mock = creator.mock(DeepObject.class);
+        System.out.println(Arrays.deepToString(creator.mock(Integer[][][][][].class)));
         System.out.println(mock);
     }
 
