@@ -196,6 +196,12 @@ public class MockDataCreator {
             // 不存在则尝试新建对象
             if (dataCreator == null) {
                 t = newInstance(cla);
+                // 如果是数组则取其真实类
+                Class<?> tmpCla = cla;
+                while (tmpCla.isArray()) {
+                    tmpCla = tmpCla.getComponentType();
+                }
+                claKey = NamingUtil.getKeyName(tmpCla);
                 // 如果此类允许级联构造则进行mock
                 if (mockConfig.isCascadeCreate(claKey)) {
                     mock(t, cla);
@@ -238,31 +244,24 @@ public class MockDataCreator {
          */
         private void fillArray(Object o, Class<?> cla) throws IllegalAccessException {
             // 当前的实际类
-            Class<?> realCla = cla.getComponentType();
-            // 判断是否是基础数据类型，则直接返回构建
-            if (cla.getName().length() == 2) {
-                for (int i = 0, size = mockConfig.getArraySize(); i < size; i++) {
-                    Array.set(o, i, MockDataCreator.this.mock(realCla));
-                }
-                return;
-            }
+            Class<?> componentType = cla.getComponentType();
             // 当前的多维数组
-            Object[] arr = (Object[]) o;
-            int size = arr.length;
+            int size = Array.getLength(o);
             // 遍历多维数组的最外层
-            for (int i = 0; i < arr.length; i++) {
+            for (int i = 0; i < size; i++) {
                 // 如果多维数组的降维后还是数组
-                if (realCla.isArray()) {
-                    if (arr[i] != null) {
-                        size = ((Object[]) arr[i]).length;
-                    }
+                if (componentType.isArray()) {
                     // 进行递归
-                    // 当前的实际类
-                    Class<?> realClaDepp = realCla.getComponentType();
-                    arr[i] = Array.newInstance(realClaDepp, size);
-                    fillArray(arr[i], realCla);
+                    Class<?> realClaDepp = componentType.getComponentType();
+                    Object arr = Array.get(o, i);
+                    if (arr == null) {
+                        arr = Array.newInstance(realClaDepp, mockConfig.getArraySize());
+                    }
+                    arr = Array.newInstance(realClaDepp, Array.getLength(arr));
+                    fillArray(arr, componentType);
+                    Array.set(o, i, arr);
                 } else {
-                    Array.set(o, i, MockDataCreator.this.mock(realCla));
+                    Array.set(o, i, MockDataCreator.this.mock(componentType));
                 }
             }
         }

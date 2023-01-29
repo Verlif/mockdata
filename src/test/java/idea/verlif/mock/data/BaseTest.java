@@ -193,15 +193,9 @@ public class BaseTest {
                 .ignoredField(Student::getScore)
                 .creatingDepth(1);
 //        System.out.println("int -- " + Arrays.deepToString(creator.mock(new int[2][3])));
-        Pet pet = creator.mock(Person::getPet);
-        System.out.println("pet -- " + pet);
-        Person person = new Person();
-        System.out.println(person);
-        Person personMocked = creator.mock(person);
-        System.out.println("person -- " + personMocked);
-        DeepObject mock = creator.mock(DeepObject.class);
-        System.out.println(Arrays.deepToString(creator.mock(Integer[][][][][].class)));
-        System.out.println(mock);
+        System.out.println(Arrays.deepToString(creator.mock(new int[2][2][2][2])));
+        System.out.println(Arrays.deepToString(creator.mock(new Integer[2][3][2])));
+        System.out.println(creator.mock(DeepObject.class));
     }
 
     @Before
