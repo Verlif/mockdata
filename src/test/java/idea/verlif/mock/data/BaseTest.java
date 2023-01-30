@@ -76,7 +76,7 @@ public class BaseTest {
                     private final Random random = new Random();
 
                     @Override
-                    public Student mock(Field field, MockDataCreator.Creator creator) {
+                    public Student mock(Class<?> cla, Field field, MockDataCreator.Creator creator) {
                         if (random.nextBoolean()) {
                             return new Student("这是自定义的构造");
                         } else {
@@ -86,19 +86,19 @@ public class BaseTest {
                 })
                 .fieldCreator(new DataCreator<Person>() {
                     @Override
-                    public Person mock(Field field, MockDataCreator.Creator creator) {
+                    public Person mock(Class<?> cla, Field field, MockDataCreator.Creator creator) {
                         return new Person("Person");
                     }
                 })
                 .fieldCreator(Dog.class, new DataCreator<Dog>() {
                     @Override
-                    public Dog mock(Field field, MockDataCreator.Creator creator) {
+                    public Dog mock(Class<?> cla, Field field, MockDataCreator.Creator creator) {
                         return new Dog("Dog");
                     }
                 })
                 .fieldCreator(Pet.class, new DataCreator<Pet>() {
                     @Override
-                    public Pet mock(Field field, MockDataCreator.Creator creator) {
+                    public Pet mock(Class<?> cla, Field field, MockDataCreator.Creator creator) {
                         return new Pet("Pet");
                     }
                 });
@@ -123,7 +123,7 @@ public class BaseTest {
         MockDataConfig config = creator.getConfig()
                 .fieldCreator(Student::getSecondChild, new DataCreator<Student>() {
                     @Override
-                    public Student mock(Field field, MockDataCreator.Creator creator) {
+                    public Student mock(Class<?> cla, Field field, MockDataCreator.Creator creator) {
                         return new Student("这是自定义的构造");
                     }
                 })
@@ -156,10 +156,6 @@ public class BaseTest {
         creator.setConfig(config);
         config.addCascadeCreateKey(Person.class);
         config.addIgnoredField(Person::getAList);
-//        config.addFieldCreator(IListExtend::getList, (DataCreator<List<?>>) (field, creator1) -> {
-//            System.out.println("Hello");
-//            return new ArrayList<>();
-//        });
         config.setCreatingDepth(2);
         config.addFieldCreator(Person::getId, new LongRandomCreator(100, 300));
         Person[][] mock = creator.mock(Person[][].class);
@@ -193,8 +189,10 @@ public class BaseTest {
                 .ignoredField(Student::getScore)
                 .creatingDepth(1);
 //        System.out.println("int -- " + Arrays.deepToString(creator.mock(new int[2][3])));
-        System.out.println(Arrays.deepToString(creator.mock(new int[2][2][2][2])));
-        System.out.println(Arrays.deepToString(creator.mock(new Integer[2][3][2])));
+        System.out.println(IEnum.class.getSuperclass());
+        EnumObject enumObject = creator.mock(EnumObject.class);
+        IEnum iEnum = creator.mock(IEnum.class);
+        System.out.println(enumObject);
         System.out.println(creator.mock(DeepObject.class));
     }
 

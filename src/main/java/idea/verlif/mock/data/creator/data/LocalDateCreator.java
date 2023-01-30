@@ -29,7 +29,7 @@ public class LocalDateCreator implements DataCreator<LocalDate> {
     }
 
     @Override
-    public LocalDate mock(Field field, MockDataCreator.Creator creator) {
+    public LocalDate mock(Class<?> cla, Field field, MockDataCreator.Creator creator) {
         int month = random.nextInt(12) + 1;
         return LocalDate.of(yearPoint - random.nextInt(yearOffset), month, random.nextInt(DAY_COUNT[month - 1]) + 1);
     }

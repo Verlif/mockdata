@@ -27,7 +27,7 @@ public class DictDataCreator<T> implements DataCreator<T> {
     }
 
     @Override
-    public T mock(Field field, MockDataCreator.Creator creator) {
+    public T mock(Class<?> cla, Field field, MockDataCreator.Creator creator) {
         if (arrays.length == 0) {
             return null;
         }

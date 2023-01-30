@@ -192,7 +192,7 @@ public class MockDataCreator {
             }
             T t;
             // 检测是否存在自定义构建器
-            DataCreator<?> dataCreator = getDataCreator(claKey);
+            DataCreator<?> dataCreator = getDataCreator(cla);
             // 不存在则尝试新建对象
             if (dataCreator == null) {
                 t = newInstance(cla);
@@ -207,7 +207,7 @@ public class MockDataCreator {
                     mock(t, cla);
                 }
             } else {
-                t = (T) dataCreator.mock(null, this);
+                t = (T) dataCreator.mock(cla, null, this);
             }
             return t;
         }
@@ -308,7 +308,7 @@ public class MockDataCreator {
                             DataCreator<?> configCreator = getDataCreator(field);
                             // 构造器存在则使用构造器进行构造
                             if (configCreator != null) {
-                                o = configCreator.mock(field, this);
+                                o = configCreator.mock(fieldCla, field, this);
                             } else {
                                 // 判断属性是否允许级联构造
                                 o = newInstance(fieldCla);
@@ -373,17 +373,11 @@ public class MockDataCreator {
         /**
          * 获取数据构造器
          *
-         * @param field 目标类型
+         * @param cla 目标类
          * @return 目标类型对应的数据构造器
          */
-        public DataCreator<?> getDataCreator(Field field) {
-            // 优先从配置中获取属性构造器
-            DataCreator<?> creator = getDataCreator(NamingUtil.getKeyName(field));
-            if (creator != null) {
-                return creator;
-            }
-            // 获取属性类构造器
-            Class<?> cla = field.getType();
+        public DataCreator<?> getDataCreator(Class<?> cla) {
+            DataCreator<?> creator;
             String key;
             // 向类上级求取构造器
             do {
@@ -398,6 +392,23 @@ public class MockDataCreator {
                 cla = cla.getSuperclass();
             } while (cla != null);
             return null;
+        }
+
+        /**
+         * 获取数据构造器
+         *
+         * @param field 目标类型
+         * @return 目标类型对应的数据构造器
+         */
+        public DataCreator<?> getDataCreator(Field field) {
+            // 优先从配置中获取属性构造器
+            DataCreator<?> creator = getDataCreator(NamingUtil.getKeyName(field));
+            if (creator != null) {
+                return creator;
+            }
+            // 获取属性类构造器
+            Class<?> cla = field.getType();
+            return getDataCreator(cla);
         }
     }
 }

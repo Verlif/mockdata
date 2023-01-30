@@ -18,8 +18,8 @@ public class EnumRandomCreator implements DataCreator<Enum<?>> {
     }
 
     @Override
-    public Enum<?> mock(Field field, MockDataCreator.Creator creator) {
-        Class<Enum<?>> type = (Class<Enum<?>>) field.getType();
+    public Enum<?> mock(Class<?> cla, Field field, MockDataCreator.Creator creator) {
+        Class<Enum<?>> type = (Class<Enum<?>>) cla;
         Enum<?>[] enums = type.getEnumConstants();
         if (enums.length == 0) {
             return null;

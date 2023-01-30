@@ -69,7 +69,7 @@
             private final Random random = new Random();
 
             @Override
-            public Student mock(Field field, MockDataCreator.Creator creator) {
+            public Student mock(Class<?> cla, Field field, MockDataCreator.Creator creator) {
                 if (random.nextBoolean()) {
                     return new Student("这是自定义的构造");
                 } else {

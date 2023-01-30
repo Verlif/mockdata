@@ -19,7 +19,7 @@ public class LocalTimeCreator implements DataCreator<LocalTime> {
     }
 
     @Override
-    public LocalTime mock(Field field, MockDataCreator.Creator creator) {
+    public LocalTime mock(Class<?> cla, Field field, MockDataCreator.Creator creator) {
         return LocalTime.of(random.nextInt(24), random.nextInt(60));
     }
 }

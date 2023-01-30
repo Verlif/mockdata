@@ -38,7 +38,7 @@ public class IntegerRandomCreator implements DataCreator<Integer> {
     }
 
     @Override
-    public Integer mock(Field field, MockDataCreator.Creator creator) {
+    public Integer mock(Class<?> cla, Field field, MockDataCreator.Creator creator) {
         int ran = random.nextInt(offset);
         if (random.nextBoolean()) {
             return point - ran;

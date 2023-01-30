@@ -25,7 +25,7 @@ public class MapRandomCreator implements DataCreator<Map<?, ?>> {
     }
 
     @Override
-    public Map<?, ?> mock(Field field, MockDataCreator.Creator creator) {
+    public Map<?, ?> mock(Class<?> cla, Field field, MockDataCreator.Creator creator) {
         ParameterizedType genericType = (ParameterizedType) field.getGenericType();
         Type[] arguments = genericType.getActualTypeArguments();
         Map<Object, Object> map = new HashMap<>();

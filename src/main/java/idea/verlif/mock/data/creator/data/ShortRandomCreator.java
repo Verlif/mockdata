@@ -38,7 +38,7 @@ public class ShortRandomCreator implements DataCreator<Short> {
     }
 
     @Override
-    public Short mock(Field field, MockDataCreator.Creator creator) {
+    public Short mock(Class<?> cla, Field field, MockDataCreator.Creator creator) {
         int ran = random.nextInt(offset);
         if (random.nextBoolean()) {
             return (short) (point - ran);

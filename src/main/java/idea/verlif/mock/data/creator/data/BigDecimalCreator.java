@@ -19,7 +19,7 @@ public class BigDecimalCreator implements DataCreator<BigDecimal> {
     }
 
     @Override
-    public BigDecimal mock(Field field, MockDataCreator.Creator creator) {
+    public BigDecimal mock(Class<?> cla, Field field, MockDataCreator.Creator creator) {
         return BigDecimal.valueOf(random.nextLong()).add(BigDecimal.valueOf(random.nextDouble()));
     }
 

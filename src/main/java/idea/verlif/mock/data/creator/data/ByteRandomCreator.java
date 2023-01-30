@@ -27,7 +27,7 @@ public class ByteRandomCreator implements DataCreator<Byte> {
     }
 
     @Override
-    public Byte mock(Field field, MockDataCreator.Creator creator) {
+    public Byte mock(Class<?> cla, Field field, MockDataCreator.Creator creator) {
         int i = random.nextInt(max) - 128;
         if (random.nextBoolean()) {
             return (byte) (i + (random.nextBoolean() ? 0 : 1));

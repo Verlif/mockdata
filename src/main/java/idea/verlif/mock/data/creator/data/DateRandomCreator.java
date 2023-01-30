@@ -30,7 +30,7 @@ public class DateRandomCreator implements DataCreator<Date> {
     }
 
     @Override
-    public Date mock(Field field, MockDataCreator.Creator creator) {
+    public Date mock(Class<?> cla, Field field, MockDataCreator.Creator creator) {
         long offset = end - start;
         long ran = (long) (Math.random() * offset + start);
         return new Date(ran);
