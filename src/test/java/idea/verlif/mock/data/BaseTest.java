@@ -1,6 +1,10 @@
 package idea.verlif.mock.data;
 
 import idea.verlif.mock.data.config.MockDataConfig;
+import idea.verlif.mock.data.config.SizeCreator;
+import idea.verlif.mock.data.config.filter.impl.ClassKeyFilter;
+import idea.verlif.mock.data.config.filter.impl.FieldKeyFilter;
+import idea.verlif.mock.data.config.filter.impl.FieldModifierFilter;
 import idea.verlif.mock.data.creator.DataCreator;
 import idea.verlif.mock.data.creator.data.*;
 import idea.verlif.mock.data.domain.*;
@@ -103,7 +107,7 @@ public class BaseTest {
                     }
                 });
         System.out.println("------>>> 强制新建对象");
-        config.setForceNew(true);
+        config.forceNew(true);
 //        System.out.println("------>>> 关闭private属性构建");
 //        config.allowedModifiers(Modifier.PRIVATE);
 //        System.out.println("------>>> 开启public属性构建");
@@ -136,28 +140,27 @@ public class BaseTest {
 //                .cascadeCreateKey(Pet.class)
 //                .cascadeCreateKey(Dog.class)
                 .cascadeCreatePackage(B.class.getPackage().getName())
-                .ignoredFieldRegex(".*secondChild.*")
+                .filter(new ClassKeyFilter()
+                        .ignoredClassRegex(".*secondChild.*")
+                        .ignoredClassPackage(Person.class.getPackage().getName()))
                 // 将构造深度设置为1
                 .creatingDepth(1);
         System.out.println(creator.mock(Student.class));
-        config.ignoredFieldPackage(Person.class.getPackage().getName());
-        config.ignoredFieldPackage(Integer.class.getPackage().getName());
         System.out.println(creator.mock(Student.class));
     }
 
     @Test
     public void mockTest() throws IllegalAccessException {
         MockDataCreator creator = new MockDataCreator();
-        creator.useBaseData();
         creator.addDefaultCreator(new LongRandomCreator(-100, 200));
         MockDataConfig config = new MockDataConfig();
-        config.addCascadeCreateKey(A.class);
-        config.addCascadeCreateKey(B.class);
+        config.cascadeCreateKey(A.class, B.class);
         creator.setConfig(config);
-        config.addCascadeCreateKey(Person.class);
-        config.addIgnoredField(Person::getAList);
-        config.setCreatingDepth(2);
-        config.addFieldCreator(Person::getId, new LongRandomCreator(100, 300));
+        config.cascadeCreateKey(Person.class)
+                .filter(new FieldKeyFilter()
+                .ignoredField(Person::getAList))
+                .creatingDepth(2)
+                .fieldCreator(Person::getId, new LongRandomCreator(100, 300));
         Person[][] mock = creator.mock(Person[][].class);
         System.out.println(Arrays.toString(mock));
         Person[][] mock2 = creator.mock(new Person[2][5]);
@@ -182,18 +185,29 @@ public class BaseTest {
         MockDataCreator creator = new MockDataCreator();
         creator.getConfig()
                 .autoCascade(true)
-//                .cascadeCreatePackage(B.class.getPackage().getName())
-//                .cascadeCreateKey(Integer.class)
-                .arraySize(2)
-                .allowedModifiers(Modifier.PUBLIC, Modifier.STATIC)
-                .ignoredField(Student::getScore)
-                .creatingDepth(1);
-//        System.out.println("int -- " + Arrays.deepToString(creator.mock(new int[2][3])));
-        System.out.println(IEnum.class.getSuperclass());
-        EnumObject enumObject = creator.mock(EnumObject.class);
-        IEnum iEnum = creator.mock(IEnum.class);
-        System.out.println(enumObject);
-        System.out.println(creator.mock(DeepObject.class));
+                .creatingDepth(4)
+                .creatingDepth(SelfIt::getSelfOne, 1)
+                .creatingDepth(SelfIt::getSelfTwo, 2)
+                .creatingDepth(SelfIt.class, 1)
+                .arraySize(cla -> {
+                    if (cla == int.class) {
+                        return 2;
+                    } else {
+                        return new Random().nextInt(10);
+                    }
+                })
+                .filter(new FieldModifierFilter()
+                        .allowedModifiers(Modifier.PRIVATE, Modifier.STATIC))
+                .filter(new FieldKeyFilter()
+                        .ignoredField(Student::getScore));
+        System.out.println(Arrays.deepToString(creator.mock(int[][].class)));
+        for (int i = 0; i < 10; i++) {
+            System.out.println(Arrays.deepToString(creator.mock(int[][][][].class)));
+        }
+        System.out.println("--------------------------------------------------------------");
+        for (int i = 0; i < 10; i++) {
+            System.out.println(Arrays.deepToString(creator.mock(Integer[][][][].class)));
+        }
     }
 
     @Before

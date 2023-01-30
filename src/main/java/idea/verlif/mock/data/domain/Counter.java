@@ -10,10 +10,17 @@ import java.util.Map;
  */
 public abstract class Counter<T> {
 
+    protected int defaultCount;
+
     protected final Map<T, Integer> countMap;
 
     public Counter() {
-        countMap = new HashMap<>();
+        this(0);
+    }
+
+    public Counter(int defaultCount) {
+        this.defaultCount = defaultCount;
+        this.countMap = new HashMap<>();
     }
 
     /**
@@ -23,7 +30,7 @@ public abstract class Counter<T> {
      * @return 目标key对应计数
      */
     public synchronized int getCount(T t) {
-        return countMap.computeIfAbsent(t, k -> 0);
+        return countMap.computeIfAbsent(t, k -> defaultCount);
     }
 
     /**
@@ -58,12 +65,30 @@ public abstract class Counter<T> {
     }
 
     /**
+     * 获取初始计数
+     *
+     * @return 初始计数
+     */
+    public int getDefaultCount() {
+        return defaultCount;
+    }
+
+    /**
+     * 设定初始计数
+     *
+     * @param defaultCount 初始计数
+     */
+    public synchronized void setDefaultCount(int defaultCount) {
+        this.defaultCount = defaultCount;
+    }
+
+    /**
      * 清除计数
      *
      * @param t 目标key
      */
     public synchronized void clear(T t) {
-        countMap.put(t, 0);
+        countMap.put(t, defaultCount);
     }
 
     /**

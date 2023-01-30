@@ -1,13 +1,16 @@
 package idea.verlif.mock.data.config;
 
+import idea.verlif.mock.data.config.filter.ClassFilter;
+import idea.verlif.mock.data.config.filter.FieldFilter;
 import idea.verlif.mock.data.creator.DataCreator;
 import idea.verlif.mock.data.creator.InstanceCreator;
 import idea.verlif.mock.data.domain.SFunction;
+import idea.verlif.mock.data.domain.counter.StringCounter;
+import idea.verlif.mock.data.util.ContainsUtil;
 import idea.verlif.mock.data.util.NamingUtil;
 import idea.verlif.mock.data.util.ReflectUtil;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -16,15 +19,18 @@ import java.util.regex.Pattern;
  */
 public class MockDataConfig {
 
+    private static final int ARRAY_SIZE = 5;
+    private static final int DEFAULT_DEPTH = 2;
+
     /**
      * 属性填充的循环次数
      */
-    private int creatingDepth = 3;
+    private StringCounter depthCounter;
 
     /**
      * 构建数组时的填充长度
      */
-    private int arraySize = 5;
+    private SizeCreator arraySizeCreator;
 
     /**
      * 属性创造器表
@@ -52,19 +58,14 @@ public class MockDataConfig {
     private final List<Pattern> cascadeCreatePattern;
 
     /**
-     * 构造时忽略的属性
+     * 属性过滤器列表
      */
-    private final Set<String> ignoredFiledSet;
+    private final ArrayList<FieldFilter> fieldFilters;
 
     /**
-     * 构造时忽略的属性正则列表
+     * 类过滤器列表
      */
-    private final List<Pattern> ignoredFiledPattern;
-
-    /**
-     * 允许构建private关键字
-     */
-    private int modifiers = Modifier.PRIVATE;
+    private final ArrayList<ClassFilter> classFilters;
 
     /**
      * 强制生成新对象
@@ -76,123 +77,91 @@ public class MockDataConfig {
         instanceCreatorMap = new HashMap<>();
         cascadeCreateSet = new HashSet<>();
         cascadeCreatePattern = new ArrayList<>();
-        ignoredFiledSet = new HashSet<>();
-        ignoredFiledPattern = new ArrayList<>();
+
+        fieldFilters = new ArrayList<>();
+        classFilters = new ArrayList<>();
     }
 
     public MockDataConfig copy() {
         MockDataConfig config = new MockDataConfig();
-        config.creatingDepth = this.creatingDepth;
-        config.arraySize = this.arraySize;
+        config.depthCounter = this.depthCounter;
+        config.arraySizeCreator = this.arraySizeCreator;
         config.fieldCreatorMap.putAll(this.fieldCreatorMap);
         config.instanceCreatorMap.putAll(this.instanceCreatorMap);
         config.autoCascade = this.autoCascade;
         config.cascadeCreateSet.addAll(this.cascadeCreateSet);
         config.cascadeCreatePattern.addAll(this.cascadeCreatePattern);
-        config.ignoredFiledSet.addAll(this.ignoredFiledSet);
-        config.ignoredFiledPattern.addAll(this.ignoredFiledPattern);
-        config.modifiers = this.modifiers;
+        config.fieldFilters.addAll(this.fieldFilters);
+        config.classFilters.addAll(this.classFilters);
         config.forceNew = this.forceNew;
 
         return config;
     }
 
-    public int getCreatingDepth() {
-        return creatingDepth;
+    public int getCreatingDepth(String key) {
+        if (depthCounter == null) {
+            return 2;
+        }
+        return depthCounter.getCount(key);
     }
 
-    public void setCreatingDepth(int creatingDepth) {
-        this.creatingDepth = creatingDepth;
-    }
-
-    public MockDataConfig creatingDepth(int creatingDepth) {
-        this.creatingDepth = creatingDepth;
-        return this;
-    }
-
-    public boolean isAllowPrivate() {
-        return Modifier.isPrivate(modifiers);
-    }
-
-    public void setAllowPrivate(boolean allowPrivate) {
-        this.modifiers = allowPrivate ? this.modifiers & Modifier.PRIVATE : this.modifiers ^ Modifier.PRIVATE;
-    }
-
-    public boolean isAllowPublic() {
-        return Modifier.isPublic(modifiers);
-    }
-
-    public void setAllowPublic(boolean allowPublic) {
-        this.modifiers = allowPublic ? this.modifiers | Modifier.PUBLIC : this.modifiers ^ Modifier.PUBLIC;
-    }
-
-    public boolean isAllowProtect() {
-        return Modifier.isProtected(modifiers);
-    }
-
-    public void setAllowProtect(boolean allowProtect) {
-        this.modifiers = allowProtect ? this.modifiers | Modifier.PROTECTED : this.modifiers ^ Modifier.PROTECTED;
-    }
-
-    public boolean isAllowStatic() {
-        return Modifier.isStatic(modifiers);
-    }
-
-    public void setAllowStatic(boolean allowStatic) {
-        this.modifiers = allowStatic ? this.modifiers | Modifier.STATIC : this.modifiers ^ Modifier.STATIC;
-    }
-
-    public void setAllowedModifiers(int modifiers) {
-        this.modifiers = modifiers;
-    }
-
-    /**
-     * 添加允许的属性修饰符
-     *
-     * @param modifiers 属性修饰符
-     */
-    public MockDataConfig allowedModifiers(int... modifiers) {
-        for (int modifier : modifiers) {
-            this.modifiers |= modifier;
+    public MockDataConfig creatingDepth(int defaultDepth) {
+        if (depthCounter == null) {
+            depthCounter = new StringCounter(defaultDepth);
+        } else {
+            depthCounter.setDefaultCount(defaultDepth);
         }
         return this;
     }
 
     /**
-     * 移除允许的属性修饰符
+     * 设定构建深度
      *
-     * @param modifiers 属性修饰符
+     * @param function 属性表达式
+     * @param depth    属性的构建深度
      */
-    public MockDataConfig blockedModifiers(int... modifiers) {
-        for (int modifier : modifiers) {
-            this.modifiers -= modifier;
-        }
+    public <T> MockDataConfig creatingDepth(SFunction<T, ?> function, int depth) {
+        setKeyDepth(NamingUtil.getKeyName(ReflectUtil.getFieldFromLambda(function)), depth);
         return this;
     }
 
-    public boolean isAllowedModifier(int mod) {
-        return (mod & modifiers) != 0;
+    /**
+     * 设定构建深度
+     *
+     * @param cla   目标类
+     * @param depth 目标类的构建深度
+     */
+    public <T> MockDataConfig creatingDepth(Class<?> cla, int depth) {
+        setKeyDepth(NamingUtil.getKeyName(cla), depth);
+        return this;
     }
 
-    public int getArraySize() {
-        return arraySize;
+    private void setKeyDepth(String key, int depth) {
+        if (depthCounter == null) {
+            depthCounter = new StringCounter(DEFAULT_DEPTH);
+        }
+        depthCounter.setCount(key, depth);
     }
 
-    public void setArraySize(int arraySize) {
-        this.arraySize = arraySize;
+    public int getArraySize(Class<?> cla) {
+        if (arraySizeCreator == null) {
+            return ARRAY_SIZE;
+        }
+        return arraySizeCreator.getSize(cla);
     }
 
     public MockDataConfig arraySize(int arraySize) {
-        this.arraySize = arraySize;
+        this.arraySizeCreator = new StaticSizeCreator(arraySize);
+        return this;
+    }
+
+    public MockDataConfig arraySize(SizeCreator sizeCreator) {
+        this.arraySizeCreator = sizeCreator;
         return this;
     }
 
     public boolean isForceNew() {
         return forceNew;
-    }
-
-    public void setForceNew(boolean forceNew) {
-        this.forceNew = forceNew;
     }
 
     public MockDataConfig forceNew(boolean forceNew) {
@@ -210,7 +179,7 @@ public class MockDataConfig {
      * @param function 属性获取表达式
      * @param creator  数据创造器
      */
-    public <T> void addFieldCreator(SFunction<T, ?> function, DataCreator<?> creator) {
+    private  <T> void addFieldCreator(SFunction<T, ?> function, DataCreator<?> creator) {
         Field field = ReflectUtil.getFieldFromLambda(function, true);
         addFieldCreator(NamingUtil.getKeyName(field), creator);
     }
@@ -232,7 +201,7 @@ public class MockDataConfig {
      * @param key     属性key值
      * @param creator 数据创造器
      */
-    public void addFieldCreator(String key, DataCreator<?> creator) {
+    private void addFieldCreator(String key, DataCreator<?> creator) {
         fieldCreatorMap.put(
                 key,
                 creator);
@@ -255,7 +224,7 @@ public class MockDataConfig {
      * @param cla     目标类
      * @param creator 数据创造器
      */
-    public void addFieldCreator(Class<?> cla, DataCreator<?> creator) {
+    private void addFieldCreator(Class<?> cla, DataCreator<?> creator) {
         fieldCreatorMap.put(
                 NamingUtil.getKeyName(cla),
                 creator);
@@ -266,7 +235,7 @@ public class MockDataConfig {
      *
      * @param creator 数据创造器
      */
-    public void addFieldCreator(DataCreator<?> creator) {
+    private void addFieldCreator(DataCreator<?> creator) {
         for (Class<?> cla : creator.types()) {
             fieldCreatorMap.put(
                     NamingUtil.getKeyName(cla),
@@ -309,7 +278,7 @@ public class MockDataConfig {
      *
      * @param creator 实例构造器
      */
-    public void addInstanceCreator(InstanceCreator<?> creator) {
+    private void addInstanceCreator(InstanceCreator<?> creator) {
         Class<?> cla = creator.matched();
         if (cla != null) {
             instanceCreatorMap.put(NamingUtil.getKeyName(cla), creator);
@@ -340,19 +309,12 @@ public class MockDataConfig {
     /**
      * 添加级联构造的类
      *
-     * @param cla 需要级联构造的类
+     * @param clas 需要级联构造的类
      */
-    public void addCascadeCreateKey(Class<?> cla) {
-        addCascadeCreateKey(NamingUtil.getKeyName(cla));
-    }
-
-    /**
-     * 添加级联构造的类
-     *
-     * @param cla 需要级联构造的类
-     */
-    public MockDataConfig cascadeCreateKey(Class<?> cla) {
-        addCascadeCreateKey(cla);
+    public MockDataConfig cascadeCreateKey(Class<?>... clas) {
+        for (Class<?> cla : clas) {
+            addCascadeCreateKey(NamingUtil.getKeyName(cla));
+        }
         return this;
     }
 
@@ -361,7 +323,7 @@ public class MockDataConfig {
      *
      * @param function 需要级联构造的属性
      */
-    public void addCascadeCreateKey(SFunction<?, ?> function) {
+    private void addCascadeCreateKey(SFunction<?, ?> function) {
         addCascadeCreateKey(NamingUtil.getKeyName(ReflectUtil.getFieldFromLambda(function, true)));
     }
 
@@ -380,7 +342,7 @@ public class MockDataConfig {
      *
      * @param key 需要级联构造的key
      */
-    public void addCascadeCreateKey(String key) {
+    private void addCascadeCreateKey(String key) {
         cascadeCreateSet.add(key);
     }
 
@@ -401,7 +363,7 @@ public class MockDataConfig {
      *
      * @param regex 需要级联构造的属性key的正则表达
      */
-    public void addCascadeCreatePattern(String regex) {
+    private void addCascadeCreatePattern(String regex) {
         cascadeCreatePattern.add(Pattern.compile(regex));
     }
 
@@ -422,7 +384,7 @@ public class MockDataConfig {
      *
      * @param packName 需要级联构造的包名
      */
-    public void addCascadeCreatePackage(String packName) {
+    private void addCascadeCreatePackage(String packName) {
         addCascadeCreatePattern(packName + ".*" + NamingUtil.KEY_SUFFIX_CLASS);
     }
 
@@ -459,7 +421,7 @@ public class MockDataConfig {
      *
      * @param key 需要级联构造的key
      */
-    public void removeCascadeCreateKey(String key) {
+    private void removeCascadeCreateKey(String key) {
         cascadeCreateSet.remove(key);
     }
 
@@ -468,17 +430,8 @@ public class MockDataConfig {
      *
      * @param autoCascade 是否自动级联构造
      */
-    public void setAutoCascade(boolean autoCascade) {
-        this.autoCascade = autoCascade;
-    }
-
-    /**
-     * 设置自动级联构造标识
-     *
-     * @param autoCascade 是否自动级联构造
-     */
     public MockDataConfig autoCascade(boolean autoCascade) {
-        setAutoCascade(autoCascade);
+        this.autoCascade = autoCascade;
         return this;
     }
 
@@ -489,106 +442,71 @@ public class MockDataConfig {
      * @return 目标key是否级联构造
      */
     public boolean isCascadeCreate(String key) {
-        return autoCascade || checkContains(key, cascadeCreateSet, cascadeCreatePattern);
-    }
-
-    private boolean checkContains(String key, Set<String> stringSet, List<Pattern> patternList) {
-        if (stringSet.contains(key)) {
-            return true;
-        }
-        if (patternList.size() != 0) {
-            for (Pattern pattern : patternList) {
-                if (pattern.matcher(key).matches()) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return autoCascade || ContainsUtil.checkContains(key, cascadeCreateSet, cascadeCreatePattern);
     }
 
     /**
-     * 增加忽略的属性
-     */
-    public <T> void addIgnoredField(SFunction<T, ?> function) {
-        ignoredFiledSet.add(NamingUtil.getKeyName(ReflectUtil.getFieldFromLambda(function)));
-    }
-
-    /**
-     * 增加忽略的属性
-     */
-    public <T> MockDataConfig ignoredField(SFunction<T, ?> function) {
-        addIgnoredField(function);
-        return this;
-    }
-
-    /**
-     * 增加忽略的属性
-     */
-    public void addIgnoredField(Class<?> cla) {
-        ignoredFiledSet.add(NamingUtil.getKeyName(cla));
-    }
-
-    /**
-     * 增加忽略的属性
-     */
-    public MockDataConfig ignoredField(Class<?> cla) {
-        addIgnoredField(cla);
-        return this;
-    }
-
-    /**
-     * 增加忽略的属性key的正则表达
-     */
-    public void addIgnoredFieldRegex(String regex) {
-        ignoredFiledPattern.add(Pattern.compile(regex));
-    }
-
-    /**
-     * 增加忽略的属性key的正则表达
-     */
-    public MockDataConfig ignoredFieldRegex(String... regex) {
-        for (String s : regex) {
-            addIgnoredFieldRegex(s);
-        }
-        return this;
-    }
-
-    /**
-     * 增加忽略的属性key的类包名
+     * 添加类过滤器
      *
-     * @param packName 忽略的属性key的类包名
+     * @param filter 类过滤器
      */
-    public MockDataConfig ignoredFieldPackage(String... packName) {
-        for (String s : packName) {
-            addIgnoredFieldPackage(s);
-        }
+    public MockDataConfig filter(ClassFilter filter) {
+        classFilters.add(filter);
         return this;
     }
 
     /**
-     * 增加忽略的属性key的类包名
+     * 添加属性过滤器
      *
-     * @param packName 忽略的属性key的类包名
+     * @param filter 属性过滤器
      */
-    public void addIgnoredFieldPackage(String packName) {
-        addIgnoredFieldRegex(packName + ".*" + NamingUtil.KEY_SUFFIX_CLASS);
+    public MockDataConfig filter(FieldFilter filter) {
+        fieldFilters.add(filter);
+        return this;
     }
 
     /**
      * 判断该属性是否是被忽略的
      *
-     * @param key 属性key
+     * @param field 目标属性
      */
-    public boolean isIgnoredFiled(String key) {
-        return checkContains(key, ignoredFiledSet, ignoredFiledPattern);
+    public boolean isAllowedField(Field field) {
+        for (FieldFilter filter : fieldFilters) {
+            if (!filter.accept(field)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
-     * 属性是否被允许构建
+     * 判断该类是否是被忽略的
      *
-     * @param field 属性对象
+     * @param cla 目标类
      */
-    public boolean isAllowField(Field field) {
-        return (field.getModifiers() | modifiers) == modifiers;
+    public boolean isAllowedClass(Class<?> cla) {
+        for (ClassFilter filter : classFilters) {
+            if (!filter.accept(cla)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 固定大小创建器
+     */
+    private static final class StaticSizeCreator implements SizeCreator {
+
+        private final int size;
+
+        public StaticSizeCreator(int size) {
+            this.size = size;
+        }
+
+        @Override
+        public int getSize(Class<?> cla) {
+            return size;
+        }
     }
 }

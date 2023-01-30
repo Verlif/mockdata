@@ -6,4 +6,8 @@ import idea.verlif.mock.data.domain.Counter;
  * @author Verlif
  */
 public class StringCounter extends Counter<String> {
+
+    public StringCounter(int defaultCount) {
+        super(defaultCount);
+    }
 }

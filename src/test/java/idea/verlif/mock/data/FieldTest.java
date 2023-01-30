@@ -1,6 +1,6 @@
 package idea.verlif.mock.data;
 
-import idea.verlif.mock.data.config.MockDataConfig;
+import idea.verlif.mock.data.config.filter.impl.FieldModifierFilter;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,18 +16,18 @@ public class FieldTest {
 
     @Test
     public void annotation() {
-        MockDataConfig config = new MockDataConfig();
-        System.out.println("预期 - true - " + config.isAllowedModifier(Modifier.PRIVATE));
-        System.out.println("预期 - false - " + config.isAllowedModifier(Modifier.PUBLIC));
-        config.setAllowPublic(true);
-        System.out.println("预期 - true - " + config.isAllowedModifier(Modifier.PRIVATE));
-        System.out.println("预期 - true - " + config.isAllowedModifier(Modifier.PUBLIC));
-        config.setAllowPrivate(false);
-        System.out.println("预期 - false - " + config.isAllowedModifier(Modifier.PRIVATE));
-        System.out.println("预期 - true - " + config.isAllowedModifier(Modifier.PUBLIC));
-        config.setAllowPublic(false);
-        System.out.println("预期 - false - " + config.isAllowedModifier(Modifier.PRIVATE));
-        System.out.println("预期 - false - " + config.isAllowedModifier(Modifier.PUBLIC));
+        FieldModifierFilter filter = new FieldModifierFilter();
+        System.out.println("预期 - true - " + filter.isAllowedModifier(Modifier.PRIVATE));
+        System.out.println("预期 - false - " + filter.isAllowedModifier(Modifier.PUBLIC));
+        filter.setAllowPublic(true);
+        System.out.println("预期 - true - " + filter.isAllowedModifier(Modifier.PRIVATE));
+        System.out.println("预期 - true - " + filter.isAllowedModifier(Modifier.PUBLIC));
+        filter.setAllowPrivate(false);
+        System.out.println("预期 - false - " + filter.isAllowedModifier(Modifier.PRIVATE));
+        System.out.println("预期 - true - " + filter.isAllowedModifier(Modifier.PUBLIC));
+        filter.setAllowPublic(false);
+        System.out.println("预期 - false - " + filter.isAllowedModifier(Modifier.PRIVATE));
+        System.out.println("预期 - false - " + filter.isAllowedModifier(Modifier.PUBLIC));
     }
 
     @Test
