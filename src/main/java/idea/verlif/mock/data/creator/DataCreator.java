@@ -6,9 +6,11 @@ import idea.verlif.mock.data.domain.TypeGetter;
 import java.lang.reflect.Field;
 
 /**
+ * 数据构建器
+ *
  * @author Verlif
  */
-public interface DataCreator<R> extends TypeGetter<R> {
+public interface DataCreator<R> extends TypeGetter {
 
     /**
      * 生成数据

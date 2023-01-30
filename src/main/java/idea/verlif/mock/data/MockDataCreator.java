@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * Mock数据创建器
+ *
  * @author Verlif
  */
 public class MockDataCreator {
@@ -156,6 +158,9 @@ public class MockDataCreator {
         return t;
     }
 
+    /**
+     * 构建器
+     */
     public final class Creator {
 
         /**
@@ -382,10 +387,7 @@ public class MockDataCreator {
             // 向类上级求取构造器
             do {
                 key = NamingUtil.getKeyName(cla);
-                creator = mockConfig.getDataCreator(key);
-                if (creator == null) {
-                    creator = defaultCreatorMap.get(key);
-                }
+                creator = getDataCreator(key);
                 if (creator != null) {
                     return creator;
                 }

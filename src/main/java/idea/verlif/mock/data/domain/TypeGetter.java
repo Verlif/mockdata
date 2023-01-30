@@ -7,9 +7,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * 类型获取器
+ *
  * @author Verlif
  */
-public interface TypeGetter<T> {
+public interface TypeGetter {
 
     default List<Class<?>> types() {
         List<Class<?>> list = new ArrayList<>();
