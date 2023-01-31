@@ -65,7 +65,7 @@ public class BaseTest {
         System.out.println("------>>> 自定义secondChild属性");
         config
                 // 使用字典生成name属性
-                .fieldCreator(Student::getName, new DictDataCreator<>(new String[]{
+                .fieldCreator(Student::getName, new DictDataCreator<String>(new String[]{
                         "小明", "小红", "小王", "小赵", "小李", "小周", "小强"
                 }))
                 // 限制id属性生成范围
@@ -172,11 +172,15 @@ public class BaseTest {
     @Test
     public void randomTest() throws IllegalAccessException {
         MockDataCreator creator = new MockDataCreator();
-        creator.addDefaultCreator(new LocalDateCreator());
+        creator.addDefaultCreator(new DictDataCreator<>(new Integer[]{
+                1, 2, 3, 4
+        }));
         creator.useExtendData();
-        for (int i = 0; i < 100; i++) {
-            List data = creator.mock(new ArrayList<Person>());
-            System.out.println(data);
+        for (int i = 0; i < 10; i++) {
+            System.out.println(creator.mock(int.class));
+        }
+        for (int i = 0; i < 10; i++) {
+            System.out.println(creator.mock(Integer.class));
         }
     }
 

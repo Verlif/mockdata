@@ -15,8 +15,6 @@ import java.util.Random;
  */
 public class DictDataCreator<T> implements DataCreator<T> {
 
-    private static final List<Class<?>> LIST = new ArrayList<>();
-
     private final T[] arrays;
 
     private final Random random;
@@ -36,6 +34,9 @@ public class DictDataCreator<T> implements DataCreator<T> {
 
     @Override
     public List<Class<?>> types() {
-        return LIST;
+        List<Class<?>> list = new ArrayList<>();
+        Class<?> cla = arrays.getClass().getComponentType();
+        list.add(cla);
+        return list;
     }
 }
