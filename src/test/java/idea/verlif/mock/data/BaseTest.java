@@ -182,32 +182,17 @@ public class BaseTest {
 
     @Test
     public void simpleTest() throws IllegalAccessException {
+        Stopwatch stopwatch = Stopwatch.get("this");
+        stopwatch.pin();
         MockDataCreator creator = new MockDataCreator();
         creator.getConfig()
-                .autoCascade(true)
-                .creatingDepth(4)
-                .creatingDepth(SelfIt::getSelfOne, 1)
-                .creatingDepth(SelfIt::getSelfTwo, 2)
-                .creatingDepth(SelfIt.class, 1)
-                .arraySize(cla -> {
-                    if (cla == int.class) {
-                        return 2;
-                    } else {
-                        return new Random().nextInt(10);
-                    }
-                })
-                .filter(new FieldModifierFilter()
-                        .allowedModifiers(Modifier.PRIVATE, Modifier.STATIC))
-                .filter(new FieldKeyFilter()
-                        .ignoredField(Student::getScore));
-        System.out.println(Arrays.deepToString(creator.mock(int[][].class)));
-        for (int i = 0; i < 10; i++) {
-            System.out.println(Arrays.deepToString(creator.mock(int[][][][].class)));
-        }
-        System.out.println("--------------------------------------------------------------");
-        for (int i = 0; i < 10; i++) {
-            System.out.println(Arrays.deepToString(creator.mock(Integer[][][][].class)));
-        }
+                .cascadeCreatePackage(Person.class.getPackage().getName())
+                .creatingDepth(1)
+                .arraySize(2);
+        System.out.println("->\t\t" + creator.mock(DeepObject.class));
+        System.out.println("->\t\t" + creator.mock(SelfIt.class));
+        stopwatch.pin();
+        System.out.println("---------------- >>> MockDataCreatorTest: " + stopwatch.getLastInterval(TimeUnit.MILLISECONDS) + "ms");
     }
 
     @Before

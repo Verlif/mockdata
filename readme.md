@@ -29,6 +29,7 @@
    MockDataCreator creator = new MockDataCreator();
    // 获取构造器的当前配置
    creator.getConfig()
+           // 自动级联构建
            .autoCascade(true)
    // 通过类来实例化对象
    Person person = creator.mock(Person.class);
@@ -109,17 +110,16 @@
 
 - __数组__
    - 支持任意维度数数组。
+   - 通过`mock(new T[2][3][4][5])`的方式来手动指定数组大小
 
 ### 注意
 
 __目前自动构建暂不支持非静态内部类，有需要请使用添加自定义构建器__
 
-__当数组维度大于2后，其2维以上的每个维度的大小都会被重置为`MockDataConfig.getArraySize(Class)`__
-
 ## 注意事项
 
 - __mock__ 无法实例化的类（例如接口或是抽象类）时，请给予实例构建器。
-- __mock__ 未指定泛型的类时，大概率无法构建成功，请指定泛型类型或实例构建器。
+- __mock__ 构建带有泛型但未指明泛型的类时，大概率无法构建成功，请指定泛型类型或实例构建器。
 
 ## 添加依赖
 

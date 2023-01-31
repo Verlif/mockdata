@@ -100,7 +100,7 @@ public class MockDataConfig {
 
     public int getCreatingDepth(String key) {
         if (depthCounter == null) {
-            return 2;
+            return DEFAULT_DEPTH;
         }
         return depthCounter.getCount(key);
     }

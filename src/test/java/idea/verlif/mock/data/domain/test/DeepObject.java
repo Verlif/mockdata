@@ -39,13 +39,13 @@ public class DeepObject {
 
     private String stringT;
 
-    private DeepObject deepObject;
+    private DeepObject[] deepObject;
 
-    public DeepObject getDeepObject() {
+    public DeepObject[] getDeepObject() {
         return deepObject;
     }
 
-    public void setDeepObject(DeepObject deepObject) {
+    public void setDeepObject(DeepObject[] deepObject) {
         this.deepObject = deepObject;
     }
 

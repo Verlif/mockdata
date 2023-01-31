@@ -198,15 +198,16 @@ public class MockDataCreator {
                 // 不存在则尝试新建对象
                 if (dataCreator == null) {
                     t = newInstance(cla);
-                    // 如果是数组则取其真实类
-                    Class<?> tmpCla = cla;
-                    while (tmpCla.isArray()) {
-                        tmpCla = tmpCla.getComponentType();
-                    }
-                    String claKey = NamingUtil.getKeyName(tmpCla);
-                    // 如果此类允许级联构造则进行mock
-                    if (mockConfig.isCascadeCreate(claKey)) {
-                        mock(t, cla);
+                    // 如果是数组则填充数组
+                    if (cla.isArray()) {
+                        fillArray(t, cla);
+                    } else {
+                        Class<?> tmpCla = getRealClass(cla);
+                        String claKey = NamingUtil.getKeyName(tmpCla);
+                        // 如果此类允许级联构造则进行mock
+                        if (mockConfig.isCascadeCreate(claKey)) {
+                            mock(t, cla);
+                        }
                     }
                 } else {
                     t = (T) dataCreator.mock(cla, null, this);
@@ -257,17 +258,14 @@ public class MockDataCreator {
                     // 进行递归
                     Class<?> realClaDepp = componentType.getComponentType();
                     Object arr = Array.get(o, i);
-                    int nextSize;
                     if (arr == null) {
-                        nextSize = mockConfig.getArraySize(getRealClass(realClaDepp));
-                    } else {
-                        nextSize = Array.getLength(arr);
+                        int nextSize = mockConfig.getArraySize(getRealClass(realClaDepp));
+                        arr = Array.newInstance(realClaDepp, nextSize);
                     }
-                    arr = Array.newInstance(realClaDepp, nextSize);
                     fillArray(arr, componentType);
                     Array.set(o, i, arr);
                 } else {
-                    Array.set(o, i, MockDataCreator.this.mock(componentType));
+                    Array.set(o, i, mockClass(componentType));
                 }
             }
         }

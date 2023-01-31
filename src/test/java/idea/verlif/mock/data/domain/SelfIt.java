@@ -7,17 +7,17 @@ import com.alibaba.fastjson2.JSONObject;
  */
 public class SelfIt {
 
-    private SelfIt selfOne;
+    private SelfIt[] selfOne;
 
     private SelfIt selfTwo;
 
     private SelfIt selfThree;
 
-    public SelfIt getSelfOne() {
+    public SelfIt[] getSelfOne() {
         return selfOne;
     }
 
-    public void setSelfOne(SelfIt selfOne) {
+    public void setSelfOne(SelfIt[] selfOne) {
         this.selfOne = selfOne;
     }
 
