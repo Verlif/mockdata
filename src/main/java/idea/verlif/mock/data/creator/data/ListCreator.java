@@ -37,7 +37,7 @@ public class ListCreator implements DataCreator<List<?>> {
                     Object o = creator.mockClass(Class.forName(arguments[0].getTypeName()));
                     list.add(o);
                 }
-            } catch (ClassNotFoundException | IllegalAccessException e) {
+            } catch (ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
         }

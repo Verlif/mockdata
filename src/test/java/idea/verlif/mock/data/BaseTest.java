@@ -1,5 +1,6 @@
 package idea.verlif.mock.data;
 
+import com.alibaba.fastjson2.JSONObject;
 import idea.verlif.mock.data.config.MockDataConfig;
 import idea.verlif.mock.data.config.filter.impl.ClassKeyFilter;
 import idea.verlif.mock.data.config.filter.impl.FieldKeyFilter;
@@ -10,7 +11,6 @@ import idea.verlif.mock.data.creator.data.IntegerRandomCreator;
 import idea.verlif.mock.data.creator.data.LongRandomCreator;
 import idea.verlif.mock.data.domain.*;
 import idea.verlif.mock.data.domain.test.A;
-import idea.verlif.mock.data.domain.test.DeepObject;
 import idea.verlif.mock.data.domain.test.Dog;
 import org.junit.After;
 import org.junit.Before;
@@ -190,18 +190,67 @@ public class BaseTest {
     }
 
     @Test
-    public void simpleTest() throws IllegalAccessException {
+    public void simpleTest() {
         Stopwatch stopwatch = Stopwatch.get("this");
         stopwatch.pin();
         MockDataCreator creator = new MockDataCreator();
         creator.getConfig()
-                .cascadeCreatePackage(Person.class.getPackage().getName())
-                .creatingDepth(1)
-                .arraySize(2);
-        System.out.println("->\t\t" + creator.mock(DeepObject.class));
-        System.out.println("->\t\t" + creator.mock(SelfIt.class));
+                .arraySize(2)
+                .autoCascade(true)
+                .filter(new ClassKeyFilter()
+                        .ignoredClass(int.class)
+                        .ignoredClass(Integer.class));
+        System.out.println(creator.mock(ObjectForTest.class));
         stopwatch.pin();
         System.out.println("---------------- >>> MockDataCreatorTest: " + stopwatch.getLastInterval(TimeUnit.MILLISECONDS) + "ms");
+    }
+
+    public static class ObjectForTest {
+
+        private int[] ints;
+
+        private int[][] intss;
+
+        private int[][][] intsss;
+
+        private Integer[][][] integersss;
+
+        public int[] getInts() {
+            return ints;
+        }
+
+        public void setInts(int[] ints) {
+            this.ints = ints;
+        }
+
+        public int[][] getIntss() {
+            return intss;
+        }
+
+        public void setIntss(int[][] intss) {
+            this.intss = intss;
+        }
+
+        public int[][][] getIntsss() {
+            return intsss;
+        }
+
+        public void setIntsss(int[][][] intsss) {
+            this.intsss = intsss;
+        }
+
+        public Integer[][][] getIntegersss() {
+            return integersss;
+        }
+
+        public void setIntegersss(Integer[][][] integersss) {
+            this.integersss = integersss;
+        }
+
+        @Override
+        public String toString() {
+            return JSONObject.toJSONString(this);
+        }
     }
 
     @Before

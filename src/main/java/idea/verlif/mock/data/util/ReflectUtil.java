@@ -158,7 +158,8 @@ public class ReflectUtil {
         }
         // 遍历构造器查询对应参数的构造器方法
         Constructor<?>[] constructors = cla.getConstructors();
-        LOOP_constructor: for (Constructor<?> constructor : constructors) {
+        LOOP_constructor:
+        for (Constructor<?> constructor : constructors) {
             // 如果构造器参数数量相同则进一步验证
             if (constructor.getParameterCount() == params.length) {
                 Class<?>[] types = constructor.getParameterTypes();

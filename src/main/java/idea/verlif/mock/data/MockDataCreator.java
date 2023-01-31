@@ -106,7 +106,7 @@ public class MockDataCreator {
      * @param <T>      目标泛型
      * @return 返回对象本身
      */
-    public <T, V> V mock(SFunction<T, V> function) throws IllegalAccessException {
+    public <T, V> V mock(SFunction<T, V> function) {
         return (V) mock(ReflectUtil.getFieldFromLambda(function).getType());
     }
 
@@ -117,7 +117,7 @@ public class MockDataCreator {
      * @param <T> 目标泛型
      * @return 返回对象本身
      */
-    public <T> T mock(T t) throws IllegalAccessException {
+    public <T> T mock(T t) {
         return mock(t, config);
     }
 
@@ -129,7 +129,7 @@ public class MockDataCreator {
      * @param <T>    目标泛型
      * @return 返回对象本身
      */
-    public <T> T mock(T t, MockDataConfig config) throws IllegalAccessException {
+    public <T> T mock(T t, MockDataConfig config) {
         Creator creator = new Creator(config);
         creator.mock(t, (Class<T>) t.getClass());
         creator.counterClear();
@@ -143,7 +143,7 @@ public class MockDataCreator {
      * @param <T> 目标泛型
      * @return 返回新实例
      */
-    public <T> T mock(Class<T> cla) throws IllegalAccessException {
+    public <T> T mock(Class<T> cla) {
         return mock(cla, config);
     }
 
@@ -155,7 +155,7 @@ public class MockDataCreator {
      * @param <T>    目标泛型
      * @return 返回新实例
      */
-    public <T> T mock(Class<T> cla, MockDataConfig config) throws IllegalAccessException {
+    public <T> T mock(Class<T> cla, MockDataConfig config) {
         Creator creator = new Creator(config);
         T t = creator.mockClass(cla);
         creator.counterClear();
@@ -193,25 +193,20 @@ public class MockDataCreator {
          * @param <T> 目标类泛型
          * @return 目标类
          */
-        public <T> T mockClass(Class<T> cla) throws IllegalAccessException {
+        public <T> T mockClass(Class<T> cla) {
+            Class<?> realClass = getRealClass(cla);
             // 是否是忽略类
-            if (mockConfig.isAllowedClass(cla)) {
+            if (mockConfig.isAllowedClass(realClass)) {
                 T t;
                 // 检测是否存在自定义构建器
                 DataCreator<?> dataCreator = getDataCreator(cla);
                 // 不存在则尝试新建对象
                 if (dataCreator == null) {
                     t = newInstance(cla);
-                    // 如果是数组则填充数组
-                    if (cla.isArray()) {
-                        fillArray(t, cla);
-                    } else {
-                        Class<?> tmpCla = getRealClass(cla);
-                        String claKey = NamingUtil.getKeyName(tmpCla);
-                        // 如果此类允许级联构造则进行mock
-                        if (mockConfig.isCascadeCreate(claKey)) {
-                            mock(t, cla);
-                        }
+                    String claKey = NamingUtil.getKeyName(realClass);
+                    // 如果此类允许级联构造则进行mock
+                    if (mockConfig.isCascadeCreate(claKey) || cla.isArray()) {
+                        mock(t, cla);
                     }
                 } else {
                     t = (T) dataCreator.mock(cla, null, this);
@@ -229,13 +224,14 @@ public class MockDataCreator {
          * @param <T> 目标类泛型
          * @return 目标类
          */
-        public <T> T mock(T t, Class<T> cla) throws IllegalAccessException {
+        public <T> T mock(T t, Class<T> cla) {
             // 判断是否是忽略类
-            if (mockConfig.isAllowedClass(cla)) {
-                // 判断是否是枚举类
+            if (mockConfig.isAllowedClass(getRealClass(cla))) {
+                // 按照类型进行填装
                 if (cla.isEnum()) {
-                    // 枚举对象直接返回
                     return t;
+                } else if (cla.isArray()) {
+                    fillArray(t, cla);
                 } else {
                     fillField(t, cla);
                 }
@@ -248,9 +244,8 @@ public class MockDataCreator {
          *
          * @param o   数组引用对象
          * @param cla 数组类型
-         * @throws IllegalAccessException
          */
-        private void fillArray(Object o, Class<?> cla) throws IllegalAccessException {
+        private void fillArray(Object o, Class<?> cla) {
             // 当前的实际类
             Class<?> componentType = cla.getComponentType();
             // 当前的多维数组
@@ -280,7 +275,7 @@ public class MockDataCreator {
          * @param t   目标对象
          * @param cla 目标对象类
          */
-        private void fillField(Object t, Class<?> cla) throws IllegalAccessException {
+        private void fillField(Object t, Class<?> cla) {
             if (t == null) {
                 return;
             }
@@ -292,47 +287,56 @@ public class MockDataCreator {
                 // 遍历属性进行填充
                 List<Field> allFields = ReflectUtil.getAllFields(cla);
                 for (Field field : allFields) {
-                    // 判断此属性是否支持构建
                     Class<?> fieldCla = field.getType();
-                    if (!mockConfig.isAllowedField(field) || !mockConfig.isAllowedClass(fieldCla)) {
-                        continue;
-                    }
-                    String fieldKey = NamingUtil.getKeyName(field);
-                    String claKey = NamingUtil.getKeyName(fieldCla);
-                    int max = getCreatingDepth(fieldKey, claKey);
-                    // 判定属性引用次数是否已到达最大值
-                    if (counter.getCount(fieldKey) < max) {
-                        // 设定可访问
-                        boolean oldAcc = field.isAccessible();
-                        if (!oldAcc) {
-                            field.setAccessible(true);
-                        }
-                        // 获取属性可能存在的对象
-                        Object o = field.get(t);
-                        // 如果对象已存在则判断是否重新创建
-                        if (o == null || mockConfig.isForceNew()) {
-                            int count = counter.count(fieldKey);
-                            // 判定类是否存在构造器
-                            DataCreator<?> configCreator = getDataCreator(field);
-                            // 构造器存在则使用构造器进行构造
-                            if (configCreator != null) {
-                                o = configCreator.mock(fieldCla, field, this);
-                            } else {
-                                // 判断属性是否允许级联构造
-                                o = newInstance(fieldCla);
-                                if (mockConfig.isCascadeCreate(claKey) || mockConfig.isCascadeCreate(fieldKey) || fieldCla.isArray()) {
-                                    // 进行级联构造
-                                    fillField(o, field.getType());
+                    Class<?> realCla = getRealClass(fieldCla);
+                    // 判断此属性是否支持构建
+                    if (mockConfig.isAllowedField(field) && mockConfig.isAllowedClass(realCla)) {
+                        String fieldKey = NamingUtil.getKeyName(field);
+                        String claKey = NamingUtil.getKeyName(realCla);
+                        int max = getCreatingDepth(fieldKey, claKey);
+                        // 判定属性引用次数是否已到达最大值
+                        if (counter.getCount(fieldKey) < max) {
+                            // 设定可访问
+                            boolean oldAcc = field.isAccessible();
+                            if (!oldAcc) {
+                                field.setAccessible(true);
+                            }
+                            Object o;
+                            try {
+                                // 获取属性可能存在的对象
+                                o = field.get(t);
+                            } catch (IllegalAccessException e) {
+                                throw new RuntimeException(e);
+                            }
+                            // 如果对象已存在则判断是否重新创建
+                            if (o == null || mockConfig.isForceNew()) {
+                                int count = counter.count(fieldKey);
+                                // 判定类是否存在构造器
+                                DataCreator<?> configCreator = getDataCreator(field);
+                                // 构造器存在则使用构造器进行构造
+                                if (configCreator != null) {
+                                    o = configCreator.mock(fieldCla, field, this);
+                                } else {
+                                    // 判断属性是否允许级联构造
+                                    o = newInstance(fieldCla);
+                                    if (mockConfig.isCascadeCreate(claKey) || mockConfig.isCascadeCreate(fieldKey) || fieldCla.isArray()) {
+                                        // 进行级联构造
+                                        fillField(o, field.getType());
+                                    }
                                 }
+                                if (o != null) {
+                                    try {
+                                        field.set(t, o);
+                                    } catch (IllegalAccessException e) {
+                                        throw new RuntimeException(e);
+                                    }
+                                }
+                                counter.setCount(fieldKey, count - 1);
                             }
-                            if (o != null) {
-                                field.set(t, o);
+                            // 还原权限
+                            if (!oldAcc) {
+                                field.setAccessible(false);
                             }
-                            counter.setCount(fieldKey, count - 1);
-                        }
-                        // 还原权限
-                        if (!oldAcc) {
-                            field.setAccessible(false);
                         }
                     }
                 }
@@ -342,11 +346,10 @@ public class MockDataCreator {
         private int getCreatingDepth(String fieldKey, String claKey) {
             int defaultDepth = mockConfig.getCreatingDepth(null);
             int fieldDepth = mockConfig.getCreatingDepth(fieldKey);
-            int claDepth = mockConfig.getCreatingDepth(claKey);
             if (fieldDepth != defaultDepth) {
                 return fieldDepth;
             }
-            return claDepth;
+            return mockConfig.getCreatingDepth(claKey);
         }
 
         private Class<?> getRealClass(Class<?> arrayClass) {

@@ -34,6 +34,16 @@ public abstract class Counter<T> {
     }
 
     /**
+     * 获取计数
+     *
+     * @param t 目标key
+     * @return 目标key对应计数
+     */
+    public Integer getCountWithNull(T t) {
+        return countMap.get(t);
+    }
+
+    /**
      * 计数 + 1
      *
      * @param t 目标key

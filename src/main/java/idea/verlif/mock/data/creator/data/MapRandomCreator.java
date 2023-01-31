@@ -35,7 +35,7 @@ public class MapRandomCreator implements DataCreator<Map<?, ?>> {
             for (int i = 0; i < size; i++) {
                 map.put(creator.mockClass(keyCla), creator.mockClass(valueCla));
             }
-        } catch (ClassNotFoundException | IllegalAccessException e) {
+        } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
         return map;
