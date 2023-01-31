@@ -4,6 +4,9 @@ import idea.verlif.mock.data.MockDataCreator;
 import idea.verlif.mock.data.domain.TypeGetter;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 数据构建器
@@ -23,4 +26,16 @@ public interface DataCreator<R> extends TypeGetter {
      * @return 生成的数据
      */
     R mock(Class<?> cla, Field field, MockDataCreator.Creator creator);
+
+    @Override
+    default List<Class<?>> types() {
+        List<Class<?>> list = new ArrayList<>();
+        try {
+            Method method = this.getClass().getMethod("mock", Class.class, Field.class, MockDataCreator.Creator.class);
+            Class<?> type = method.getReturnType();
+            list.add(type);
+        } catch (NoSuchMethodException ignored) {
+        }
+        return list;
+    }
 }

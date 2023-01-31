@@ -6,6 +6,7 @@ import idea.verlif.mock.data.creator.DataCreator;
 import idea.verlif.mock.data.creator.InstanceCreator;
 import idea.verlif.mock.data.domain.SFunction;
 import idea.verlif.mock.data.domain.counter.StringCounter;
+import idea.verlif.mock.data.exception.MockDataException;
 import idea.verlif.mock.data.util.ContainsUtil;
 import idea.verlif.mock.data.util.NamingUtil;
 import idea.verlif.mock.data.util.ReflectUtil;
@@ -202,6 +203,9 @@ public class MockDataConfig {
      * @param creator 数据创造器
      */
     private void addFieldCreator(String key, DataCreator<?> creator) {
+        if (creator.getClass().getName().contains("$Lambda")) {
+            throw new MockDataException("Lambda expressions are not recognized!");
+        }
         fieldCreatorMap.put(
                 key,
                 creator);
@@ -225,9 +229,7 @@ public class MockDataConfig {
      * @param creator 数据创造器
      */
     private void addFieldCreator(Class<?> cla, DataCreator<?> creator) {
-        fieldCreatorMap.put(
-                NamingUtil.getKeyName(cla),
-                creator);
+        addFieldCreator(NamingUtil.getKeyName(cla), creator);
     }
 
     /**
@@ -237,9 +239,7 @@ public class MockDataConfig {
      */
     private void addFieldCreator(DataCreator<?> creator) {
         for (Class<?> cla : creator.types()) {
-            fieldCreatorMap.put(
-                    NamingUtil.getKeyName(cla),
-                    creator);
+            addFieldCreator(cla, creator);
         }
     }
 
@@ -250,6 +250,9 @@ public class MockDataConfig {
      * @param creator 数据创造器
      */
     public MockDataConfig fieldCreator(Class<?> cla, DataCreator<?> creator) {
+        if (creator.getClass().getName().contains("$Lambda")) {
+            throw new MockDataException("Lambda expressions are not recognized!");
+        }
         addFieldCreator(cla, creator);
         return this;
     }

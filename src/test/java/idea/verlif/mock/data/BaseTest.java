@@ -1,12 +1,13 @@
 package idea.verlif.mock.data;
 
 import idea.verlif.mock.data.config.MockDataConfig;
-import idea.verlif.mock.data.config.SizeCreator;
 import idea.verlif.mock.data.config.filter.impl.ClassKeyFilter;
 import idea.verlif.mock.data.config.filter.impl.FieldKeyFilter;
-import idea.verlif.mock.data.config.filter.impl.FieldModifierFilter;
 import idea.verlif.mock.data.creator.DataCreator;
-import idea.verlif.mock.data.creator.data.*;
+import idea.verlif.mock.data.creator.data.DictDataCreator;
+import idea.verlif.mock.data.creator.data.DoubleRandomCreator;
+import idea.verlif.mock.data.creator.data.IntegerRandomCreator;
+import idea.verlif.mock.data.creator.data.LongRandomCreator;
 import idea.verlif.mock.data.domain.*;
 import idea.verlif.mock.data.domain.test.A;
 import idea.verlif.mock.data.domain.test.DeepObject;
@@ -17,10 +18,7 @@ import org.junit.Test;
 import stopwatch.Stopwatch;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -158,7 +156,7 @@ public class BaseTest {
         creator.setConfig(config);
         config.cascadeCreateKey(Person.class)
                 .filter(new FieldKeyFilter()
-                .ignoredField(Person::getAList))
+                        .ignoredField(Person::getAList))
                 .creatingDepth(2)
                 .fieldCreator(Person::getId, new LongRandomCreator(100, 300));
         Person[][] mock = creator.mock(Person[][].class);
@@ -172,13 +170,20 @@ public class BaseTest {
     @Test
     public void randomTest() throws IllegalAccessException {
         MockDataCreator creator = new MockDataCreator();
+        creator.getConfig()
+                .autoCascade(true)
+                .fieldCreator(Person::getId, new DataCreator<Long>() {
+                    @Override
+                    public Long mock(Class<?> cla, Field field, MockDataCreator.Creator creator) {
+                        return 312L;
+                    }
+                });
         creator.addDefaultCreator(new DictDataCreator<>(new Integer[]{
                 1, 2, 3, 4
         }));
-        creator.useExtendData();
-        for (int i = 0; i < 10; i++) {
-            System.out.println(creator.mock(int.class));
-        }
+        creator.addDefaultCreator((cla, field, creator1) -> "String.String");
+        Person person = creator.mock(Person.class);
+        System.out.println(person);
         for (int i = 0; i < 10; i++) {
             System.out.println(creator.mock(Integer.class));
         }

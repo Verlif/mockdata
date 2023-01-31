@@ -6,6 +6,7 @@ import idea.verlif.mock.data.creator.InstanceCreator;
 import idea.verlif.mock.data.creator.data.*;
 import idea.verlif.mock.data.domain.SFunction;
 import idea.verlif.mock.data.domain.counter.StringCounter;
+import idea.verlif.mock.data.exception.MockDataException;
 import idea.verlif.mock.data.util.NamingUtil;
 import idea.verlif.mock.data.util.ReflectUtil;
 
@@ -78,7 +79,10 @@ public class MockDataCreator {
      *
      * @param creator 数据创造器
      */
-    public void addDefaultCreator(DataCreator<?> creator) {
+    public <T> void addDefaultCreator(DataCreator<T> creator) {
+        if (creator.getClass().getName().contains("$Lambda")) {
+            throw new MockDataException("Lambda expressions are not recognized!");
+        }
         for (Class<?> cla : creator.types()) {
             defaultCreatorMap.put(NamingUtil.getKeyName(cla), creator);
         }

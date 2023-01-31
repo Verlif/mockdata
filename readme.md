@@ -120,6 +120,8 @@ __目前自动构建暂不支持非静态内部类，有需要请使用添加自
 
 - __mock__ 无法实例化的类（例如接口或是抽象类）时，请给予实例构建器。
 - __mock__ 构建带有泛型但未指明泛型的类时，大概率无法构建成功，请指定泛型类型或实例构建器。
+- 在添加`DataCreator`时请勿使用 __lambda__ 表达式，否则会无法识别`DataCreator`的匹配类型。
+  - 例如`creator.addDefaultCreator((DataCreator<String>) (cla, field, creator1) -> "String.String")`会抛出异常，可以使用匿名内部类来代替。
 
 ## 添加依赖
 
