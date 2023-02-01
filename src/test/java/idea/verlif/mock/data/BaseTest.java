@@ -63,17 +63,17 @@ public class BaseTest {
         System.out.println("------>>> 自定义secondChild属性");
         config
                 // 使用字典生成name属性
-                .fieldCreator(Student::getName, new DictDataCreator<String>(new String[]{
+                .fieldValue(Student::getName, new DictDataCreator<String>(new String[]{
                         "小明", "小红", "小王", "小赵", "小李", "小周", "小强"
                 }))
                 // 限制id属性生成范围
-                .fieldCreator(Student::getId, new LongRandomCreator(0L, 9999L))
+                .fieldValue(Student::getId, new LongRandomCreator(0L, 9999L))
                 // 限制age属性生成范围
-                .fieldCreator(Student::getAge, new IntegerRandomCreator(0, 200))
+                .fieldValue(Student::getAge, new IntegerRandomCreator(0, 200))
                 // 限制score属性生成范围
-                .fieldCreator(Student::getScore, new DoubleRandomCreator(0, 100D))
+                .fieldValue(Student::getScore, new DoubleRandomCreator(0, 100D))
                 // 自定义secondChild属性
-                .fieldCreator(Student::getSecondChild, new DataCreator<Student>() {
+                .fieldValue(Student::getSecondChild, new DataCreator<Student>() {
 
                     private final Random random = new Random();
 
@@ -86,19 +86,19 @@ public class BaseTest {
                         }
                     }
                 })
-                .fieldCreator(new DataCreator<Person>() {
+                .fieldValue(new DataCreator<Person>() {
                     @Override
                     public Person mock(Class<?> cla, Field field, MockDataCreator.Creator creator) {
                         return new Person("Person");
                     }
                 })
-                .fieldCreator(Dog.class, new DataCreator<Dog>() {
+                .fieldValue(Dog.class, new DataCreator<Dog>() {
                     @Override
                     public Dog mock(Class<?> cla, Field field, MockDataCreator.Creator creator) {
                         return new Dog("Dog");
                     }
                 })
-                .fieldCreator(Pet.class, new DataCreator<Pet>() {
+                .fieldValue(Pet.class, new DataCreator<Pet>() {
                     @Override
                     public Pet mock(Class<?> cla, Field field, MockDataCreator.Creator creator) {
                         return new Pet("Pet");
@@ -123,7 +123,7 @@ public class BaseTest {
         MockDataCreator creator = new MockDataCreator();
         // 获取构造器的当前配置
         MockDataConfig config = creator.getConfig()
-                .fieldCreator(Student::getSecondChild, new DataCreator<Student>() {
+                .fieldValue(Student::getSecondChild, new DataCreator<Student>() {
                     @Override
                     public Student mock(Class<?> cla, Field field, MockDataCreator.Creator creator) {
                         return new Student("这是自定义的构造");
@@ -158,7 +158,7 @@ public class BaseTest {
                 .filter(new FieldKeyFilter()
                         .ignoredField(Person::getAList))
                 .creatingDepth(2)
-                .fieldCreator(Person::getId, new LongRandomCreator(100, 300));
+                .fieldValue(Person::getId, new LongRandomCreator(100, 300));
         Person[][] mock = creator.mock(Person[][].class);
         System.out.println(Arrays.toString(mock));
         Person[][] mock2 = creator.mock(new Person[2][5]);
@@ -172,7 +172,7 @@ public class BaseTest {
         MockDataCreator creator = new MockDataCreator();
         creator.getConfig()
                 .autoCascade(true)
-                .fieldCreator(Person::getId, new DataCreator<Long>() {
+                .fieldValue(Person::getId, new DataCreator<Long>() {
                     @Override
                     public Long mock(Class<?> cla, Field field, MockDataCreator.Creator creator) {
                         return 312L;

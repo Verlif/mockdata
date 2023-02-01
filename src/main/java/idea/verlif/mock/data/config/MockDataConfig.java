@@ -1,5 +1,6 @@
 package idea.verlif.mock.data.config;
 
+import idea.verlif.mock.data.MockDataCreator;
 import idea.verlif.mock.data.config.filter.ClassFilter;
 import idea.verlif.mock.data.config.filter.FieldFilter;
 import idea.verlif.mock.data.creator.DataCreator;
@@ -180,9 +181,9 @@ public class MockDataConfig {
      * @param function 属性获取表达式
      * @param creator  数据创造器
      */
-    private  <T> void addFieldCreator(SFunction<T, ?> function, DataCreator<?> creator) {
+    private <T> void addFieldValue(SFunction<T, ?> function, DataCreator<?> creator) {
         Field field = ReflectUtil.getFieldFromLambda(function, true);
-        addFieldCreator(NamingUtil.getKeyName(field), creator);
+        addFieldValue(NamingUtil.getKeyName(field), creator);
     }
 
     /**
@@ -191,8 +192,19 @@ public class MockDataConfig {
      * @param function 属性获取表达式
      * @param creator  数据创造器
      */
-    public <T> MockDataConfig fieldCreator(SFunction<T, ?> function, DataCreator<?> creator) {
-        addFieldCreator(function, creator);
+    public <T> MockDataConfig fieldValue(SFunction<T, ?> function, DataCreator<?> creator) {
+        addFieldValue(function, creator);
+        return this;
+    }
+
+    /**
+     * 添加或替换属性数据
+     *
+     * @param function 属性获取表达式
+     * @param o        属性对应数据
+     */
+    public <T> MockDataConfig fieldValue(SFunction<T, ?> function, Object o) {
+        addFieldValue(function, new StaticValueCreator(o));
         return this;
     }
 
@@ -202,7 +214,7 @@ public class MockDataConfig {
      * @param key     属性key值
      * @param creator 数据创造器
      */
-    private void addFieldCreator(String key, DataCreator<?> creator) {
+    private void addFieldValue(String key, DataCreator<?> creator) {
         if (creator.getClass().getName().contains("$Lambda")) {
             throw new MockDataException("Lambda expressions are not recognized!");
         }
@@ -217,8 +229,8 @@ public class MockDataConfig {
      * @param key     属性key值
      * @param creator 数据创造器
      */
-    public MockDataConfig fieldCreator(String key, DataCreator<?> creator) {
-        addFieldCreator(key, creator);
+    public MockDataConfig fieldValue(String key, DataCreator<?> creator) {
+        addFieldValue(key, creator);
         return this;
     }
 
@@ -228,8 +240,8 @@ public class MockDataConfig {
      * @param cla     目标类
      * @param creator 数据创造器
      */
-    private void addFieldCreator(Class<?> cla, DataCreator<?> creator) {
-        addFieldCreator(NamingUtil.getKeyName(cla), creator);
+    private void addFieldValue(Class<?> cla, DataCreator<?> creator) {
+        addFieldValue(NamingUtil.getKeyName(cla), creator);
     }
 
     /**
@@ -237,9 +249,9 @@ public class MockDataConfig {
      *
      * @param creator 数据创造器
      */
-    private void addFieldCreator(DataCreator<?> creator) {
+    private void addFieldValue(DataCreator<?> creator) {
         for (Class<?> cla : creator.types()) {
-            addFieldCreator(cla, creator);
+            addFieldValue(cla, creator);
         }
     }
 
@@ -249,11 +261,22 @@ public class MockDataConfig {
      * @param cla     目标类
      * @param creator 数据创造器
      */
-    public MockDataConfig fieldCreator(Class<?> cla, DataCreator<?> creator) {
+    public MockDataConfig fieldValue(Class<?> cla, DataCreator<?> creator) {
         if (creator.getClass().getName().contains("$Lambda")) {
             throw new MockDataException("Lambda expressions are not recognized!");
         }
-        addFieldCreator(cla, creator);
+        addFieldValue(cla, creator);
+        return this;
+    }
+
+    /**
+     * 添加或替换属性数据
+     *
+     * @param cla 目标类
+     * @param o   属性对应数据
+     */
+    public <T> MockDataConfig fieldValue(Class<?> cla, Object o) {
+        addFieldValue(cla, new StaticValueCreator(o));
         return this;
     }
 
@@ -262,8 +285,8 @@ public class MockDataConfig {
      *
      * @param creator 数据创造器
      */
-    public MockDataConfig fieldCreator(DataCreator<?> creator) {
-        addFieldCreator(creator);
+    public MockDataConfig fieldValue(DataCreator<?> creator) {
+        addFieldValue(creator);
         return this;
     }
 
@@ -510,6 +533,23 @@ public class MockDataConfig {
         @Override
         public int getSize(Class<?> cla) {
             return size;
+        }
+    }
+
+    /**
+     * 静态值返回器
+     */
+    private static final class StaticValueCreator implements DataCreator<Object> {
+
+        private final Object o;
+
+        public StaticValueCreator(Object o) {
+            this.o = o;
+        }
+
+        @Override
+        public Object mock(Class<?> cla, Field field, MockDataCreator.Creator creator) {
+            return o;
         }
     }
 }

@@ -29,6 +29,9 @@ public class DictDataCreator<T> implements DataCreator<T> {
         if (arrays.length == 0) {
             return null;
         }
+        if (arrays.length == 1) {
+            return arrays[0];
+        }
         return arrays[random.nextInt(arrays.length)];
     }
 

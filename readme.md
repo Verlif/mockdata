@@ -61,15 +61,17 @@
    ```java
    config
         // 使用字典生成name属性
-        .fieldCreator(Student::getName, new DictDataCreator<>(new String[]{
+        .fieldValue(Student::getName, new DictDataCreator<>(new String[]{
             "小明", "小红", "小王", "小赵", "小李", "小周", "小强"
         }))
+        // 为nickname填充固定值
+        .fieldValue(Student::getNickname, "小屁孩"))
         // 限制id属性生成范围
-        .fieldCreator(Student::getId, new LongRandomCreator(0L, 9999L))
+        .fieldValue(Student::getId, new LongRandomCreator(0L, 9999L))
         // 限制age属性生成范围
-        .fieldCreator(Student::getAge, new IntegerRandomCreator(0, 200))
+        .fieldValue(Student::getAge, new IntegerRandomCreator(0, 200))
         // 自定义secondChild属性
-        .fieldCreator(Student::getSecondChild, new DataCreator<Student>() {
+        .fieldValue(Student::getSecondChild, new DataCreator<Student>() {
 
             private final Random random = new Random();
 

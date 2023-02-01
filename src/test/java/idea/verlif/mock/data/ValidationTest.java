@@ -11,7 +11,7 @@ public class ValidationTest {
     public void validate() throws IllegalAccessException {
         MockDataCreator creator = new MockDataCreator();
         MockDataConfig config = creator.getConfig();
-        config.fieldCreator(Person::getId, new LongRandomCreator(3, 10));
+        config.fieldValue(Person::getId, new LongRandomCreator(3, 10));
 
         for (int i = 0; i < 10; i++) {
             Person person = creator.mock(Person.class);

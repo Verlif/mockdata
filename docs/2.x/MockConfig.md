@@ -32,7 +32,7 @@ __级联设定__ 优先度 __最低__，如果有对应的数据构建器，则�
 
 自定义数据构建器，方便添加随机数据生成规则。
 
-- `fieldCreator([SFunction|String|Class], DataCreator)`
+- `fieldValue([SFunction|String|Class], Object|DataCreator)`
 
 ## 添加实例构建器
 
