@@ -326,7 +326,7 @@ public class MockDataConfig {
      *
      * @param function 需要级联构造的属性
      */
-    private void addCascadeCreateKey(SFunction<?, ?> function) {
+    private <T> void addCascadeCreateKey(SFunction<T, ?> function) {
         addCascadeCreateKey(NamingUtil.getKeyName(ReflectUtil.getFieldFromLambda(function, true)));
     }
 
@@ -335,7 +335,7 @@ public class MockDataConfig {
      *
      * @param function 需要级联构造的属性
      */
-    public MockDataConfig cascadeCreateKey(SFunction<?, ?> function) {
+    public <T> MockDataConfig cascadeCreateKey(SFunction<T, ?> function) {
         addCascadeCreateKey(function);
         return this;
     }
@@ -415,7 +415,7 @@ public class MockDataConfig {
      *
      * @param function 需要级联构造的属性
      */
-    public void removeCascadeCreateKey(SFunction<?, ?> function) {
+    public <T> void removeCascadeCreateKey(SFunction<T, ?> function) {
         removeCascadeCreateKey(NamingUtil.getKeyName(ReflectUtil.getFieldFromLambda(function, true)));
     }
 

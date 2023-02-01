@@ -181,7 +181,7 @@ public class BaseTest {
         creator.addDefaultCreator(new DictDataCreator<>(new Integer[]{
                 1, 2, 3, 4
         }));
-        creator.addDefaultCreator((cla, field, creator1) -> "String.String");
+//        creator.addDefaultCreator((cla, field, creator1) -> "String.String");
         Person person = creator.mock(Person.class);
         System.out.println(person);
         for (int i = 0; i < 10; i++) {

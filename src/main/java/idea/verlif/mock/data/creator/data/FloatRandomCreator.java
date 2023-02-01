@@ -39,7 +39,7 @@ public class FloatRandomCreator implements DataCreator<Float> {
 
     @Override
     public Float mock(Class<?> cla, Field field, MockDataCreator.Creator creator) {
-        float num = (float) (Math.random() * offset);
+        float num = random.nextFloat() * offset;
         if (random.nextBoolean()) {
             return point - num;
         } else {

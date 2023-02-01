@@ -22,6 +22,22 @@
 
 ## 举例
 
+### 简单用法
+
+   ```java
+   MockDataCreator creator = new MockDataCreator();
+   // 就像new Random.next一样，随机基础类型的数据
+   int i = creator.mock(int.class);
+   // 随机包装类型
+   int inte = creator.mock(Integer.class);
+   // 随机数组
+   int[] ints = creator.mock(int[].class);
+   // 指定数组大小
+   int[] intsArray creator.mock(new int[2][3]);
+   // 随机日期
+   Date date = creator.mock(Date.class);
+   ```
+
 ### 基础用法
 
    ```java
@@ -78,9 +94,9 @@
                 return new Random().nextInt(10);
             }
         })
-        // 只允许private或static的属性进行构建
+        // 只允许private或protect的属性进行构建
         .filter(new FieldModifierFilter()
-            .allowedModifiers(Modifier.PRIVATE, Modifier.STATIC))
+            .allowedModifiers(Modifier.PRIVATE, Modifier.PROTECT))
         // 忽略Student下的score属性构建
         .filter(new FieldKeyFilter()
             .ignoredField(Student::getScore));

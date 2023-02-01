@@ -5,12 +5,15 @@ import idea.verlif.mock.data.creator.DataCreator;
 
 import java.lang.reflect.Field;
 import java.util.Date;
+import java.util.Random;
 
 public class DateRandomCreator implements DataCreator<Date> {
 
     private final long start;
 
     private final long end;
+
+    private final Random random;
 
     public DateRandomCreator() {
         this(null, null);
@@ -27,12 +30,13 @@ public class DateRandomCreator implements DataCreator<Date> {
         } else {
             this.end = end.getTime();
         }
+        this.random = new Random();
     }
 
     @Override
     public Date mock(Class<?> cla, Field field, MockDataCreator.Creator creator) {
         long offset = end - start;
-        long ran = (long) (Math.random() * offset + start);
+        long ran = (long) (random.nextDouble() * offset + start);
         return new Date(ran);
     }
 

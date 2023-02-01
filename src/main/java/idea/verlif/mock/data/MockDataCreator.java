@@ -205,8 +205,10 @@ public class MockDataCreator {
                     t = newInstance(cla);
                     String claKey = NamingUtil.getKeyName(realClass);
                     // 如果此类允许级联构造则进行mock
-                    if (mockConfig.isCascadeCreate(claKey) || cla.isArray()) {
+                    if (mockConfig.isCascadeCreate(claKey)) {
                         mock(t, cla);
+                    } else if (cla.isArray()) {
+                        fillArray(t, cla);
                     }
                 } else {
                     t = (T) dataCreator.mock(cla, null, this);
@@ -276,67 +278,63 @@ public class MockDataCreator {
          * @param cla 目标对象类
          */
         private void fillField(Object t, Class<?> cla) {
+            // 对象为空则忽略
             if (t == null) {
                 return;
             }
-            // 判断填充对象是否是数组
-            if (cla.isArray()) {
-                // 填充数组
-                fillArray(t, cla);
-            } else {
-                // 遍历属性进行填充
-                List<Field> allFields = ReflectUtil.getAllFields(cla);
-                for (Field field : allFields) {
-                    Class<?> fieldCla = field.getType();
-                    Class<?> realCla = getRealClass(fieldCla);
-                    // 判断此属性是否支持构建
-                    if (mockConfig.isAllowedField(field) && mockConfig.isAllowedClass(realCla)) {
-                        String fieldKey = NamingUtil.getKeyName(field);
-                        String claKey = NamingUtil.getKeyName(realCla);
-                        int max = getCreatingDepth(fieldKey, claKey);
-                        // 判定属性引用次数是否已到达最大值
-                        if (counter.getCount(fieldKey) < max) {
-                            // 设定可访问
-                            boolean oldAcc = field.isAccessible();
-                            if (!oldAcc) {
-                                field.setAccessible(true);
-                            }
-                            Object o;
-                            try {
-                                // 获取属性可能存在的对象
-                                o = field.get(t);
-                            } catch (IllegalAccessException e) {
-                                throw new RuntimeException(e);
-                            }
-                            // 如果对象已存在则判断是否重新创建
-                            if (o == null || mockConfig.isForceNew()) {
-                                int count = counter.count(fieldKey);
-                                // 判定类是否存在构造器
-                                DataCreator<?> configCreator = getDataCreator(field);
-                                // 构造器存在则使用构造器进行构造
-                                if (configCreator != null) {
-                                    o = configCreator.mock(fieldCla, field, this);
-                                } else {
-                                    // 判断属性是否允许级联构造
-                                    o = newInstance(fieldCla);
-                                    if (mockConfig.isCascadeCreate(claKey) || mockConfig.isCascadeCreate(fieldKey) || fieldCla.isArray()) {
-                                        // 进行级联构造
-                                        fillField(o, field.getType());
-                                    }
+            // 遍历属性进行填充
+            List<Field> allFields = ReflectUtil.getAllFields(cla);
+            for (Field field : allFields) {
+                Class<?> fieldCla = field.getType();
+                Class<?> realCla = getRealClass(fieldCla);
+                // 判断此属性是否支持构建
+                if (mockConfig.isAllowedField(field) && mockConfig.isAllowedClass(realCla)) {
+                    String fieldKey = NamingUtil.getKeyName(field);
+                    String claKey = NamingUtil.getKeyName(realCla);
+                    int max = getCreatingDepth(fieldKey, claKey);
+                    // 判定属性引用次数是否已到达最大值
+                    if (counter.getCount(fieldKey) < max) {
+                        // 设定可访问
+                        boolean oldAcc = field.isAccessible();
+                        if (!oldAcc) {
+                            field.setAccessible(true);
+                        }
+                        Object o;
+                        try {
+                            // 获取属性可能存在的对象
+                            o = field.get(t);
+                        } catch (IllegalAccessException e) {
+                            throw new RuntimeException(e);
+                        }
+                        // 如果对象已存在则判断是否重新创建
+                        if (o == null || mockConfig.isForceNew()) {
+                            int count = counter.count(fieldKey);
+                            // 判定类是否存在构造器
+                            DataCreator<?> configCreator = getDataCreator(field);
+                            // 构造器存在则使用构造器进行构造
+                            if (configCreator != null) {
+                                o = configCreator.mock(fieldCla, field, this);
+                            } else {
+                                // 判断属性是否允许级联构造
+                                o = newInstance(fieldCla);if (fieldCla.isArray()) {
+                                    fillArray(o, fieldCla);
+                                } else if (mockConfig.isCascadeCreate(claKey) || mockConfig.isCascadeCreate(fieldKey)) {
+                                    // 进行级联构造
+                                    fillField(o, fieldCla);
                                 }
-                                if (o != null) {
-                                    try {
-                                        field.set(t, o);
-                                    } catch (IllegalAccessException e) {
-                                        throw new RuntimeException(e);
-                                    }
+                            }
+                            if (o != null) {
+                                try {
+                                    field.set(t, o);
+                                } catch (IllegalAccessException e) {
+                                    throw new RuntimeException(e);
                                 }
-                                counter.setCount(fieldKey, count - 1);
                             }
-                            // 还原权限
-                            if (!oldAcc) {
-                                field.setAccessible(false);
-                            }
+                            counter.setCount(fieldKey, count - 1);
+                        }
+                        // 还原权限
+                        if (!oldAcc) {
+                            field.setAccessible(false);
                         }
                     }
                 }
