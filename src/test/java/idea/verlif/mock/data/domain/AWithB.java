@@ -1,21 +1,21 @@
-package idea.verlif.mock.data.domain.test;
+package idea.verlif.mock.data.domain;
 
-import idea.verlif.mock.data.domain.B;
+import java.util.Date;
 
 /**
  * @author Verlif
  */
-public class A {
+public class AWithB {
 
-    private B b;
+    private BWithA b;
 
     private String name;
 
-    public B getB() {
+    public BWithA getB() {
         return b;
     }
 
-    public void setB(B b) {
+    public void setB(BWithA b) {
         this.b = b;
     }
 
@@ -25,6 +25,10 @@ public class A {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Date now() {
+        return new Date();
     }
 
     @Override

@@ -318,7 +318,8 @@ public class MockDataCreator {
                                 o = configCreator.mock(fieldCla, field, this);
                             } else {
                                 // 判断属性是否允许级联构造
-                                o = newInstance(fieldCla);if (fieldCla.isArray()) {
+                                o = newInstance(fieldCla);
+                                if (fieldCla.isArray()) {
                                     fillArray(o, fieldCla);
                                 } else if (mockConfig.isCascadeCreate(claKey) || mockConfig.isCascadeCreate(fieldKey)) {
                                     // 进行级联构造
@@ -405,18 +406,8 @@ public class MockDataCreator {
          * @return 目标类型对应的数据构造器
          */
         public DataCreator<?> getDataCreator(Class<?> cla) {
-            DataCreator<?> creator;
-            String key;
-            // 向类上级求取构造器
-            do {
-                key = NamingUtil.getKeyName(cla);
-                creator = getDataCreator(key);
-                if (creator != null) {
-                    return creator;
-                }
-                cla = cla.getSuperclass();
-            } while (cla != null);
-            return null;
+            String key = NamingUtil.getKeyName(cla);
+            return getDataCreator(key);
         }
 
         /**

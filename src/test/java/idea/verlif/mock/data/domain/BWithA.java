@@ -1,21 +1,19 @@
 package idea.verlif.mock.data.domain;
 
-import idea.verlif.mock.data.domain.test.A;
-
 /**
  * @author Verlif
  */
-public class B {
+public class BWithA {
 
-    private A a;
+    private AWithB a;
 
     private String name;
 
-    public A getA() {
+    public AWithB getA() {
         return a;
     }
 
-    public void setA(A a) {
+    public void setA(AWithB a) {
         this.a = a;
     }
 

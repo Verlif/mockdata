@@ -3,7 +3,7 @@ package idea.verlif.mock.data.domain;
 /**
  * @author Verlif
  */
-public enum IEnum implements Named {
+public enum IEnum {
     HELLO("hello"),
     WORLD("world"),
     ;
@@ -20,11 +20,6 @@ public enum IEnum implements Named {
 
     @Override
     public String toString() {
-        return str;
-    }
-
-    @Override
-    public String getName() {
         return str;
     }
 }

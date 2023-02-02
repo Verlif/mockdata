@@ -76,8 +76,8 @@ __mock-data__ 就提供了很多自定义的功能，方便开发者根据自己
 - __给两个相同类型的属性不同的构建规则__
   - 例如在`Person`中有一个 __height__ 和 __weight__ 两个 __double__ 类型的属性，但这两个的生成规则不相同。
   - 使用`MockConfig.fieldValue(Person::getHeight, new HeightCreator()).fieldValue(Person::getWeight, new WeightCreator())`即可将两个属性分别做构建控制。
-- __存在循环引用的值需要递归创建__
-  - __mock-data__ 本身是支持循环引用的，但为了避免生成的数据过大，开发这可以使用`creatingDepth([SFunction|Class], int)`对不同属性或是不同类设定不同的构建深度。
+- __存在自嵌套的值需要递归创建__
+  - __mock-data__ 本身是支持循环嵌套的，但为了避免生成的数据过大，开发这可以使用`creatingDepth([SFunction|Class], int)`对不同属性或是不同类设定不同的构建深度。
 - __忽略属性__
   - 通过`filter(ClassFilter|FieldFilter)`来自定义忽略规则，过滤掉不需要构建的属性或是类。
 - __指定级联构建__

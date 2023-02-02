@@ -133,7 +133,7 @@ public class MockDataConfig {
      * @param cla   目标类
      * @param depth 目标类的构建深度
      */
-    public <T> MockDataConfig creatingDepth(Class<?> cla, int depth) {
+    public MockDataConfig creatingDepth(Class<?> cla, int depth) {
         setKeyDepth(NamingUtil.getKeyName(cla), depth);
         return this;
     }
@@ -241,7 +241,8 @@ public class MockDataConfig {
      * @param creator 数据创造器
      */
     private void addFieldValue(Class<?> cla, DataCreator<?> creator) {
-        addFieldValue(NamingUtil.getKeyName(cla), creator);
+        String key = NamingUtil.getKeyName(cla);
+        addFieldValue(key, creator);
     }
 
     /**
@@ -261,7 +262,7 @@ public class MockDataConfig {
      * @param cla     目标类
      * @param creator 数据创造器
      */
-    public MockDataConfig fieldValue(Class<?> cla, DataCreator<?> creator) {
+    public <T> MockDataConfig fieldValue(Class<T> cla, DataCreator<T> creator) {
         if (creator.getClass().getName().contains("$Lambda")) {
             throw new MockDataException("Lambda expressions are not recognized!");
         }
@@ -275,7 +276,7 @@ public class MockDataConfig {
      * @param cla 目标类
      * @param o   属性对应数据
      */
-    public <T> MockDataConfig fieldValue(Class<?> cla, Object o) {
+    public <T> MockDataConfig fieldValue(Class<T> cla, Object o) {
         addFieldValue(cla, new StaticValueCreator(o));
         return this;
     }

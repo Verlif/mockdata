@@ -1,9 +1,9 @@
-package idea.verlif.mock.data.domain.test;
+package idea.verlif.mock.data.domain;
 
-import com.alibaba.fastjson2.JSONObject;
-import idea.verlif.mock.data.domain.Person;
+import java.util.List;
+import java.util.Map;
 
-public class DeepObject {
+public class SimpleObject {
 
     private int si;
 
@@ -39,26 +39,6 @@ public class DeepObject {
 
     private String stringT;
 
-    private DeepObject[] deepObject;
-
-    public DeepObject[] getDeepObject() {
-        return deepObject;
-    }
-
-    public void setDeepObject(DeepObject[] deepObject) {
-        this.deepObject = deepObject;
-    }
-
-    private Person person;
-
-    public Person getPerson() {
-        return person;
-    }
-
-    public void setPerson(Person person) {
-        this.person = person;
-    }
-
     private int[] sia;
 
     private Integer[] sIa;
@@ -92,6 +72,10 @@ public class DeepObject {
     private Character[] sCa;
 
     private String[] stringTa;
+
+    private List<String> strings;
+
+    private Map<Integer, Double> doubleMap;
 
     public int getSi() {
         return si;
@@ -365,8 +349,20 @@ public class DeepObject {
         this.stringTa = stringTa;
     }
 
-    @Override
-    public String toString() {
-        return JSONObject.toJSONString(this);
+    public List<String> getStrings() {
+        return strings;
     }
+
+    public void setStrings(List<String> strings) {
+        this.strings = strings;
+    }
+
+    public Map<Integer, Double> getDoubleMap() {
+        return doubleMap;
+    }
+
+    public void setDoubleMap(Map<Integer, Double> doubleMap) {
+        this.doubleMap = doubleMap;
+    }
+
 }

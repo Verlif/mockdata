@@ -5,15 +5,35 @@ import java.util.List;
 /**
  * @author Verlif
  */
-public class IList<T> {
+public class IList {
 
-    private List<IList<T>> list;
+    private List<Double> doubles;
 
-    public List<IList<T>> getList() {
-        return list;
+    private List<List<String>> listList;
+
+    private MyArrayList myArrayList;
+
+    public List<Double> getDoubles() {
+        return doubles;
     }
 
-    public void setList(List<IList<T>> list) {
-        this.list = list;
+    public void setDoubles(List<Double> doubles) {
+        this.doubles = doubles;
+    }
+
+    public List<List<String>> getListList() {
+        return listList;
+    }
+
+    public void setListList(List<List<String>> listList) {
+        this.listList = listList;
+    }
+
+    public MyArrayList getMyArrayList() {
+        return myArrayList;
+    }
+
+    public void setMyArrayList(MyArrayList myArrayList) {
+        this.myArrayList = myArrayList;
     }
 }
