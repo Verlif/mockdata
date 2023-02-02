@@ -5,6 +5,8 @@ import idea.verlif.mock.data.domain.SFunction;
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.*;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 反射方法
@@ -13,7 +15,11 @@ import java.util.*;
  */
 public class ReflectUtil {
 
+    private static final Pattern RETURN_TYPE_PATTERN = Pattern.compile("\\(.*\\)L(.*);");
+    private static final Pattern PARAMETER_TYPE_PATTERN = Pattern.compile("\\((.*)\\).*");
+
     private static final Map<SFunction<?, ?>, Field> FUNCTION_FIELD_MAP = new HashMap<>();
+    private static final Map<SFunction<?, ?>, Method> FUNCTION_METHOD_MAP = new HashMap<>();
 
     /**
      * 获取类的所有属性
@@ -93,6 +99,94 @@ public class ReflectUtil {
                 return field;
             }
         }
+
+        SerializedLambda serializedLambda = getSerializedLambda(function);
+        // 从Lambda表达式中获取属性名
+        String implMethodName = serializedLambda.getImplMethodName();
+        // 确保方法是符合规范的get方法，boolean类型是is开头
+        if (!implMethodName.startsWith("is") && !implMethodName.startsWith("get")) {
+            throw new RuntimeException("It's not the standard name - " + implMethodName);
+        }
+
+        // 构建属性名
+        int prefixLen = implMethodName.startsWith("is") ? 2 : 3;
+        String fieldName = implMethodName.substring(prefixLen);
+        String firstChar = fieldName.substring(0, 1);
+        fieldName = fieldName.replaceFirst(firstChar, firstChar.toLowerCase());
+        // 获取属性
+        try {
+            field = Class.forName(serializedLambda.getImplClass().replace("/", ".")).getDeclaredField(fieldName);
+        } catch (ClassNotFoundException | NoSuchFieldException e) {
+            throw new RuntimeException(e);
+        }
+        // 更新缓存
+        if (cache) {
+            FUNCTION_FIELD_MAP.put(function, field);
+        }
+        return field;
+    }
+
+
+    /**
+     * 获取Lambda表达式对应的属性
+     *
+     * @param function lambda表达式，对应get方法
+     * @param cache    是否允许缓存
+     * @param <T>      泛型
+     * @return 属性对象
+     */
+    public static <T, R> Method getMethodFromLambda(SFunction<T, R> function, boolean cache) {
+        Method method = null;
+        // 获取缓存值
+        if (cache) {
+            method = FUNCTION_METHOD_MAP.get(function);
+            if (method != null) {
+                return method;
+            }
+        }
+        SerializedLambda serializedLambda = getSerializedLambda(function);
+
+        // 获取方法参数类型
+        String expr = serializedLambda.getImplMethodSignature();
+        Matcher matcher = PARAMETER_TYPE_PATTERN.matcher(expr);
+        if (!matcher.find() || matcher.groupCount() != 1) {
+            throw new RuntimeException("Lambda parsing failed!");
+        }
+        expr = matcher.group(1);
+        Class<?>[] claArray;
+        if (expr.length() == 0) {
+            claArray = new Class[0];
+        } else {
+            claArray = Arrays.stream(expr.split(";"))
+                    .filter(s -> !s.isEmpty())
+                    .map(s -> s.replace("L", "").replace("/", "."))
+                    .map(s -> {
+                        try {
+                            return Class.forName(s);
+                        } catch (ClassNotFoundException e) {
+                            throw new RuntimeException("Can not found class - " + s, e);
+                        }
+                    }).toArray(Class[]::new);
+        }
+        try {
+            Class<?> aClass = Class.forName(serializedLambda.getImplClass().replace("/", "."));
+            method = aClass.getMethod(serializedLambda.getImplMethodName(), claArray);
+        } catch (ClassNotFoundException | NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
+        // 更新缓存
+        if (cache) {
+            FUNCTION_METHOD_MAP.put(function, method);
+        }
+        return method;
+    }
+
+    /**
+     * 获取Lambda表达式的SerializedLambda对象
+     * @param function Lambda表达式
+     * @return SerializedLambda对象
+     */
+    public static <T> SerializedLambda getSerializedLambda(SFunction<T, ?> function) {
         // 获取序列化方法
         Method writeReplaceMethod;
         try {
@@ -117,30 +211,7 @@ public class ReflectUtil {
         if (!isAccessible) {
             writeReplaceMethod.setAccessible(false);
         }
-
-        // 从Lambda表达式中获取属性名
-        String implMethodName = serializedLambda.getImplMethodName();
-        // 确保方法是符合规范的get方法，boolean类型是is开头
-        if (!implMethodName.startsWith("is") && !implMethodName.startsWith("get")) {
-            throw new RuntimeException("It's not the standard name - " + implMethodName);
-        }
-
-        // 构建属性名
-        int prefixLen = implMethodName.startsWith("is") ? 2 : 3;
-        String fieldName = implMethodName.substring(prefixLen);
-        String firstChar = fieldName.substring(0, 1);
-        fieldName = fieldName.replaceFirst(firstChar, firstChar.toLowerCase());
-        // 获取属性
-        try {
-            field = Class.forName(serializedLambda.getImplClass().replace("/", ".")).getDeclaredField(fieldName);
-        } catch (ClassNotFoundException | NoSuchFieldException e) {
-            throw new RuntimeException(e);
-        }
-        // 更新缓存
-        if (cache) {
-            FUNCTION_FIELD_MAP.put(function, field);
-        }
-        return field;
+        return serializedLambda;
     }
 
     /**

@@ -13,6 +13,7 @@ import idea.verlif.mock.data.util.ReflectUtil;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -107,7 +108,8 @@ public class MockDataCreator {
      * @return 返回对象本身
      */
     public <T, V> V mock(SFunction<T, V> function) {
-        return (V) mock(ReflectUtil.getFieldFromLambda(function).getType());
+        Method method = ReflectUtil.getMethodFromLambda(function, false);
+        return (V) mock(method.getReturnType());
     }
 
     /**

@@ -19,6 +19,7 @@ import stopwatch.Stopwatch;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -155,9 +156,11 @@ public class BaseTest {
         config.cascadeCreateKey(A.class, B.class);
         creator.setConfig(config);
         config.cascadeCreateKey(Person.class)
+                .autoCascade(true)
                 .filter(new FieldKeyFilter()
                         .ignoredField(Person::getAList))
                 .creatingDepth(2)
+                .creatingDepth(IList.class, 3)
                 .fieldValue(Person::getId, new LongRandomCreator(100, 300));
         Person[][] mock = creator.mock(Person[][].class);
         System.out.println(Arrays.toString(mock));
@@ -196,11 +199,8 @@ public class BaseTest {
         MockDataCreator creator = new MockDataCreator();
         creator.getConfig()
                 .arraySize(2)
-                .autoCascade(true)
-                .filter(new ClassKeyFilter()
-                        .ignoredClass(int.class)
-                        .ignoredClass(Integer.class));
-        System.out.println(creator.mock(ObjectForTest.class));
+                .autoCascade(true);
+        System.out.println(Arrays.toString(creator.mock(ObjectForTest::getInts)));
         stopwatch.pin();
         System.out.println("---------------- >>> MockDataCreatorTest: " + stopwatch.getLastInterval(TimeUnit.MILLISECONDS) + "ms");
     }
@@ -245,6 +245,10 @@ public class BaseTest {
 
         public void setIntegersss(Integer[][][] integersss) {
             this.integersss = integersss;
+        }
+
+        public Date now() {
+            return new Date();
         }
 
         @Override
