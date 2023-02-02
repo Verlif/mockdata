@@ -28,24 +28,41 @@ public class MapRandomCreator implements DataCreator<Map<?, ?>> {
 
     @Override
     public Map<?, ?> mock(Class<?> cla, Field field, MockDataCreator.Creator creator) {
-        Map<Object, Object> map = new HashMap<>();
-        if (field == null) {
-            return map;
-        }
-        ParameterizedType genericType = (ParameterizedType) field.getGenericType();
-        Type[] arguments = genericType.getActualTypeArguments();
-        if (arguments[0] instanceof Class && arguments[1] instanceof Class) {
-            try {
-                Class<?> keyCla = Class.forName(arguments[0].getTypeName());
-                Class<?> valueCla = Class.forName(arguments[1].getTypeName());
-                for (int i = 0; i < size; i++) {
-                    map.put(creator.mockClass(keyCla), creator.mockClass(valueCla));
-                }
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException(e);
+        if (field != null) {
+            ParameterizedType type = (ParameterizedType) field.getGenericType();
+            Type[] arguments = type.getActualTypeArguments();
+            return fillMap(arguments[0], arguments[1], creator);
+        } else {
+            Type genericSuperclass = cla.getGenericSuperclass();
+            if (genericSuperclass instanceof ParameterizedType) {
+                Type[] arguments = ((ParameterizedType) genericSuperclass).getActualTypeArguments();
+                return fillMap(arguments[0], arguments[1], creator);
             }
         }
+        return new HashMap<>();
+    }
+
+    private Map<Object, Object> fillMap(Type keyType, Type valueType, MockDataCreator.Creator creator) {
+        Map<Object, Object> map = new HashMap<>();
+        for (int i = 0; i < size; i++) {
+            Object key = getObjectOfType(keyType, creator);
+            Object value = getObjectOfType(valueType, creator);
+            map.put(key, value);
+        }
         return map;
+    }
+
+    private Object getObjectOfType(Type type, MockDataCreator.Creator creator) {
+        if (type instanceof Class) {
+            return creator.mockClass((Class<?>) type);
+        } else if (type instanceof ParameterizedType) {
+            Type rawType = ((ParameterizedType) type).getRawType();
+            if (rawType instanceof Class && Map.class.isAssignableFrom((Class<?>) rawType)) {
+                Type[] arguments = ((ParameterizedType) type).getActualTypeArguments();
+                return fillMap(arguments[0], arguments[1], creator);
+            }
+        }
+        return null;
     }
 
     @Override

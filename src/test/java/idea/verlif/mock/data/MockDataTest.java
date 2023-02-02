@@ -116,6 +116,19 @@ public class MockDataTest {
         println(creator.mock(new MyMapExtend()));
     }
 
+    @Test
+    public void circleTest() {
+        println(creator.mock(AWithB.class));
+        println(creator.mock(AWithB[].class));
+        println(creator.mock(new AWithB()));
+        println(creator.mock(BWithA.class));
+        println(creator.mock(BWithA[].class));
+        println(creator.mock(new BWithA()));
+        println(creator.mock(SelfC.class));
+        println(creator.mock(SelfC[].class));
+        println(creator.mock(new SelfC()));
+    }
+
     private void println(Object o) {
         String claName = o.getClass().getName();
         printlnFormatted(claName, o);
