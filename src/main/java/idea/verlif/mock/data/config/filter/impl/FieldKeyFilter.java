@@ -86,6 +86,7 @@ public class FieldKeyFilter implements FieldFilter {
 
     @Override
     public boolean accept(Field field) {
-        return !ContainsUtil.checkContains(NamingUtil.getKeyName(field), ignoredFiledSet, ignoredFiledPattern);
+        return !ContainsUtil.checkContains(NamingUtil.getKeyName(field), ignoredFiledSet, ignoredFiledPattern)
+                && !ContainsUtil.checkContains(NamingUtil.getKeyName(field.getType()), ignoredFiledSet, ignoredFiledPattern);
     }
 }

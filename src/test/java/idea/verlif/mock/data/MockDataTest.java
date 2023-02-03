@@ -1,12 +1,23 @@
 package idea.verlif.mock.data;
 
 import com.alibaba.fastjson2.JSONObject;
+import idea.verlif.mock.data.config.filter.impl.ClassKeyFilter;
+import idea.verlif.mock.data.config.filter.impl.FieldKeyFilter;
+import idea.verlif.mock.data.config.filter.impl.FieldModifierFilter;
 import idea.verlif.mock.data.creator.DataCreator;
 import idea.verlif.mock.data.domain.*;
 import org.junit.*;
 import stopwatch.Stopwatch;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -42,6 +53,21 @@ public class MockDataTest {
         println(creator.mock(Double.class));
         println(creator.mock(boolean.class));
         println(creator.mock(Boolean.class));
+    }
+
+    /**
+     * 其他数据测试
+     */
+    @Test
+    public void otherDataTest() {
+        println(creator.mock(Date.class));
+        println(creator.mock(LocalDate.class));
+        println(creator.mock(LocalTime.class));
+        println(creator.mock(LocalDateTime.class));
+        println(creator.mock(IEnum.class));
+        println(creator.mock(BigDecimal.class));
+        println(creator.mock(BigInteger.class));
+        println(creator.mock(LocalDate.class));
     }
 
     /**
@@ -129,14 +155,67 @@ public class MockDataTest {
         println(creator.mock(new SelfC()));
     }
 
+    @Test
+    public void customTest() {
+        // 固定值测试
+        creator.getConfig()
+                .fieldValue(IEnum.class, IEnum.HELLO);
+        boolean flag = true;
+        for (int i = 0; i < 20; i++) {
+            IEnum iEnum = creator.mock(IEnum.class);
+            if (iEnum != IEnum.HELLO) {
+                flag = false;
+                break;
+            }
+        }
+        printlnFormatted("IEnum testing result", flag);
+
+        // 自定义数据构建器测试
+        final String name = "测试生成数据";
+        creator.getConfig()
+                .fieldValue(AWithB.class, new DataCreator<AWithB>() {
+                    @Override
+                    public AWithB mock(Class<?> cla, Field field, MockDataCreator.Creator creator) {
+                        AWithB a = new AWithB();
+                        a.setName(name);
+                        return a;
+                    }
+                });
+        printlnFormatted("DataCreator testing result", name.equals(creator.mock(AWithB.class).getName()));
+
+        // 特选属性固定值测试
+        creator.getConfig()
+                .fieldValue(AWithB::getName, name);
+        printlnFormatted("DataCreator testing result", name.equals(creator.mock(AWithB.class).getName()));
+
+        // 过滤器测试
+        creator.getConfig()
+                // 表示忽略所有的Double类型
+                .filter(new ClassKeyFilter()
+                        .ignoredClass(Double.class))
+                // 表示仅忽略属性中的Integer类型
+                .filter(new FieldKeyFilter()
+                        .ignoredField(Integer.class))
+                .filter(new FieldModifierFilter()
+                        .allowedModifiers(Modifier.PROTECTED, Modifier.PUBLIC)
+                        .blockedModifiers(Modifier.PRIVATE));
+        println(creator.mock(ModifierObject.class));
+        printlnFormatted("Integer not ignored testing result", creator.mock(Integer.class));
+        printlnFormatted("Double ignored testing result", creator.mock(Double.class) == null);
+    }
+
     private void println(Object o) {
-        String claName = o.getClass().getName();
-        printlnFormatted(claName, o);
+        if (o == null) {
+            printlnFormatted("null", null);
+        } else {
+            String claName = o.getClass().getName();
+            printlnFormatted(claName, o);
+        }
     }
 
     private void printlnFormatted(String desc, Object o) {
         StringBuilder builder = new StringBuilder(desc);
-        for (int i = desc.length(); i < 30; i++) {
+        for (int i = desc.length(); i < 50; i++) {
             builder.append(" ");
         }
         System.out.println(builder + "\t--->\t" + JSONObject.toJSONString(o));

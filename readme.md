@@ -33,7 +33,7 @@
    // 随机数组
    int[] ints = creator.mock(int[].class);
    // 指定数组大小
-   int[] intsArray creator.mock(new int[2][3]);
+   int[][] intsArray = creator.mock(new int[2][3]);
    // 随机日期
    Date date = creator.mock(Date.class);
    ```

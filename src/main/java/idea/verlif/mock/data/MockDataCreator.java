@@ -407,7 +407,12 @@ public class MockDataCreator {
          */
         public DataCreator<?> getDataCreator(Class<?> cla) {
             String key = NamingUtil.getKeyName(cla);
-            return getDataCreator(key);
+            DataCreator<?> creator = getDataCreator(key);
+            if (creator == null && cla.isEnum()) {
+                // 对枚举类进行特殊操作
+                return getDataCreator(NamingUtil.getKeyName(cla.getSuperclass()));
+            }
+            return creator;
         }
 
         /**

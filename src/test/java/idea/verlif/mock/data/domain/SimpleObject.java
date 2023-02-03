@@ -39,6 +39,8 @@ public class SimpleObject {
 
     private String stringT;
 
+    private IEnum anEnum;
+
     private int[] sia;
 
     private Integer[] sIa;
@@ -211,6 +213,14 @@ public class SimpleObject {
 
     public void setStringT(String stringT) {
         this.stringT = stringT;
+    }
+
+    public IEnum getAnEnum() {
+        return anEnum;
+    }
+
+    public void setAnEnum(IEnum anEnum) {
+        this.anEnum = anEnum;
     }
 
     public int[] getSia() {
