@@ -16,13 +16,18 @@ import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Predicate;
 
 public class MockDataTest {
+
+    private static int total;
+    private static int falseCount;
+    private static int trueCount;
 
     private final MockDataCreator creator = new MockDataCreator();
 
@@ -32,6 +37,25 @@ public class MockDataTest {
                 .forceNew(true)
                 .arraySize(2)
                 .creatingDepth(3);
+
+        creator.addDefaultCreator(new DataCreator<MyArrayList>() {
+            @Override
+            public MyArrayList mock(Class<?> cla, Field field, MockDataCreator.Creator creator) {
+                return new MyArrayList();
+            }
+        });
+        creator.addDefaultCreator(new DataCreator<MyMapExtend>() {
+            @Override
+            public MyMapExtend mock(Class<?> cla, Field field, MockDataCreator.Creator creator) {
+                return new MyMapExtend();
+            }
+        });
+        creator.addDefaultCreator(new DataCreator<MyMap>() {
+            @Override
+            public MyMap mock(Class<?> cla, Field field, MockDataCreator.Creator creator) {
+                return new MyMap();
+            }
+        });
     }
 
     /**
@@ -39,20 +63,21 @@ public class MockDataTest {
      */
     @Test
     public void primitiveTest() {
-        println(creator.mock(int.class));
-        println(creator.mock(Integer.class));
-        println(creator.mock(short.class));
-        println(creator.mock(Short.class));
-        println(creator.mock(long.class));
-        println(creator.mock(Long.class));
-        println(creator.mock(char.class));
-        println(creator.mock(Character.class));
-        println(creator.mock(float.class));
-        println(creator.mock(Float.class));
-        println(creator.mock(double.class));
-        println(creator.mock(Double.class));
-        println(creator.mock(boolean.class));
-        println(creator.mock(Boolean.class));
+        check(creator.mock(int.class), integer -> integer != 0);
+        check(creator.mock(Integer.class), o -> o != 0);
+        check(creator.mock(short.class), o -> o != 0);
+        check(creator.mock(Short.class), o -> o != 0);
+        check(creator.mock(long.class), o -> o != 0);
+        check(creator.mock(Long.class), o -> o != 0);
+        check(creator.mock(char.class), Objects::nonNull);
+        check(creator.mock(Character.class), Objects::nonNull);
+        check(creator.mock(float.class), o -> o != 0);
+        check(creator.mock(Float.class), o -> o != 0);
+        check(creator.mock(double.class), o -> o != 0);
+        check(creator.mock(Double.class), o -> o != 0);
+        check(creator.mock(boolean.class), o -> true);
+        check(creator.mock(Boolean.class), Objects::nonNull);
+        check(creator.mock(String.class), Objects::nonNull);
     }
 
     /**
@@ -60,14 +85,14 @@ public class MockDataTest {
      */
     @Test
     public void otherDataTest() {
-        println(creator.mock(Date.class));
-        println(creator.mock(LocalDate.class));
-        println(creator.mock(LocalTime.class));
-        println(creator.mock(LocalDateTime.class));
-        println(creator.mock(IEnum.class));
-        println(creator.mock(BigDecimal.class));
-        println(creator.mock(BigInteger.class));
-        println(creator.mock(LocalDate.class));
+        check(creator.mock(Date.class), Objects::nonNull);
+        check(creator.mock(LocalDate.class), Objects::nonNull);
+        check(creator.mock(LocalTime.class), Objects::nonNull);
+        check(creator.mock(LocalDateTime.class), Objects::nonNull);
+        check(creator.mock(IEnum.class), Objects::nonNull);
+        check(creator.mock(BigDecimal.class), Objects::nonNull);
+        check(creator.mock(BigInteger.class), Objects::nonNull);
+        check(creator.mock(LocalDate.class), Objects::nonNull);
     }
 
     /**
@@ -75,15 +100,15 @@ public class MockDataTest {
      */
     @Test
     public void intArrayTest() {
-        println(creator.mock(int[].class));
-        println(creator.mock(int[][].class));
-        println(creator.mock(int[][][].class));
-        println(creator.mock(Integer[].class));
-        println(creator.mock(Integer[][].class));
-        println(creator.mock(Integer[][][].class));
-        println(creator.mock(new Integer[2]));
-        println(creator.mock(new Integer[2][3]));
-        println(creator.mock(new Integer[2][3][4]));
+        check(creator.mock(int[].class), o -> o != null && o.length > 0 && o[0] != 0);
+        check(creator.mock(int[][].class), o -> o != null && o.length > 0 && o[0][0] != 0);
+        check(creator.mock(int[][][].class), o -> o != null && o.length > 0 && o[0][0][0] != 0);
+        check(creator.mock(Integer[].class), o -> o != null && o.length > 0 && o[0] != 0);
+        check(creator.mock(Integer[][].class), o -> o != null && o.length > 0 && o[0][0] != 0);
+        check(creator.mock(Integer[][][].class), o -> o != null && o.length > 0 && o[0][0][0] != 0);
+        check(creator.mock(new Integer[2]), o -> o != null && o.length == 2 && o[0] != 0);
+        check(creator.mock(new Integer[2][3]), o -> o != null && o.length == 2 && o[0].length == 3 && o[0][0] != 0);
+        check(creator.mock(new Integer[2][3][4]), o -> o != null && o.length == 2 && o[0].length == 3 && o[0][0].length == 4 && o[0][0][0] != 0);
     }
 
     /**
@@ -91,22 +116,33 @@ public class MockDataTest {
      */
     @Test
     public void simpleObjectTest() {
-        println(creator.mock(SimpleObject.class));
-        println(creator.mock(new SimpleObject()));
-        println(creator.mock(SimpleObject[].class));
-        println(creator.mock(new SimpleObject[2]));
+        check(creator.mock(SimpleObject.class),
+                o -> o != null && o.getAnEnum() != null && o.getSi() != 0
+                        && o.getDoubleMap() != null && o.getDoubleMap().size() > 0
+                        && o.getStrings() != null && o.getStrings().size() > 0);
+        check(creator.mock(new SimpleObject()),
+                o -> o != null && o.getAnEnum() != null && o.getSi() != 0
+                        && o.getDoubleMap() != null && o.getDoubleMap().size() > 0
+                        && o.getStrings() != null && o.getStrings().size() > 0);
+        check(creator.mock(SimpleObject[].class),
+                o -> o != null && o.length > 0 && o[0].getAnEnum() != null && o[0].getSi() != 0
+                        && o[0].getDoubleMap() != null && o[0].getDoubleMap().size() > 0
+                        && o[0].getStrings() != null && o[0].getStrings().size() > 0);
+        check(creator.mock(new SimpleObject[2]),
+                o -> o != null && o.length == 2 && o[0].getAnEnum() != null && o[0].getSi() != 0
+                        && o[0].getDoubleMap() != null && o[0].getDoubleMap().size() > 0
+                        && o[0].getStrings() != null && o[0].getStrings().size() > 0);
     }
 
     @Test
     public void complexObjectTest() {
-        creator.addDefaultCreator(new DataCreator<MyArrayList>() {
-            @Override
-            public MyArrayList mock(Class<?> cla, Field field, MockDataCreator.Creator creator) {
-                return new MyArrayList();
-            }
-        });
-        println(creator.mock(ComplexObject.class));
-        println(creator.mock(new ComplexObject()));
+        // TODO: 增加接口类型构建器，便于类似List或Map进行数值填充
+        check(creator.mock(ComplexObject.class), o -> o != null
+                && o.getMapExtend() != null && o.getMapExtend().size() > 0
+                && o.getMyArrayList() != null && o.getMyArrayList().size() > 0);
+        check(creator.mock(new ComplexObject()), o -> o != null
+                && o.getMapExtend() != null && o.getMapExtend().size() > 0
+                && o.getMyArrayList() != null && o.getMyArrayList().size() > 0);
     }
 
     /**
@@ -114,18 +150,23 @@ public class MockDataTest {
      */
     @Test
     public void ListTest() {
-        creator.getConfig()
-                .fieldValue(MyArrayList.class, new DataCreator<MyArrayList>() {
-                    @Override
-                    public MyArrayList mock(Class<?> cla, Field field, MockDataCreator.Creator creator) {
-                        return new MyArrayList();
-                    }
-                });
-        println(creator.mock(List.class));
-        println(creator.mock(IList.class));
-        println(creator.mock(new IList()));
-        println(creator.mock(IListExtend.class));
-        println(creator.mock(new IListExtend()));
+        check(creator.mock(List.class), o -> o != null && o.size() > 0);
+        check(creator.mock(IList.class), o -> o != null
+                && o.getListList() != null && o.getListList().size() > 0 && o.getListList().get(0).size() > 0
+                && o.getMyArrayList() != null && o.getMyArrayList().size() > 0
+                && o.getDoubles() != null && o.getDoubles().size() > 0 && o.getDoubles().get(0) != 0);
+        check(creator.mock(new IList()), o -> o != null
+                && o.getListList() != null && o.getListList().size() > 0 && o.getListList().get(0).size() > 0
+                && o.getMyArrayList() != null && o.getMyArrayList().size() > 0
+                && o.getDoubles() != null && o.getDoubles().size() > 0 && o.getDoubles().get(0) != 0);
+        check(creator.mock(IListExtend.class), o -> o != null
+                && o.getListList() != null && o.getListList().size() > 0 && o.getListList().get(0).size() > 0
+                && o.getMyArrayList() != null && o.getMyArrayList().size() > 0
+                && o.getDoubles() != null && o.getDoubles().size() > 0 && o.getDoubles().get(0) != 0);
+        check(creator.mock(new IListExtend()), o -> o != null
+                && o.getListList() != null && o.getListList().size() > 0 && o.getListList().get(0).size() > 0
+                && o.getMyArrayList() != null && o.getMyArrayList().size() > 0
+                && o.getDoubles() != null && o.getDoubles().size() > 0 && o.getDoubles().get(0) != 0);
     }
 
     /**
@@ -133,26 +174,42 @@ public class MockDataTest {
      */
     @Test
     public void MapTest() {
-        println(creator.mock(Map.class));
-        println(creator.mock(IMap.class));
-        println(creator.mock(new IMap()));
-        println(creator.mock(MyMap.class));
-        println(creator.mock(new MyMap<String, Double>()));
-        println(creator.mock(MyMapExtend.class));
-        println(creator.mock(new MyMapExtend()));
+        check(creator.mock(Map.class), o -> o != null && o.size() > 0);
+        check(creator.mock(IMap.class), o -> o != null
+                && o.getStringMapMap() != null && o.getStringMapMap().size() > 0
+                && o.getMapExtend() != null && o.getMapExtend().size() > 0
+                && o.getDoubleMyMap() != null && o.getDoubleMyMap().size() > 0);
+        check(creator.mock(new IMap()), o -> o != null
+                && o.getStringMapMap() != null && o.getStringMapMap().size() > 0
+                && o.getMapExtend() != null && o.getMapExtend().size() > 0
+                && o.getDoubleMyMap() != null && o.getDoubleMyMap().size() > 0);
+        check(creator.mock(MyMap.class), o -> o != null && o.size() > 0);
+        // 以下不被允许
+//        check(creator.mock(new MyMap<String, Double>()), o -> o != null && o.size() > 0);
+        check(creator.mock(MyMapExtend.class), o -> o != null && o.size() > 0);
+//        check(creator.mock(new MyMapExtend()), o -> o != null && o.size() > 0);
     }
 
     @Test
     public void circleTest() {
-        println(creator.mock(AWithB.class));
-        println(creator.mock(AWithB[].class));
-        println(creator.mock(new AWithB()));
-        println(creator.mock(BWithA.class));
-        println(creator.mock(BWithA[].class));
-        println(creator.mock(new BWithA()));
-        println(creator.mock(SelfC.class));
-        println(creator.mock(SelfC[].class));
-        println(creator.mock(new SelfC()));
+        check(creator.mock(AWithB.class), o -> o != null && o.getName() != null
+                && o.getB() != null && o.getB().getA() != null);
+        check(creator.mock(AWithB[].class), o -> o != null && o.length > 0 && o[0].getName() != null
+                && o[0].getB() != null && o[0].getB().getA() != null);
+        check(creator.mock(new AWithB()), o -> o != null && o.getName() != null
+                && o.getB() != null && o.getB().getA() != null);
+        check(creator.mock(BWithA.class), o -> o != null && o.getName() != null
+                && o.getA() != null && o.getA().getB() != null);
+        check(creator.mock(BWithA[].class), o -> o != null && o.length > 0 && o[0].getName() != null
+                && o[0].getA() != null && o[0].getA().getB() != null);
+        check(creator.mock(new BWithA()), o -> o != null && o.getName() != null
+                && o.getA() != null && o.getA().getB() != null);
+        check(creator.mock(SelfC.class), o -> o != null && o.getStr() != null && o.getI() != 0 && o.getD() != 0
+                && o.getSelfC() != null);
+        check(creator.mock(SelfC[].class), o -> o != null && o.length > 0 && o[0].getStr() != null && o[0].getI() != 0 && o[0].getD() != 0
+                && o[0].getSelfC() != null);
+        check(creator.mock(new SelfC()), o -> o != null && o.getStr() != null && o.getI() != 0 && o.getD() != 0
+                && o.getSelfC() != null);
     }
 
     @Test
@@ -190,18 +247,34 @@ public class MockDataTest {
 
         // 过滤器测试
         creator.getConfig()
-                // 表示忽略所有的Double类型
-                .filter(new ClassKeyFilter()
-                        .ignoredClass(Double.class))
                 // 表示仅忽略属性中的Integer类型
                 .filter(new FieldKeyFilter()
                         .ignoredField(Integer.class))
                 .filter(new FieldModifierFilter()
                         .allowedModifiers(Modifier.PROTECTED, Modifier.PUBLIC)
                         .blockedModifiers(Modifier.PRIVATE));
-        println(creator.mock(ModifierObject.class));
-        printlnFormatted("Integer not ignored testing result", creator.mock(Integer.class));
+        check(creator.mock(ModifierObject.class), o -> o != null && o.getPubInt() == null && o.getPriInt() == null && o.getProDou() != null);
+        printlnFormatted("Integer not ignored testing result", creator.mock(Integer.class) != null);
+        creator.getConfig()
+                .filter(new ClassKeyFilter()
+                        .ignoredClass(Double.class));
         printlnFormatted("Double ignored testing result", creator.mock(Double.class) == null);
+    }
+
+    private <T> void check(T t, Predicate<T> predicate) {
+        total ++;
+        boolean test = predicate.test(t);
+        if (test) {
+            trueCount ++;
+        } else {
+            falseCount ++;
+        }
+        if (t == null) {
+            printlnFormatted("null", null);
+        } else {
+            String claName = t.getClass().getName();
+            printlnFormatted(claName, test + "\t---\t" + JSONObject.toJSONString(t));
+        }
     }
 
     private void println(Object o) {
@@ -218,7 +291,11 @@ public class MockDataTest {
         for (int i = desc.length(); i < 50; i++) {
             builder.append(" ");
         }
-        System.out.println(builder + "\t--->\t" + JSONObject.toJSONString(o));
+        if (o instanceof String) {
+            System.out.println(builder + "\t--->\t" + o);
+        } else {
+            System.out.println(builder + "\t--->\t" + JSONObject.toJSONString(o));
+        }
     }
 
     @Before
@@ -242,6 +319,7 @@ public class MockDataTest {
     public static void stopStopwatch() {
         Stopwatch stopwatch = Stopwatch.get("this");
         stopwatch.stop();
-        System.out.println("\n---------------------- 累计耗时 >> " + stopwatch.getIntervalLine(TimeUnit.MILLISECONDS) + "  毫秒");
+        System.out.println("---------------------- 总测试次数 " + total + " , 失败次数 " + falseCount + " , 成功率为 " + trueCount + " / " + total);
+        System.out.println("---------------------- 累计耗时 >> " + stopwatch.getWholeInterval(TimeUnit.MILLISECONDS) + "  毫秒");
     }
 }
