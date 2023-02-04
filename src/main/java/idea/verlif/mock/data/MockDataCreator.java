@@ -17,6 +17,7 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Mock数据创建器
@@ -27,14 +28,21 @@ public class MockDataCreator {
 
     private final Map<String, DataCreator<?>> defaultCreatorMap;
 
+    /**
+     * 接口类型构造器表
+     */
+    private final Map<Class<?>, DataCreator<?>> interfaceCreatorMap;
+
     private MockDataConfig config;
 
     public MockDataCreator() {
         this.defaultCreatorMap = new HashMap<>();
+        this.interfaceCreatorMap = new HashMap<>();
 
         this.config = new MockDataConfig();
         useBaseData();
         useExtendData();
+        useBaseFiller();
     }
 
     public void setConfig(MockDataConfig config) {
@@ -58,7 +66,6 @@ public class MockDataCreator {
         addDefaultCreator(new DoubleRandomCreator());
         addDefaultCreator(new CharacterRandomCreator());
         addDefaultCreator(new StringRandomCreator());
-        addDefaultCreator(new ListCreator());
         addDefaultCreator(new DateRandomCreator());
         addDefaultCreator(new EnumRandomCreator());
     }
@@ -72,7 +79,12 @@ public class MockDataCreator {
         addDefaultCreator(new LocalDateCreator());
         addDefaultCreator(new LocalTimeCreator());
         addDefaultCreator(new LocalDateTimeCreator());
-        addDefaultCreator(new MapRandomCreator());
+    }
+
+    public void useBaseFiller() {
+        addInterfaceValue(List.class, new ListCreator());
+        addInterfaceValue(Map.class, new MapCreator());
+        addInterfaceValue(Set.class, new SetCreator());
     }
 
     /**
@@ -99,6 +111,29 @@ public class MockDataCreator {
         return this;
     }
 
+    /**
+     * 添加或替换属性接口创造器
+     *
+     * @param cla     目标类
+     * @param creator 数据填充器
+     */
+    public MockDataCreator interfaceValue(Class<?> cla, DataCreator<?> creator) {
+        if (creator.getClass().getName().contains("$Lambda")) {
+            throw new MockDataException("Lambda expressions are not recognized!");
+        }
+        addInterfaceValue(cla, creator);
+        return this;
+    }
+
+    /**
+     * 添加或替换属性接口创造器
+     *
+     * @param cla    目标类
+     * @param filler 数据填充器
+     */
+    private void addInterfaceValue(Class<?> cla, DataCreator<?> filler) {
+        this.interfaceCreatorMap.put(cla, filler);
+    }
 
     /**
      * mock数据
@@ -186,6 +221,10 @@ public class MockDataCreator {
 
         public void counterClear() {
             counter.clearAll();
+        }
+
+        public MockDataConfig getMockConfig() {
+            return mockConfig;
         }
 
         /**
@@ -399,6 +438,14 @@ public class MockDataCreator {
             return creator;
         }
 
+        public DataCreator<?> getInterfaceCreator(Class<?> cla) {
+            DataCreator<?> creator = mockConfig.getDataFiller(cla);
+            if (creator == null) {
+                creator = interfaceCreatorMap.get(cla);
+            }
+            return creator;
+        }
+
         /**
          * 获取数据构造器
          *
@@ -408,9 +455,27 @@ public class MockDataCreator {
         public DataCreator<?> getDataCreator(Class<?> cla) {
             String key = NamingUtil.getKeyName(cla);
             DataCreator<?> creator = getDataCreator(key);
-            if (creator == null && cla.isEnum()) {
-                // 对枚举类进行特殊操作
-                return getDataCreator(NamingUtil.getKeyName(cla.getSuperclass()));
+            if (creator == null) {
+                if (cla.isEnum()) {
+                    // 对枚举类进行特殊操作
+                    return getDataCreator(NamingUtil.getKeyName(cla.getSuperclass()));
+                } else {
+                    // 尝试接口获取
+                    LOOP_while:
+                    while (cla != null) {
+                        if (cla.isInterface()) {
+                            return getInterfaceCreator(cla);
+                        }
+                        Class<?>[] claInterfaces = cla.getInterfaces();
+                        for (Class<?> anInterface : claInterfaces) {
+                            creator = getInterfaceCreator(anInterface);
+                            if (anInterface != null) {
+                                break LOOP_while;
+                            }
+                        }
+                        cla = cla.getSuperclass();
+                    }
+                }
             }
             return creator;
         }

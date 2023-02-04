@@ -5,6 +5,7 @@ import idea.verlif.mock.data.config.filter.impl.ClassKeyFilter;
 import idea.verlif.mock.data.config.filter.impl.FieldKeyFilter;
 import idea.verlif.mock.data.config.filter.impl.FieldModifierFilter;
 import idea.verlif.mock.data.creator.DataCreator;
+import idea.verlif.mock.data.creator.data.DictDataCreator;
 import idea.verlif.mock.data.domain.*;
 import org.junit.*;
 import stopwatch.Stopwatch;
@@ -16,10 +17,7 @@ import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 
@@ -37,25 +35,6 @@ public class MockDataTest {
                 .forceNew(true)
                 .arraySize(2)
                 .creatingDepth(3);
-
-        creator.addDefaultCreator(new DataCreator<MyArrayList>() {
-            @Override
-            public MyArrayList mock(Class<?> cla, Field field, MockDataCreator.Creator creator) {
-                return new MyArrayList();
-            }
-        });
-        creator.addDefaultCreator(new DataCreator<MyMapExtend>() {
-            @Override
-            public MyMapExtend mock(Class<?> cla, Field field, MockDataCreator.Creator creator) {
-                return new MyMapExtend();
-            }
-        });
-        creator.addDefaultCreator(new DataCreator<MyMap>() {
-            @Override
-            public MyMap mock(Class<?> cla, Field field, MockDataCreator.Creator creator) {
-                return new MyMap();
-            }
-        });
     }
 
     /**
@@ -151,6 +130,7 @@ public class MockDataTest {
     @Test
     public void ListTest() {
         check(creator.mock(List.class), o -> o != null && o.size() > 0);
+        check(creator.mock(MyArrayList.class), o -> o != null && o.size() > 0 && o.get(0) != null);
         check(creator.mock(IList.class), o -> o != null
                 && o.getListList() != null && o.getListList().size() > 0 && o.getListList().get(0).size() > 0
                 && o.getMyArrayList() != null && o.getMyArrayList().size() > 0
@@ -170,11 +150,34 @@ public class MockDataTest {
     }
 
     /**
+     * List测试
+     */
+    @Test
+    public void SetTest() {
+        check(creator.mock(Set.class), o -> o != null && o.size() > 0);
+        check(creator.mock(MySet.class), Objects::nonNull);
+        check(creator.mock(MyHashSet.class), o -> o != null && o.size() > 0);
+        check(creator.mock(ISet.class), o -> o != null
+                && o.getSetSet() != null && o.getSetSet().size() > 0 && o.getSetSet().toArray(new Set<?>[0])[0].size() > 0
+                && o.getMySet() != null && o.getMySet().size() > 0
+                && o.getMyHashSet() != null && o.getMyHashSet().size() > 0);
+        check(creator.mock(new ISet()), o -> o != null
+                && o.getSetSet() != null && o.getSetSet().size() > 0 && o.getSetSet().toArray(new Set<?>[0])[0].size() > 0
+                && o.getMySet() != null && o.getMySet().size() > 0
+                && o.getMyHashSet() != null && o.getMyHashSet().size() > 0);
+    }
+
+    /**
      * map测试
      */
     @Test
     public void MapTest() {
-        check(creator.mock(Map.class), o -> o != null && o.size() > 0);
+        creator.addDefaultCreator(new DictDataCreator<>(new String[]{
+                "小明", "小红"
+        }));
+        // 未指明泛型，无法添加数据
+        check(creator.mock(Map.class), Objects::nonNull);
+        check(creator.mock(MyHashMap.class), o -> o != null && o.size() > 0);
         check(creator.mock(IMap.class), o -> o != null
                 && o.getStringMapMap() != null && o.getStringMapMap().size() > 0
                 && o.getMapExtend() != null && o.getMapExtend().size() > 0
@@ -183,11 +186,14 @@ public class MockDataTest {
                 && o.getStringMapMap() != null && o.getStringMapMap().size() > 0
                 && o.getMapExtend() != null && o.getMapExtend().size() > 0
                 && o.getDoubleMyMap() != null && o.getDoubleMyMap().size() > 0);
-        check(creator.mock(MyMap.class), o -> o != null && o.size() > 0);
+        // 未指明泛型，无法添加数据
+        check(creator.mock(MyMap.class), Objects::nonNull);
         // 以下不被允许
-//        check(creator.mock(new MyMap<String, Double>()), o -> o != null && o.size() > 0);
+        creator.getConfig()
+                .filter(new ClassKeyFilter()
+                        .ignoredClass(MyMap.class));
+        check(creator.mock(new MyMap<String, Double>()), Objects::nonNull);
         check(creator.mock(MyMapExtend.class), o -> o != null && o.size() > 0);
-//        check(creator.mock(new MyMapExtend()), o -> o != null && o.size() > 0);
     }
 
     @Test
@@ -262,12 +268,12 @@ public class MockDataTest {
     }
 
     private <T> void check(T t, Predicate<T> predicate) {
-        total ++;
+        total++;
         boolean test = predicate.test(t);
         if (test) {
-            trueCount ++;
+            trueCount++;
         } else {
-            falseCount ++;
+            falseCount++;
         }
         if (t == null) {
             printlnFormatted("null", null);

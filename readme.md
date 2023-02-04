@@ -47,6 +47,8 @@
    creator.getConfig()
            // 自动级联构建
            .autoCascade(true)
+           // 替换目标对象中已存在的对象，例如基础类型
+           .forceNew(true)
    // 通过类来实例化对象
    Person person = creator.mock(Person.class);
    // 或是手动实例化对象，然后填充数据
@@ -115,16 +117,12 @@
    - `Byte`、`Boolean`、`Short`、`Integer`、`Long`、`Float`、`Double`、`Character`
 - __String__
 - __枚举类__
-- __List__
-  - 暂不支持继承于List接口的自定义类，需要构建时请自定义构建器
-- __Map__
-   - 暂不支持继承于Map接口的自定义类，需要构建时请自定义构建器
-- __Date__
 
 ### 常用对象
 
+- `List`、`Set`
 - `Map`
-- `LocalDate`、`LocalTime`、`LocalDateTime`
+- `Date`、`LocalDate`、`LocalTime`、`LocalDateTime`
 - `BigInteger`、`BigDecimal`
 
 ### 其他

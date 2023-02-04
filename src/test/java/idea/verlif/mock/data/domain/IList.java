@@ -11,6 +11,8 @@ public class IList {
 
     private List<List<String>> listList;
 
+    private MyList<SelfC> myList;
+
     private MyArrayList myArrayList;
 
     public List<Double> getDoubles() {
@@ -27,6 +29,14 @@ public class IList {
 
     public void setListList(List<List<String>> listList) {
         this.listList = listList;
+    }
+
+    public MyList<SelfC> getMyList() {
+        return myList;
+    }
+
+    public void setMyList(MyList<SelfC> myList) {
+        this.myList = myList;
     }
 
     public MyArrayList getMyArrayList() {

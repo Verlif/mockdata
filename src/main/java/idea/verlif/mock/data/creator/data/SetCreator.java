@@ -7,29 +7,31 @@ import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 列表构造器
  *
  * @author Verlif
  */
-public class ListCreator implements DataCreator<List<?>> {
+public class SetCreator implements DataCreator<Set<?>> {
 
     private Integer size;
 
     private Class<?> target;
 
-    public ListCreator() {
+    public SetCreator() {
     }
 
-    public ListCreator(int size) {
+    public SetCreator(int size) {
         this.size = size;
     }
 
     @Override
-    public List<?> mock(Class<?> cla, Field field, MockDataCreator.Creator creator) {
-        this.target = cla == List.class ? ArrayList.class : cla;
+    public Set<?> mock(Class<?> cla, Field field, MockDataCreator.Creator creator) {
+        this.target = cla == Set.class ? HashSet.class : cla;
         if (this.size == null) {
             this.size = creator.getMockConfig().getArraySize(cla);
         }
@@ -38,47 +40,47 @@ public class ListCreator implements DataCreator<List<?>> {
             Type type = field.getGenericType();
             if (type instanceof ParameterizedType) {
                 Type argument = ((ParameterizedType) type).getActualTypeArguments()[0];
-                return fillList(argument, creator);
+                return fillSet(argument, creator);
             } else if (type instanceof Class) {
-                return (List<?>) creator.mockClass(((Class<?>) type));
+                return (Set<?>) creator.mockClass(((Class<?>) type));
             }
         } else {
             Type genericSuperclass = cla.getGenericSuperclass();
             if (genericSuperclass instanceof ParameterizedType) {
                 rawType = ((ParameterizedType) genericSuperclass).getActualTypeArguments()[0];
             }
-            return fillList(rawType, creator);
+            return fillSet(rawType, creator);
         }
         return newInstance(cla, creator);
     }
 
-    private List<?> fillList(Type type, MockDataCreator.Creator creator) {
-        List<Object> list = newInstance(target, creator);
+    private Set<?> fillSet(Type type, MockDataCreator.Creator creator) {
+        Set<Object> set = newInstance(target, creator);
         if (type instanceof Class) {
             for (int i = 0; i < size; i++) {
                 Object o = creator.mockClass((Class<?>) type);
-                list.add(o);
+                set.add(o);
             }
         } else if (type instanceof ParameterizedType) {
             Type rawType = ((ParameterizedType) type).getRawType();
-            if (rawType instanceof Class && List.class.isAssignableFrom((Class<?>) rawType)) {
+            if (rawType instanceof Class && Set.class.isAssignableFrom((Class<?>) rawType)) {
                 for (int i = 0; i < size; i++) {
-                    Object o = fillList(((ParameterizedType) type).getActualTypeArguments()[0], creator);
-                    list.add(o);
+                    Object o = fillSet(((ParameterizedType) type).getActualTypeArguments()[0], creator);
+                    set.add(o);
                 }
             }
         }
-        return list;
+        return set;
     }
 
-    public List<Object> newInstance(Class<?> cla, MockDataCreator.Creator creator) {
-        return (List<Object>) creator.newInstance(cla);
+    public Set<Object> newInstance(Class<?> cla, MockDataCreator.Creator creator) {
+        return (Set<Object>) creator.newInstance(cla);
     }
 
     @Override
     public List<Class<?>> types() {
         List<Class<?>> list = new ArrayList<>();
-        list.add(List.class);
+        list.add(Set.class);
         return list;
     }
 }

@@ -31,6 +31,9 @@ __mock-data__ 的使用其实很简单，与大部分工具一样，只需要三
    Person[][] personArray = creator.mock(new Person[2][5]);
    ```
 
+__注意：`creator.mock(Person.class)`表示构建Person类，MockDataCreator会判断其类型并进行选择构建。
+而`creator.mock(new Person())`则表示填充person对象的属性，两者的构建模式并不相同，一般情况下推荐使用Class方式进行构建。__
+
 ## 功能
 
 __mock-data__ 并不提供类似 __JavaFaker__ 这种字典库使用，实际上，__mock-data__ 是提供了一个构造框架，开发者可以为每一个类的每一个属性给予不同的字典库，生成出“虚拟的真实数据”。
@@ -50,8 +53,9 @@ __mock-data__ 并不提供类似 __JavaFaker__ 这种字典库使用，实际上
   - `StringRandomCreator`
 - 枚举类型
   - `EnumRandomCreator`
-- List与Map
+- List、Set与Map
   - `ListCreator`
+  - `SetCreator`
   - `MapRandomCreator`
 - 大数类型
   - `BigIntegerCreator`
@@ -82,5 +86,7 @@ __mock-data__ 就提供了很多自定义的功能，方便开发者根据自己
   - 通过`filter(ClassFilter|FieldFilter)`来自定义忽略规则，过滤掉不需要构建的属性或是类。
 - __指定级联构建__
   - 为了避免不必要的构建，__mock-data__ 需要开发者手动指定需要级联构建的类，当然也可以直接使用`autoCascade(true)`允许所有类进行级联构建。
+- __填充型接口构建__
+  - 类似`List`这类的接口实现类的构建可以通过`MockDataCreator.addInterfaceValue(List.class, new ListCreator())`的方式添加接口构建器，让构建器能识别此类接口并使用添加的构建器进行自动填充操作。
 
 更多的设置在 [MockConfig方法说明](MockConfig.md) 中有说明。

@@ -14,24 +14,32 @@ import java.util.Map;
 /**
  * @author Verlif
  */
-public class MapRandomCreator implements DataCreator<Map<?, ?>> {
+public class MapCreator implements DataCreator<Map<?, ?>> {
 
-    private final int size;
+    private Integer size;
+    private Class<?> target;
 
-    public MapRandomCreator() {
-        this(5);
+    public MapCreator() {
     }
 
-    public MapRandomCreator(int size) {
+    public MapCreator(int size) {
         this.size = size;
     }
 
     @Override
     public Map<?, ?> mock(Class<?> cla, Field field, MockDataCreator.Creator creator) {
+        this.target = cla == Map.class ? HashMap.class : cla;
+        if (this.size == null) {
+            this.size = creator.getMockConfig().getArraySize(cla);
+        }
         if (field != null) {
-            ParameterizedType type = (ParameterizedType) field.getGenericType();
-            Type[] arguments = type.getActualTypeArguments();
-            return fillMap(arguments[0], arguments[1], creator);
+            Type type = field.getGenericType();
+            if (type instanceof ParameterizedType) {
+                Type[] arguments = ((ParameterizedType) type).getActualTypeArguments();
+                return fillMap(arguments[0], arguments[1], creator);
+            } else if (type instanceof Class) {
+                return (Map<?, ?>) creator.mockClass(((Class<?>) type));
+            }
         } else {
             Type genericSuperclass = cla.getGenericSuperclass();
             if (genericSuperclass instanceof ParameterizedType) {
@@ -43,7 +51,7 @@ public class MapRandomCreator implements DataCreator<Map<?, ?>> {
     }
 
     private Map<Object, Object> fillMap(Type keyType, Type valueType, MockDataCreator.Creator creator) {
-        Map<Object, Object> map = new HashMap<>();
+        Map<Object, Object> map = newInstance(target, creator);
         for (int i = 0; i < size; i++) {
             Object key = getObjectOfType(keyType, creator);
             Object value = getObjectOfType(valueType, creator);
@@ -65,11 +73,14 @@ public class MapRandomCreator implements DataCreator<Map<?, ?>> {
         return null;
     }
 
+    public Map<Object, Object> newInstance(Class<?> cla, MockDataCreator.Creator creator) {
+        return (Map<Object, Object>) creator.newInstance(cla);
+    }
+
     @Override
     public List<Class<?>> types() {
         List<Class<?>> list = new ArrayList<>();
         list.add(Map.class);
-        list.add(HashMap.class);
         return list;
     }
 }

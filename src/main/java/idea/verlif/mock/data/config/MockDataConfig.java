@@ -4,9 +4,11 @@ import idea.verlif.mock.data.MockDataCreator;
 import idea.verlif.mock.data.config.filter.ClassFilter;
 import idea.verlif.mock.data.config.filter.FieldFilter;
 import idea.verlif.mock.data.creator.DataCreator;
+import idea.verlif.mock.data.creator.DataFiller;
 import idea.verlif.mock.data.creator.InstanceCreator;
 import idea.verlif.mock.data.domain.SFunction;
 import idea.verlif.mock.data.domain.counter.StringCounter;
+import idea.verlif.mock.data.exception.ClassNotMatchException;
 import idea.verlif.mock.data.exception.MockDataException;
 import idea.verlif.mock.data.util.ContainsUtil;
 import idea.verlif.mock.data.util.NamingUtil;
@@ -40,6 +42,11 @@ public class MockDataConfig {
     private final Map<String, DataCreator<?>> fieldCreatorMap;
 
     /**
+     * 接口类型构造器表
+     */
+    private final Map<Class<?>, DataCreator<?>> interfaceCreatorMap;
+
+    /**
      * 实例构造器表
      */
     private final Map<String, InstanceCreator<?>> instanceCreatorMap;
@@ -70,12 +77,14 @@ public class MockDataConfig {
     private final ArrayList<ClassFilter> classFilters;
 
     /**
-     * 强制生成新对象
+     * 强制生成新对象。<br>
+     * 例如基础属性在声明时就存在默认对象，此时在forceNew为false的情况下就会被忽略。
      */
     private boolean forceNew = false;
 
     public MockDataConfig() {
         fieldCreatorMap = new HashMap<>();
+        interfaceCreatorMap = new HashMap<>();
         instanceCreatorMap = new HashMap<>();
         cascadeCreateSet = new HashSet<>();
         cascadeCreatePattern = new ArrayList<>();
@@ -89,6 +98,7 @@ public class MockDataConfig {
         config.depthCounter = this.depthCounter;
         config.arraySizeCreator = this.arraySizeCreator;
         config.fieldCreatorMap.putAll(this.fieldCreatorMap);
+        config.interfaceCreatorMap.putAll(this.interfaceCreatorMap);
         config.instanceCreatorMap.putAll(this.instanceCreatorMap);
         config.autoCascade = this.autoCascade;
         config.cascadeCreateSet.addAll(this.cascadeCreateSet);
@@ -198,6 +208,17 @@ public class MockDataConfig {
     }
 
     /**
+     * 添加或替换属性数据填充器
+     *
+     * @param function 属性获取表达式
+     * @param filler   数据填充器
+     */
+    public <T> MockDataConfig fieldValue(SFunction<T, ?> function, DataFiller<?> filler) {
+        addFieldValue(function, filler);
+        return this;
+    }
+
+    /**
      * 添加或替换属性数据
      *
      * @param function 属性获取表达式
@@ -260,13 +281,59 @@ public class MockDataConfig {
      * 添加或替换属性数据创造器
      *
      * @param cla     目标类
-     * @param creator 数据创造器
+     * @param creator 数据填充器
      */
     public <T> MockDataConfig fieldValue(Class<T> cla, DataCreator<T> creator) {
         if (creator.getClass().getName().contains("$Lambda")) {
             throw new MockDataException("Lambda expressions are not recognized!");
         }
         addFieldValue(cla, creator);
+        return this;
+    }
+
+    /**
+     * 添加或替换属性接口创造器
+     *
+     * @param cla    目标类
+     * @param creator 数据填充器
+     */
+    public MockDataConfig interfaceValue(Class<?> cla, DataCreator<?> creator) {
+        if (creator.getClass().getName().contains("$Lambda")) {
+            throw new MockDataException("Lambda expressions are not recognized!");
+        }
+        addInterfaceValue(cla, creator);
+        return this;
+    }
+
+    /**
+     * 添加或替换属性接口创造器
+     *
+     * @param cla    目标类
+     * @param filler 数据填充器
+     */
+    private void addInterfaceValue(Class<?> cla, DataCreator<?> filler) {
+        if (cla.isInterface()) {
+            this.interfaceCreatorMap.put(cla, filler);
+        } else {
+            throw new ClassNotMatchException(cla + " is not interface!");
+        }
+    }
+
+    public DataCreator<?> getDataFiller(Class<?> cla) {
+        return interfaceCreatorMap.get(cla);
+    }
+
+    /**
+     * 添加或替换属性数据创造器
+     *
+     * @param cla    目标类
+     * @param filler 数据创造器
+     */
+    public <T> MockDataConfig fieldValue(Class<T> cla, DataFiller<?> filler) {
+        if (filler.getClass().getName().contains("$Lambda")) {
+            throw new MockDataException("Lambda expressions are not recognized!");
+        }
+        addFieldValue(cla, filler);
         return this;
     }
 
