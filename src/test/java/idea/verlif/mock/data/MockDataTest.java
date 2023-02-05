@@ -128,7 +128,7 @@ public class MockDataTest {
      * List测试
      */
     @Test
-    public void ListTest() {
+    public void listTest() {
         check(creator.mock(List.class), o -> o != null && o.size() > 0);
         check(creator.mock(MyArrayList.class), o -> o != null && o.size() > 0 && o.get(0) != null);
         check(creator.mock(IList.class), o -> o != null
@@ -153,7 +153,7 @@ public class MockDataTest {
      * List测试
      */
     @Test
-    public void SetTest() {
+    public void setTest() {
         check(creator.mock(Set.class), o -> o != null && o.size() > 0);
         check(creator.mock(MySet.class), Objects::nonNull);
         check(creator.mock(MyHashSet.class), o -> o != null && o.size() > 0);
@@ -171,8 +171,8 @@ public class MockDataTest {
      * map测试
      */
     @Test
-    public void MapTest() {
-        creator.addDefaultCreator(new DictDataCreator<>(new String[]{
+    public void mapTest() {
+        creator.fieldValue(new DictDataCreator<>(new String[]{
                 "小明", "小红"
         }));
         // 未指明泛型，无法添加数据
@@ -194,6 +194,7 @@ public class MockDataTest {
                         .ignoredClass(MyMap.class));
         check(creator.mock(new MyMap<String, Double>()), Objects::nonNull);
         check(creator.mock(MyMapExtend.class), o -> o != null && o.size() > 0);
+        creator.getConfig().clearClassFilter();
     }
 
     @Test
@@ -265,6 +266,52 @@ public class MockDataTest {
                 .filter(new ClassKeyFilter()
                         .ignoredClass(Double.class));
         printlnFormatted("Double ignored testing result", creator.mock(Double.class) == null);
+        creator.clearClassFilter();
+        creator.clearFieldFilter();
+    }
+
+    @Test
+    public void configTest() {
+        // 属性与类过滤
+        creator.filter(new FieldKeyFilter()
+                        .ignoredField(SimpleObject::getsS))
+                .filter(new ClassKeyFilter()
+                        .ignoredClass(Boolean.class));
+        check(creator.mock(SimpleObject.class), o -> o != null
+                && o.getSelfC() != null && o.getSelfC().getSelfC() != null
+                && o.getaWithB() != null && o.getaWithB().getB() != null
+                && o.getbWithA() != null && o.getbWithA().getA() != null
+                && o.getsS() == null && o.getsSa() != null && o.getsSa().length > 0 && o.getsSa()[0] != 0
+                && o.getsBo() == null && o.getsBoa() == null);
+
+        // 自定义属性值
+        final String testStr = "test new DataCreator";
+        creator.getConfig()
+                .autoCascade(false)
+                .cascadeCreateKey(SimpleObject.class)
+                .cascadeCreateKey(SimpleObject::getSelfC)
+                .fieldValue(int.class, 5)
+                .fieldValue(SimpleObject::getSc, '=')
+                .fieldValue(SimpleObject::getStrings, new DataCreator<List<String>>() {
+                    @Override
+                    public List<String> mock(Class<?> cla, Field field, MockDataCreator.Creator creator) {
+                        List<String> list = new ArrayList<>();
+                        list.add(testStr);
+                        return list;
+                    }
+                });
+        check(creator.mock(SimpleObject.class), o -> o != null
+                && o.getSelfC() != null && o.getSelfC().getSelfC() != null
+                && o.getaWithB() != null && o.getaWithB().getB() == null
+                && o.getbWithA() != null && o.getbWithA().getA() == null
+                && o.getsS() == null && o.getsSa() != null && o.getsSa().length > 0 && o.getsSa()[0] != 0
+                && o.getsBo() == null && o.getsBoa() == null
+                && o.getSi() == 5 && o.getSc() == '='
+                && o.getStrings() != null && o.getStrings().get(0).equals(testStr));
+        creator.getConfig()
+                .autoCascade(true);
+        creator.getConfig().clearFieldFilter();
+        creator.getConfig().clearClassFilter();
     }
 
     private <T> void check(T t, Predicate<T> predicate) {

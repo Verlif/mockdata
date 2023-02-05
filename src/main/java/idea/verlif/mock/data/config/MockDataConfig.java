@@ -1,27 +1,14 @@
 package idea.verlif.mock.data.config;
 
-import idea.verlif.mock.data.MockDataCreator;
-import idea.verlif.mock.data.config.filter.ClassFilter;
-import idea.verlif.mock.data.config.filter.FieldFilter;
-import idea.verlif.mock.data.creator.DataCreator;
-import idea.verlif.mock.data.creator.DataFiller;
-import idea.verlif.mock.data.creator.InstanceCreator;
 import idea.verlif.mock.data.domain.SFunction;
 import idea.verlif.mock.data.domain.counter.StringCounter;
-import idea.verlif.mock.data.exception.ClassNotMatchException;
-import idea.verlif.mock.data.exception.MockDataException;
-import idea.verlif.mock.data.util.ContainsUtil;
 import idea.verlif.mock.data.util.NamingUtil;
 import idea.verlif.mock.data.util.ReflectUtil;
-
-import java.lang.reflect.Field;
-import java.util.*;
-import java.util.regex.Pattern;
 
 /**
  * @author Verlif
  */
-public class MockDataConfig {
+public class MockDataConfig extends CommonConfig {
 
     private static final int ARRAY_SIZE = 5;
     private static final int DEFAULT_DEPTH = 2;
@@ -37,61 +24,15 @@ public class MockDataConfig {
     private SizeCreator arraySizeCreator;
 
     /**
-     * 属性创造器表
-     */
-    private final Map<String, DataCreator<?>> fieldCreatorMap;
-
-    /**
-     * 接口类型构造器表
-     */
-    private final Map<Class<?>, DataCreator<?>> interfaceCreatorMap;
-
-    /**
-     * 实例构造器表
-     */
-    private final Map<String, InstanceCreator<?>> instanceCreatorMap;
-
-    /**
      * 自动级联构建
      */
     private boolean autoCascade;
-
-    /**
-     * 级联构造列表
-     */
-    private final Set<String> cascadeCreateSet;
-
-    /**
-     * 级联构造正则列表
-     */
-    private final List<Pattern> cascadeCreatePattern;
-
-    /**
-     * 属性过滤器列表
-     */
-    private final ArrayList<FieldFilter> fieldFilters;
-
-    /**
-     * 类过滤器列表
-     */
-    private final ArrayList<ClassFilter> classFilters;
 
     /**
      * 强制生成新对象。<br>
      * 例如基础属性在声明时就存在默认对象，此时在forceNew为false的情况下就会被忽略。
      */
     private boolean forceNew = false;
-
-    public MockDataConfig() {
-        fieldCreatorMap = new HashMap<>();
-        interfaceCreatorMap = new HashMap<>();
-        instanceCreatorMap = new HashMap<>();
-        cascadeCreateSet = new HashSet<>();
-        cascadeCreatePattern = new ArrayList<>();
-
-        fieldFilters = new ArrayList<>();
-        classFilters = new ArrayList<>();
-    }
 
     public MockDataConfig copy() {
         MockDataConfig config = new MockDataConfig();
@@ -181,344 +122,6 @@ public class MockDataConfig {
         return this;
     }
 
-    public <T> DataCreator<T> getDataCreator(String key) {
-        return (DataCreator<T>) fieldCreatorMap.get(key);
-    }
-
-    /**
-     * 添加或替换属性数据创造器
-     *
-     * @param function 属性获取表达式
-     * @param creator  数据创造器
-     */
-    private <T> void addFieldValue(SFunction<T, ?> function, DataCreator<?> creator) {
-        Field field = ReflectUtil.getFieldFromLambda(function, true);
-        addFieldValue(NamingUtil.getKeyName(field), creator);
-    }
-
-    /**
-     * 添加或替换属性数据创造器
-     *
-     * @param function 属性获取表达式
-     * @param creator  数据创造器
-     */
-    public <T> MockDataConfig fieldValue(SFunction<T, ?> function, DataCreator<?> creator) {
-        addFieldValue(function, creator);
-        return this;
-    }
-
-    /**
-     * 添加或替换属性数据填充器
-     *
-     * @param function 属性获取表达式
-     * @param filler   数据填充器
-     */
-    public <T> MockDataConfig fieldValue(SFunction<T, ?> function, DataFiller<?> filler) {
-        addFieldValue(function, filler);
-        return this;
-    }
-
-    /**
-     * 添加或替换属性数据
-     *
-     * @param function 属性获取表达式
-     * @param o        属性对应数据
-     */
-    public <T> MockDataConfig fieldValue(SFunction<T, ?> function, Object o) {
-        addFieldValue(function, new StaticValueCreator(o));
-        return this;
-    }
-
-    /**
-     * 添加或替换属性数据创造器
-     *
-     * @param key     属性key值
-     * @param creator 数据创造器
-     */
-    private void addFieldValue(String key, DataCreator<?> creator) {
-        if (creator.getClass().getName().contains("$Lambda")) {
-            throw new MockDataException("Lambda expressions are not recognized!");
-        }
-        fieldCreatorMap.put(
-                key,
-                creator);
-    }
-
-    /**
-     * 添加或替换属性数据创造器
-     *
-     * @param key     属性key值
-     * @param creator 数据创造器
-     */
-    public MockDataConfig fieldValue(String key, DataCreator<?> creator) {
-        addFieldValue(key, creator);
-        return this;
-    }
-
-    /**
-     * 添加或替换属性数据创造器
-     *
-     * @param cla     目标类
-     * @param creator 数据创造器
-     */
-    private void addFieldValue(Class<?> cla, DataCreator<?> creator) {
-        String key = NamingUtil.getKeyName(cla);
-        addFieldValue(key, creator);
-    }
-
-    /**
-     * 添加或替换属性数据创造器
-     *
-     * @param creator 数据创造器
-     */
-    private void addFieldValue(DataCreator<?> creator) {
-        for (Class<?> cla : creator.types()) {
-            addFieldValue(cla, creator);
-        }
-    }
-
-    /**
-     * 添加或替换属性数据创造器
-     *
-     * @param cla     目标类
-     * @param creator 数据填充器
-     */
-    public <T> MockDataConfig fieldValue(Class<T> cla, DataCreator<T> creator) {
-        if (creator.getClass().getName().contains("$Lambda")) {
-            throw new MockDataException("Lambda expressions are not recognized!");
-        }
-        addFieldValue(cla, creator);
-        return this;
-    }
-
-    /**
-     * 添加或替换属性接口创造器
-     *
-     * @param cla    目标类
-     * @param creator 数据填充器
-     */
-    public MockDataConfig interfaceValue(Class<?> cla, DataCreator<?> creator) {
-        if (creator.getClass().getName().contains("$Lambda")) {
-            throw new MockDataException("Lambda expressions are not recognized!");
-        }
-        addInterfaceValue(cla, creator);
-        return this;
-    }
-
-    /**
-     * 添加或替换属性接口创造器
-     *
-     * @param cla    目标类
-     * @param filler 数据填充器
-     */
-    private void addInterfaceValue(Class<?> cla, DataCreator<?> filler) {
-        if (cla.isInterface()) {
-            this.interfaceCreatorMap.put(cla, filler);
-        } else {
-            throw new ClassNotMatchException(cla + " is not interface!");
-        }
-    }
-
-    public DataCreator<?> getDataFiller(Class<?> cla) {
-        return interfaceCreatorMap.get(cla);
-    }
-
-    /**
-     * 添加或替换属性数据创造器
-     *
-     * @param cla    目标类
-     * @param filler 数据创造器
-     */
-    public <T> MockDataConfig fieldValue(Class<T> cla, DataFiller<?> filler) {
-        if (filler.getClass().getName().contains("$Lambda")) {
-            throw new MockDataException("Lambda expressions are not recognized!");
-        }
-        addFieldValue(cla, filler);
-        return this;
-    }
-
-    /**
-     * 添加或替换属性数据
-     *
-     * @param cla 目标类
-     * @param o   属性对应数据
-     */
-    public <T> MockDataConfig fieldValue(Class<T> cla, Object o) {
-        addFieldValue(cla, new StaticValueCreator(o));
-        return this;
-    }
-
-    /**
-     * 添加或替换属性数据创造器
-     *
-     * @param creator 数据创造器
-     */
-    public MockDataConfig fieldValue(DataCreator<?> creator) {
-        addFieldValue(creator);
-        return this;
-    }
-
-    /**
-     * 是否拥有独立属性构造器
-     *
-     * @param key 属性key
-     */
-    public boolean hasFiledCreator(String key) {
-        return fieldCreatorMap.containsKey(key);
-    }
-
-    /**
-     * 添加实例构造器
-     *
-     * @param creator 实例构造器
-     */
-    private void addInstanceCreator(InstanceCreator<?> creator) {
-        Class<?> cla = creator.matched();
-        if (cla != null) {
-            instanceCreatorMap.put(NamingUtil.getKeyName(cla), creator);
-        }
-    }
-
-    /**
-     * 添加实例构造器
-     *
-     * @param creator 实例构造器
-     */
-    public MockDataConfig instanceCreator(InstanceCreator<?> creator) {
-        addInstanceCreator(creator);
-        return this;
-    }
-
-    /**
-     * 获取实例构造器
-     *
-     * @param cla 实例类
-     * @param <T> 实例类
-     * @return 实例类对应实例构造器
-     */
-    public <T> InstanceCreator<T> getInstanceCreator(Class<T> cla) {
-        return (InstanceCreator<T>) instanceCreatorMap.get(NamingUtil.getKeyName(cla));
-    }
-
-    /**
-     * 添加级联构造的类
-     *
-     * @param clas 需要级联构造的类
-     */
-    public MockDataConfig cascadeCreateKey(Class<?>... clas) {
-        for (Class<?> cla : clas) {
-            addCascadeCreateKey(NamingUtil.getKeyName(cla));
-        }
-        return this;
-    }
-
-    /**
-     * 添加级联构造的属性
-     *
-     * @param function 需要级联构造的属性
-     */
-    private <T> void addCascadeCreateKey(SFunction<T, ?> function) {
-        addCascadeCreateKey(NamingUtil.getKeyName(ReflectUtil.getFieldFromLambda(function, true)));
-    }
-
-    /**
-     * 添加级联构造的属性
-     *
-     * @param function 需要级联构造的属性
-     */
-    public <T> MockDataConfig cascadeCreateKey(SFunction<T, ?> function) {
-        addCascadeCreateKey(function);
-        return this;
-    }
-
-    /**
-     * 添加级联构造的key
-     *
-     * @param key 需要级联构造的key
-     */
-    private void addCascadeCreateKey(String key) {
-        cascadeCreateSet.add(key);
-    }
-
-    /**
-     * 添加级联构造的属性key的正则表达
-     *
-     * @param regex 需要级联构造的属性key的正则表达
-     */
-    public MockDataConfig cascadeCreatePattern(String... regex) {
-        for (String s : regex) {
-            addCascadeCreatePattern(s);
-        }
-        return this;
-    }
-
-    /**
-     * 添加级联构造的属性key的正则表达
-     *
-     * @param regex 需要级联构造的属性key的正则表达
-     */
-    private void addCascadeCreatePattern(String regex) {
-        cascadeCreatePattern.add(Pattern.compile(regex));
-    }
-
-    /**
-     * 添加级联构造的属性key的包名
-     *
-     * @param packName 需要级联构造的包名
-     */
-    public MockDataConfig cascadeCreatePackage(String... packName) {
-        for (String s : packName) {
-            addCascadeCreatePackage(s);
-        }
-        return this;
-    }
-
-    /**
-     * 添加级联构造的属性key的包名
-     *
-     * @param packName 需要级联构造的包名
-     */
-    private void addCascadeCreatePackage(String packName) {
-        addCascadeCreatePattern(packName + ".*" + NamingUtil.KEY_SUFFIX_CLASS);
-    }
-
-    /**
-     * 添加级联构造的key
-     *
-     * @param key 需要级联构造的key
-     */
-    public MockDataConfig cascadeCreateKey(String key) {
-        addCascadeCreateKey(key);
-        return this;
-    }
-
-    /**
-     * 移除级联构造的类
-     *
-     * @param cla 需要级联构造的类
-     */
-    public void removeCascadeCreateKey(Class<?> cla) {
-        removeCascadeCreateKey(NamingUtil.getKeyName(cla));
-    }
-
-    /**
-     * 移除级联构造的属性
-     *
-     * @param function 需要级联构造的属性
-     */
-    public <T> void removeCascadeCreateKey(SFunction<T, ?> function) {
-        removeCascadeCreateKey(NamingUtil.getKeyName(ReflectUtil.getFieldFromLambda(function, true)));
-    }
-
-    /**
-     * 移除级联构造的key
-     *
-     * @param key 需要级联构造的key
-     */
-    private void removeCascadeCreateKey(String key) {
-        cascadeCreateSet.remove(key);
-    }
-
     /**
      * 设置自动级联构造标识
      *
@@ -535,56 +138,9 @@ public class MockDataConfig {
      * @param key 目标key
      * @return 目标key是否级联构造
      */
+    @Override
     public boolean isCascadeCreate(String key) {
-        return autoCascade || ContainsUtil.checkContains(key, cascadeCreateSet, cascadeCreatePattern);
-    }
-
-    /**
-     * 添加类过滤器
-     *
-     * @param filter 类过滤器
-     */
-    public MockDataConfig filter(ClassFilter filter) {
-        classFilters.add(filter);
-        return this;
-    }
-
-    /**
-     * 添加属性过滤器
-     *
-     * @param filter 属性过滤器
-     */
-    public MockDataConfig filter(FieldFilter filter) {
-        fieldFilters.add(filter);
-        return this;
-    }
-
-    /**
-     * 判断该属性是否是被忽略的
-     *
-     * @param field 目标属性
-     */
-    public boolean isAllowedField(Field field) {
-        for (FieldFilter filter : fieldFilters) {
-            if (!filter.accept(field)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
-     * 判断该类是否是被忽略的
-     *
-     * @param cla 目标类
-     */
-    public boolean isAllowedClass(Class<?> cla) {
-        for (ClassFilter filter : classFilters) {
-            if (!filter.accept(cla)) {
-                return false;
-            }
-        }
-        return true;
+        return autoCascade || super.isCascadeCreate(key);
     }
 
     /**
@@ -604,20 +160,4 @@ public class MockDataConfig {
         }
     }
 
-    /**
-     * 静态值返回器
-     */
-    private static final class StaticValueCreator implements DataCreator<Object> {
-
-        private final Object o;
-
-        public StaticValueCreator(Object o) {
-            this.o = o;
-        }
-
-        @Override
-        public Object mock(Class<?> cla, Field field, MockDataCreator.Creator creator) {
-            return o;
-        }
-    }
 }

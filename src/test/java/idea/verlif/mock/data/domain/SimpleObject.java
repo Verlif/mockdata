@@ -79,6 +79,12 @@ public class SimpleObject {
 
     private Map<Integer, Double> doubleMap;
 
+    private AWithB aWithB;
+
+    private BWithA bWithA;
+
+    private SelfC selfC;
+
     public int getSi() {
         return si;
     }
@@ -375,4 +381,27 @@ public class SimpleObject {
         this.doubleMap = doubleMap;
     }
 
+    public AWithB getaWithB() {
+        return aWithB;
+    }
+
+    public void setaWithB(AWithB aWithB) {
+        this.aWithB = aWithB;
+    }
+
+    public BWithA getbWithA() {
+        return bWithA;
+    }
+
+    public void setbWithA(BWithA bWithA) {
+        this.bWithA = bWithA;
+    }
+
+    public SelfC getSelfC() {
+        return selfC;
+    }
+
+    public void setSelfC(SelfC selfC) {
+        this.selfC = selfC;
+    }
 }

@@ -1,12 +1,12 @@
 package idea.verlif.mock.data;
 
+import idea.verlif.mock.data.config.CommonConfig;
 import idea.verlif.mock.data.config.MockDataConfig;
 import idea.verlif.mock.data.creator.DataCreator;
 import idea.verlif.mock.data.creator.InstanceCreator;
 import idea.verlif.mock.data.creator.data.*;
 import idea.verlif.mock.data.domain.SFunction;
 import idea.verlif.mock.data.domain.counter.StringCounter;
-import idea.verlif.mock.data.exception.MockDataException;
 import idea.verlif.mock.data.util.NamingUtil;
 import idea.verlif.mock.data.util.ReflectUtil;
 
@@ -14,7 +14,6 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -24,21 +23,11 @@ import java.util.Set;
  *
  * @author Verlif
  */
-public class MockDataCreator {
-
-    private final Map<String, DataCreator<?>> defaultCreatorMap;
-
-    /**
-     * 接口类型构造器表
-     */
-    private final Map<Class<?>, DataCreator<?>> interfaceCreatorMap;
+public class MockDataCreator extends CommonConfig {
 
     private MockDataConfig config;
 
     public MockDataCreator() {
-        this.defaultCreatorMap = new HashMap<>();
-        this.interfaceCreatorMap = new HashMap<>();
-
         this.config = new MockDataConfig();
         useBaseData();
         useExtendData();
@@ -57,82 +46,34 @@ public class MockDataCreator {
      * 使用基础数据
      */
     public void useBaseData() {
-        addDefaultCreator(new ByteRandomCreator());
-        addDefaultCreator(new BooleanRandomCreator());
-        addDefaultCreator(new ShortRandomCreator());
-        addDefaultCreator(new IntegerRandomCreator());
-        addDefaultCreator(new LongRandomCreator());
-        addDefaultCreator(new FloatRandomCreator());
-        addDefaultCreator(new DoubleRandomCreator());
-        addDefaultCreator(new CharacterRandomCreator());
-        addDefaultCreator(new StringRandomCreator());
-        addDefaultCreator(new DateRandomCreator());
-        addDefaultCreator(new EnumRandomCreator());
+        addFieldValue(new ByteRandomCreator());
+        addFieldValue(new BooleanRandomCreator());
+        addFieldValue(new ShortRandomCreator());
+        addFieldValue(new IntegerRandomCreator());
+        addFieldValue(new LongRandomCreator());
+        addFieldValue(new FloatRandomCreator());
+        addFieldValue(new DoubleRandomCreator());
+        addFieldValue(new CharacterRandomCreator());
+        addFieldValue(new StringRandomCreator());
+        addFieldValue(new DateRandomCreator());
+        addFieldValue(new EnumRandomCreator());
     }
 
     /**
      * 使用拓展数据
      */
     public void useExtendData() {
-        addDefaultCreator(new BigIntegerCreator());
-        addDefaultCreator(new BigDecimalCreator());
-        addDefaultCreator(new LocalDateCreator());
-        addDefaultCreator(new LocalTimeCreator());
-        addDefaultCreator(new LocalDateTimeCreator());
+        addFieldValue(new BigIntegerCreator());
+        addFieldValue(new BigDecimalCreator());
+        addFieldValue(new LocalDateCreator());
+        addFieldValue(new LocalTimeCreator());
+        addFieldValue(new LocalDateTimeCreator());
     }
 
     public void useBaseFiller() {
         addInterfaceValue(List.class, new ListCreator());
         addInterfaceValue(Map.class, new MapCreator());
         addInterfaceValue(Set.class, new SetCreator());
-    }
-
-    /**
-     * 添加或是替换数据创造器
-     *
-     * @param creator 数据创造器
-     */
-    public <T> void addDefaultCreator(DataCreator<T> creator) {
-        if (creator.getClass().getName().contains("$Lambda")) {
-            throw new MockDataException("Lambda expressions are not recognized!");
-        }
-        for (Class<?> cla : creator.types()) {
-            defaultCreatorMap.put(NamingUtil.getKeyName(cla), creator);
-        }
-    }
-
-    /**
-     * 添加或是替换数据创造器
-     *
-     * @param creator 数据创造器
-     */
-    public MockDataCreator defaultCreator(DataCreator<?> creator) {
-        addDefaultCreator(creator);
-        return this;
-    }
-
-    /**
-     * 添加或替换属性接口创造器
-     *
-     * @param cla     目标类
-     * @param creator 数据填充器
-     */
-    public MockDataCreator interfaceValue(Class<?> cla, DataCreator<?> creator) {
-        if (creator.getClass().getName().contains("$Lambda")) {
-            throw new MockDataException("Lambda expressions are not recognized!");
-        }
-        addInterfaceValue(cla, creator);
-        return this;
-    }
-
-    /**
-     * 添加或替换属性接口创造器
-     *
-     * @param cla    目标类
-     * @param filler 数据填充器
-     */
-    private void addInterfaceValue(Class<?> cla, DataCreator<?> filler) {
-        this.interfaceCreatorMap.put(cla, filler);
     }
 
     /**
@@ -199,6 +140,16 @@ public class MockDataCreator {
         return t;
     }
 
+    @Override
+    public boolean isCascadeCreate(String key) {
+        // 默认级联构建
+        if (cascadeCreateSet.size() == 0 && cascadeCreatePattern.size() == 0) {
+            return true;
+        } else {
+            return super.isCascadeCreate(key);
+        }
+    }
+
     /**
      * 构建器
      */
@@ -237,7 +188,7 @@ public class MockDataCreator {
         public <T> T mockClass(Class<T> cla) {
             Class<?> realClass = getRealClass(cla);
             // 是否是忽略类
-            if (mockConfig.isAllowedClass(realClass)) {
+            if (isAllowedClass(realClass)) {
                 T t;
                 // 检测是否存在自定义构建器
                 DataCreator<?> dataCreator = getDataCreator(cla);
@@ -246,7 +197,7 @@ public class MockDataCreator {
                     t = newInstance(cla);
                     String claKey = NamingUtil.getKeyName(realClass);
                     // 如果此类允许级联构造则进行mock
-                    if (mockConfig.isCascadeCreate(claKey)) {
+                    if (isCascadeCreate(claKey)) {
                         mock(t, cla);
                     } else if (cla.isArray()) {
                         fillArray(t, cla);
@@ -269,7 +220,7 @@ public class MockDataCreator {
          */
         public <T> T mock(T t, Class<T> cla) {
             // 判断是否是忽略类
-            if (mockConfig.isAllowedClass(getRealClass(cla))) {
+            if (isAllowedClass(getRealClass(cla))) {
                 // 按照类型进行填装
                 if (cla.isEnum()) {
                     return t;
@@ -329,7 +280,7 @@ public class MockDataCreator {
                 Class<?> fieldCla = field.getType();
                 Class<?> realCla = getRealClass(fieldCla);
                 // 判断此属性是否支持构建
-                if (mockConfig.isAllowedField(field) && mockConfig.isAllowedClass(realCla)) {
+                if (isAllowedField(field) && isAllowedClass(realCla)) {
                     String fieldKey = NamingUtil.getKeyName(field);
                     String claKey = NamingUtil.getKeyName(realCla);
                     int max = getCreatingDepth(fieldKey, claKey);
@@ -360,7 +311,7 @@ public class MockDataCreator {
                                 o = newInstance(fieldCla);
                                 if (fieldCla.isArray()) {
                                     fillArray(o, fieldCla);
-                                } else if (mockConfig.isCascadeCreate(claKey) || mockConfig.isCascadeCreate(fieldKey)) {
+                                } else if (isCascadeCreate(claKey) || isCascadeCreate(fieldKey)) {
                                     // 进行级联构造
                                     fillField(o, fieldCla);
                                 }
@@ -399,6 +350,18 @@ public class MockDataCreator {
             return arrayClass;
         }
 
+        private boolean isCascadeCreate(String key) {
+            return MockDataCreator.this.isCascadeCreate(key) && mockConfig.isCascadeCreate(key);
+        }
+
+        private boolean isAllowedField(Field field) {
+            return MockDataCreator.this.isAllowedField(field) && mockConfig.isAllowedField(field);
+        }
+
+        private boolean isAllowedClass(Class<?> cla) {
+            return MockDataCreator.this.isAllowedClass(cla) && mockConfig.isAllowedClass(cla);
+        }
+
         /**
          * 创建新实例
          *
@@ -407,7 +370,7 @@ public class MockDataCreator {
          * @return 实例对象
          */
         public <T> T newInstance(Class<T> cla, Object... params) {
-            InstanceCreator<T> instanceCreator = mockConfig.getInstanceCreator(cla);
+            InstanceCreator<T> instanceCreator = getInstanceCreator(cla);
             // 实例构造器不存在时，尝试进行参数构造
             if (instanceCreator == null) {
                 if (cla.isArray()) {
@@ -425,6 +388,19 @@ public class MockDataCreator {
         }
 
         /**
+         * 获取实例化构造器
+         *
+         * @param cla 目标类
+         */
+        public <T> InstanceCreator<T> getInstanceCreator(Class<T> cla) {
+            InstanceCreator<T> instanceCreator = mockConfig.getInstanceCreator(cla);
+            if (instanceCreator == null) {
+                instanceCreator = MockDataCreator.this.getInstanceCreator(cla);
+            }
+            return instanceCreator;
+        }
+
+        /**
          * 获取数据构造器
          *
          * @param key 构造器key
@@ -433,15 +409,20 @@ public class MockDataCreator {
         public DataCreator<?> getDataCreator(String key) {
             DataCreator<?> creator = mockConfig.getDataCreator(key);
             if (creator == null) {
-                creator = defaultCreatorMap.get(key);
+                creator = MockDataCreator.this.getDataCreator(key);
             }
             return creator;
         }
 
+        /**
+         * 获取接口构造器
+         *
+         * @param cla 目标类
+         */
         public DataCreator<?> getInterfaceCreator(Class<?> cla) {
-            DataCreator<?> creator = mockConfig.getDataFiller(cla);
+            DataCreator<?> creator = mockConfig.getInterfaceValue(cla);
             if (creator == null) {
-                creator = interfaceCreatorMap.get(cla);
+                creator = MockDataCreator.this.getInterfaceValue(cla);
             }
             return creator;
         }
