@@ -10,7 +10,6 @@ import idea.verlif.mock.data.domain.*;
 import org.junit.*;
 import stopwatch.Stopwatch;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -115,13 +114,14 @@ public class MockDataTest {
 
     @Test
     public void complexObjectTest() {
-        // TODO: 增加接口类型构建器，便于类似List或Map进行数值填充
         check(creator.mock(ComplexObject.class), o -> o != null
                 && o.getMapExtend() != null && o.getMapExtend().size() > 0
-                && o.getMyArrayList() != null && o.getMyArrayList().size() > 0);
+                && o.getMyArrayList() != null && o.getMyArrayList().size() > 0
+                && o.getMyListMyMap() != null && o.getMyListMyMap().size() > 0);
         check(creator.mock(new ComplexObject()), o -> o != null
                 && o.getMapExtend() != null && o.getMapExtend().size() > 0
-                && o.getMyArrayList() != null && o.getMyArrayList().size() > 0);
+                && o.getMyArrayList() != null && o.getMyArrayList().size() > 0
+                && o.getMyListMyMap() != null && o.getMyListMyMap().size() > 0);
     }
 
     /**
@@ -237,13 +237,10 @@ public class MockDataTest {
         // 自定义数据构建器测试
         final String name = "测试生成数据";
         creator.getConfig()
-                .fieldValue(AWithB.class, new DataCreator<AWithB>() {
-                    @Override
-                    public AWithB mock(Class<?> cla, Field field, MockDataCreator.Creator creator) {
-                        AWithB a = new AWithB();
-                        a.setName(name);
-                        return a;
-                    }
+                .fieldValue(AWithB.class, (cla, field, creator) -> {
+                    AWithB a = new AWithB();
+                    a.setName(name);
+                    return a;
                 });
         printlnFormatted("DataCreator testing result", name.equals(creator.mock(AWithB.class).getName()));
 
@@ -292,13 +289,10 @@ public class MockDataTest {
                 .cascadeCreateKey(SimpleObject::getSelfC)
                 .fieldValue(int.class, 5)
                 .fieldValue(SimpleObject::getSc, '=')
-                .fieldValue(SimpleObject::getStrings, new DataCreator<List<String>>() {
-                    @Override
-                    public List<String> mock(Class<?> cla, Field field, MockDataCreator.Creator creator) {
-                        List<String> list = new ArrayList<>();
-                        list.add(testStr);
-                        return list;
-                    }
+                .fieldValue(SimpleObject::getStrings, (DataCreator<List<String>>) (cla, field, creator) -> {
+                    List<String> list = new ArrayList<>();
+                    list.add(testStr);
+                    return list;
                 });
         check(creator.mock(SimpleObject.class), o -> o != null
                 && o.getSelfC() != null && o.getSelfC().getSelfC() != null

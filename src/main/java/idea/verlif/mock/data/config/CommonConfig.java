@@ -123,9 +123,6 @@ public class CommonConfig {
      * @param creator 数据创造器
      */
     protected void addFieldValue(String key, DataCreator<?> creator) {
-        if (creator.getClass().getName().contains("$Lambda")) {
-            throw new MockDataException("Lambda expressions are not recognized!");
-        }
         fieldCreatorMap.put(
                 key,
                 creator);
@@ -159,6 +156,9 @@ public class CommonConfig {
      * @param creator 数据创造器
      */
     protected void addFieldValue(DataCreator<?> creator) {
+        if (creator.getClass().getName().contains("$Lambda")) {
+            throw new MockDataException("Lambda expressions are not recognized!");
+        }
         for (Class<?> cla : creator.types()) {
             addFieldValue(cla, creator);
         }
@@ -171,9 +171,6 @@ public class CommonConfig {
      * @param creator 数据填充器
      */
     public <T> CommonConfig fieldValue(Class<T> cla, DataCreator<T> creator) {
-        if (creator.getClass().getName().contains("$Lambda")) {
-            throw new MockDataException("Lambda expressions are not recognized!");
-        }
         addFieldValue(cla, creator);
         return this;
     }
@@ -194,9 +191,6 @@ public class CommonConfig {
      * @param creator 数据填充器
      */
     public CommonConfig interfaceValue(Class<?> cla, DataCreator<?> creator) {
-        if (creator.getClass().getName().contains("$Lambda")) {
-            throw new MockDataException("Lambda expressions are not recognized!");
-        }
         addInterfaceValue(cla, creator);
         return this;
     }
@@ -222,9 +216,6 @@ public class CommonConfig {
      * @param filler 数据创造器
      */
     public <T> CommonConfig fieldValue(Class<T> cla, DataFiller<?> filler) {
-        if (filler.getClass().getName().contains("$Lambda")) {
-            throw new MockDataException("Lambda expressions are not recognized!");
-        }
         addFieldValue(cla, filler);
         return this;
     }
@@ -442,7 +433,7 @@ public class CommonConfig {
     }
 
     public void clearFieldFilter() {
-        fieldFilters.clear();;
+        fieldFilters.clear();
     }
 
     public void clearClassFilter() {

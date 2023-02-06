@@ -62,6 +62,18 @@
 
    ```java
    config
+        // 设定通用的构造深度
+        .creatingDepth(4)
+        // 指定SelfIt的selfOne属性的构造深度为1
+        .creatingDepth(SelfIt::getSelfOne, 1)
+        // int类的数组默认大小为2，其他类随机大小
+        .arraySize(cla -> {
+            if (cla == int.class) {
+                return 2;
+            } else {
+                return new Random().nextInt(10);
+            }
+        })
         // 使用字典生成name属性
         .fieldValue(Student::getName, new DictDataCreator<>(new String[]{
             "小明", "小红", "小王", "小赵", "小李", "小周", "小强"
@@ -84,18 +96,6 @@
                 } else {
                     return null;
                 }
-            }
-        })
-        // 设定通用的构造深度
-        .creatingDepth(4)
-        // 指定SelfIt的selfOne属性的构造深度为1
-        .creatingDepth(SelfIt::getSelfOne, 1)
-        // int类的数组默认大小为2，其他类随机大小
-        .arraySize(cla -> {
-            if (cla == int.class) {
-                return 2;
-            } else {
-                return new Random().nextInt(10);
             }
         })
         // 只允许private或protect的属性进行构建
@@ -139,8 +139,8 @@ __目前自动构建暂不支持非静态内部类，有需要请使用添加自
 
 - __mock__ 无法实例化的类（例如接口或是抽象类）时，请给予实例构建器。
 - __mock__ 构建带有泛型但未指明泛型的类时，大概率无法构建成功，请指定泛型类型或实例构建器。
-- 在添加`DataCreator`时请勿使用 __lambda__ 表达式，否则会无法识别`DataCreator`的匹配类型。
-  - 例如`creator.addDefaultCreator((DataCreator<String>) (cla, field, creator1) -> "String.String")`会抛出异常，可以使用匿名内部类来代替。
+- 在使用`fieldValue(DataCreator)`时请勿使用 __lambda__ 表达式，否则会无法识别`DataCreator`的匹配类型。
+  - 例如`creator.fieldValue((DataCreator<String>) (cla, field, creator1) -> "String.String")`会抛出异常，可以使用匿名内部类表述或通过双参的方法显式指明匹配类型。
 
 ## 添加依赖
 
