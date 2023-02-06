@@ -2,6 +2,7 @@ package idea.verlif.mock.data.creator.data;
 
 import idea.verlif.mock.data.MockDataCreator;
 import idea.verlif.mock.data.creator.DataCreator;
+import idea.verlif.mock.data.domain.MockSrc;
 
 import java.lang.reflect.Field;
 import java.math.BigInteger;
@@ -19,7 +20,7 @@ public class BigIntegerCreator implements DataCreator<BigInteger> {
     }
 
     @Override
-    public BigInteger mock(Class<?> cla, Field field, MockDataCreator.Creator creator) {
+    public BigInteger mock(MockSrc src, MockDataCreator.Creator creator) {
         long ran = random.nextLong();
         return BigInteger.valueOf(ran);
     }

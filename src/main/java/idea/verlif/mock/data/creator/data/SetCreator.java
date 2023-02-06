@@ -2,8 +2,8 @@ package idea.verlif.mock.data.creator.data;
 
 import idea.verlif.mock.data.MockDataCreator;
 import idea.verlif.mock.data.creator.DataCreator;
+import idea.verlif.mock.data.domain.MockSrc;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -30,47 +30,52 @@ public class SetCreator implements DataCreator<Set<?>> {
     }
 
     @Override
-    public Set<?> mock(Class<?> cla, Field field, MockDataCreator.Creator creator) {
-        this.target = cla == Set.class ? HashSet.class : cla;
+    public Set<?> mock(MockSrc src, MockDataCreator.Creator creator) {
+        Type type = src.getType();
+        this.target = src.getRawClass();
+        if (this.target == Set.class) {
+            this.target = HashSet.class;
+        }
         if (this.size == null) {
-            this.size = creator.getMockConfig().getArraySize(cla);
+            this.size = creator.getMockConfig().getArraySize(this.target);
         }
-        Type rawType = Object.class;
-        if (field != null) {
-            Type type = field.getGenericType();
-            if (type instanceof ParameterizedType) {
-                Type argument = ((ParameterizedType) type).getActualTypeArguments()[0];
-                return fillSet(argument, creator);
-            } else if (type instanceof Class) {
-                return (Set<?>) creator.mockClass(((Class<?>) type));
-            }
-        } else {
-            Type genericSuperclass = cla.getGenericSuperclass();
+        if (type instanceof ParameterizedType) {
+            Type[] arguments = ((ParameterizedType) type).getActualTypeArguments();
+            return fillSet(arguments[0], creator);
+        } else if (type instanceof Class) {
+            Type genericSuperclass = this.target.getGenericSuperclass();
             if (genericSuperclass instanceof ParameterizedType) {
-                rawType = ((ParameterizedType) genericSuperclass).getActualTypeArguments()[0];
+                Type argument = ((ParameterizedType) genericSuperclass).getActualTypeArguments()[0];
+                return fillSet(argument, creator);
             }
-            return fillSet(rawType, creator);
         }
-        return newInstance(cla, creator);
+        return (Set<?>) src.getOldObj();
     }
 
     private Set<?> fillSet(Type type, MockDataCreator.Creator creator) {
-        Set<Object> set = newInstance(target, creator);
+        Set<Object> Set = newInstance(target, creator);
         if (type instanceof Class) {
             for (int i = 0; i < size; i++) {
                 Object o = creator.mockClass((Class<?>) type);
-                set.add(o);
+                Set.add(o);
             }
         } else if (type instanceof ParameterizedType) {
             Type rawType = ((ParameterizedType) type).getRawType();
-            if (rawType instanceof Class && Set.class.isAssignableFrom((Class<?>) rawType)) {
-                for (int i = 0; i < size; i++) {
-                    Object o = fillSet(((ParameterizedType) type).getActualTypeArguments()[0], creator);
-                    set.add(o);
+            if (rawType instanceof Class) {
+                if (Set.class.isAssignableFrom((Class<?>) rawType)) {
+                    for (int i = 0; i < size; i++) {
+                        Object o = fillSet(((ParameterizedType) type).getActualTypeArguments()[0], creator);
+                        Set.add(o);
+                    }
+                } else {
+                    for (int i = 0; i < size; i++) {
+                        Object o = creator.mockSrc(new MockSrc(type, null));
+                        Set.add(o);
+                    }
                 }
             }
         }
-        return set;
+        return Set;
     }
 
     public Set<Object> newInstance(Class<?> cla, MockDataCreator.Creator creator) {
@@ -79,8 +84,9 @@ public class SetCreator implements DataCreator<Set<?>> {
 
     @Override
     public List<Class<?>> types() {
-        List<Class<?>> list = new ArrayList<>();
-        list.add(Set.class);
-        return list;
+        List<Class<?>> set = new ArrayList<>();
+        set.add(Set.class);
+        set.add(HashSet.class);
+        return set;
     }
 }

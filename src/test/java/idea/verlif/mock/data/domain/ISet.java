@@ -1,5 +1,7 @@
 package idea.verlif.mock.data.domain;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -8,6 +10,8 @@ import java.util.Set;
 public class ISet {
 
     private Set<Set<Integer>> setSet;
+
+    private Set<List<Map<IEnum, String>>> listSet;
 
     private MySet<String> mySet;
 
@@ -19,6 +23,14 @@ public class ISet {
 
     public void setSetSet(Set<Set<Integer>> setSet) {
         this.setSet = setSet;
+    }
+
+    public Set<List<Map<IEnum, String>>> getListSet() {
+        return listSet;
+    }
+
+    public void setListSet(Set<List<Map<IEnum, String>>> listSet) {
+        this.listSet = listSet;
     }
 
     public MySet<String> getMySet() {

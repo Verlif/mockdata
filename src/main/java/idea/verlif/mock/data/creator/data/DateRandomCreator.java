@@ -2,6 +2,7 @@ package idea.verlif.mock.data.creator.data;
 
 import idea.verlif.mock.data.MockDataCreator;
 import idea.verlif.mock.data.creator.DataCreator;
+import idea.verlif.mock.data.domain.MockSrc;
 
 import java.lang.reflect.Field;
 import java.util.Date;
@@ -34,7 +35,7 @@ public class DateRandomCreator implements DataCreator<Date> {
     }
 
     @Override
-    public Date mock(Class<?> cla, Field field, MockDataCreator.Creator creator) {
+    public Date mock(MockSrc src, MockDataCreator.Creator creator) {
         long offset = end - start;
         long ran = (long) (random.nextDouble() * offset + start);
         return new Date(ran);

@@ -2,6 +2,7 @@ package idea.verlif.mock.data.creator.data;
 
 import idea.verlif.mock.data.MockDataCreator;
 import idea.verlif.mock.data.creator.DataCreator;
+import idea.verlif.mock.data.domain.MockSrc;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -27,7 +28,7 @@ public class ByteRandomCreator implements DataCreator<Byte> {
     }
 
     @Override
-    public Byte mock(Class<?> cla, Field field, MockDataCreator.Creator creator) {
+    public Byte mock(MockSrc src, MockDataCreator.Creator creator) {
         int i = random.nextInt(max) - 128;
         if (random.nextBoolean()) {
             return (byte) (i + (random.nextBoolean() ? 0 : 1));

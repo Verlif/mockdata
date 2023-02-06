@@ -2,6 +2,7 @@ package idea.verlif.mock.data.creator.data;
 
 import idea.verlif.mock.data.MockDataCreator;
 import idea.verlif.mock.data.creator.DataCreator;
+import idea.verlif.mock.data.domain.MockSrc;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -38,7 +39,7 @@ public class ShortRandomCreator implements DataCreator<Short> {
     }
 
     @Override
-    public Short mock(Class<?> cla, Field field, MockDataCreator.Creator creator) {
+    public Short mock(MockSrc src, MockDataCreator.Creator creator) {
         int ran = random.nextInt(offset);
         if (random.nextBoolean()) {
             return (short) (point - ran);

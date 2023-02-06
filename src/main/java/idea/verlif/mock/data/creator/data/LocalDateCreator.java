@@ -2,6 +2,7 @@ package idea.verlif.mock.data.creator.data;
 
 import idea.verlif.mock.data.MockDataCreator;
 import idea.verlif.mock.data.creator.DataCreator;
+import idea.verlif.mock.data.domain.MockSrc;
 
 import java.lang.reflect.Field;
 import java.time.LocalDate;
@@ -29,7 +30,7 @@ public class LocalDateCreator implements DataCreator<LocalDate> {
     }
 
     @Override
-    public LocalDate mock(Class<?> cla, Field field, MockDataCreator.Creator creator) {
+    public LocalDate mock(MockSrc src, MockDataCreator.Creator creator) {
         int month = random.nextInt(12) + 1;
         return LocalDate.of(yearPoint - random.nextInt(yearOffset), month, random.nextInt(DAY_COUNT[month - 1]) + 1);
     }

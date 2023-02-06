@@ -2,6 +2,7 @@ package idea.verlif.mock.data.creator.data;
 
 import idea.verlif.mock.data.MockDataCreator;
 import idea.verlif.mock.data.creator.DataCreator;
+import idea.verlif.mock.data.domain.MockSrc;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
@@ -19,7 +20,7 @@ public class BigDecimalCreator implements DataCreator<BigDecimal> {
     }
 
     @Override
-    public BigDecimal mock(Class<?> cla, Field field, MockDataCreator.Creator creator) {
+    public BigDecimal mock(MockSrc src, MockDataCreator.Creator creator) {
         return BigDecimal.valueOf(random.nextLong()).add(BigDecimal.valueOf(random.nextDouble()));
     }
 

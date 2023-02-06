@@ -2,6 +2,7 @@ package idea.verlif.mock.data.creator.data;
 
 import idea.verlif.mock.data.MockDataCreator;
 import idea.verlif.mock.data.creator.DataCreator;
+import idea.verlif.mock.data.domain.MockSrc;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -17,7 +18,7 @@ public class BooleanRandomCreator implements DataCreator<Boolean> {
     }
 
     @Override
-    public Boolean mock(Class<?> cla, Field field, MockDataCreator.Creator creator) {
+    public Boolean mock(MockSrc src, MockDataCreator.Creator creator) {
         return random.nextBoolean();
     }
 

@@ -2,6 +2,7 @@ package idea.verlif.mock.data.creator.data;
 
 import idea.verlif.mock.data.MockDataCreator;
 import idea.verlif.mock.data.creator.DataCreator;
+import idea.verlif.mock.data.domain.MockSrc;
 
 import java.lang.reflect.Field;
 import java.util.Random;
@@ -18,8 +19,8 @@ public class EnumRandomCreator implements DataCreator<Enum<?>> {
     }
 
     @Override
-    public Enum<?> mock(Class<?> cla, Field field, MockDataCreator.Creator creator) {
-        Class<Enum<?>> type = (Class<Enum<?>>) cla;
+    public Enum<?> mock(MockSrc src, MockDataCreator.Creator creator) {
+        Class<Enum<?>> type = (Class<Enum<?>>) src.getType();
         Enum<?>[] enums = type.getEnumConstants();
         if (enums.length == 0) {
             return null;

@@ -1,6 +1,7 @@
 package idea.verlif.mock.data.domain;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Verlif
@@ -10,6 +11,8 @@ public class IList {
     private List<Double> doubles;
 
     private List<List<String>> listList;
+
+    private List<Map<IEnum, Double>> mapList;
 
     private MyList<SelfC> myList;
 
@@ -29,6 +32,14 @@ public class IList {
 
     public void setListList(List<List<String>> listList) {
         this.listList = listList;
+    }
+
+    public List<Map<IEnum, Double>> getMapList() {
+        return mapList;
+    }
+
+    public void setMapList(List<Map<IEnum, Double>> mapList) {
+        this.mapList = mapList;
     }
 
     public MyList<SelfC> getMyList() {

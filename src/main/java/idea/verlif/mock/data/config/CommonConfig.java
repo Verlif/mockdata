@@ -6,6 +6,7 @@ import idea.verlif.mock.data.config.filter.FieldFilter;
 import idea.verlif.mock.data.creator.DataCreator;
 import idea.verlif.mock.data.creator.DataFiller;
 import idea.verlif.mock.data.creator.InstanceCreator;
+import idea.verlif.mock.data.domain.MockSrc;
 import idea.verlif.mock.data.domain.SFunction;
 import idea.verlif.mock.data.exception.ClassNotMatchException;
 import idea.verlif.mock.data.exception.MockDataException;
@@ -480,7 +481,7 @@ public class CommonConfig {
         }
 
         @Override
-        public Object mock(Class<?> cla, Field field, MockDataCreator.Creator creator) {
+        public Object mock(MockSrc src, MockDataCreator.Creator creator) {
             return o;
         }
     }

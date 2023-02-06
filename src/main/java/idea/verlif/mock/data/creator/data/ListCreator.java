@@ -2,6 +2,7 @@ package idea.verlif.mock.data.creator.data;
 
 import idea.verlif.mock.data.MockDataCreator;
 import idea.verlif.mock.data.creator.DataCreator;
+import idea.verlif.mock.data.domain.MockSrc;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
@@ -28,28 +29,26 @@ public class ListCreator implements DataCreator<List<?>> {
     }
 
     @Override
-    public List<?> mock(Class<?> cla, Field field, MockDataCreator.Creator creator) {
-        this.target = cla == List.class ? ArrayList.class : cla;
+    public List<?> mock(MockSrc src, MockDataCreator.Creator creator) {
+        Type type = src.getType();
+        this.target = src.getRawClass();
+        if (this.target == List.class) {
+            this.target = ArrayList.class;
+        }
         if (this.size == null) {
-            this.size = creator.getMockConfig().getArraySize(cla);
+            this.size = creator.getMockConfig().getArraySize(this.target);
         }
-        Type rawType = Object.class;
-        if (field != null) {
-            Type type = field.getGenericType();
-            if (type instanceof ParameterizedType) {
-                Type argument = ((ParameterizedType) type).getActualTypeArguments()[0];
-                return fillList(argument, creator);
-            } else if (type instanceof Class) {
-                return (List<?>) creator.mockClass(((Class<?>) type));
-            }
-        } else {
-            Type genericSuperclass = cla.getGenericSuperclass();
+        if (type instanceof ParameterizedType) {
+            Type[] arguments = ((ParameterizedType) type).getActualTypeArguments();
+            return fillList(arguments[0], creator);
+        } else if (type instanceof Class) {
+            Type genericSuperclass = this.target.getGenericSuperclass();
             if (genericSuperclass instanceof ParameterizedType) {
-                rawType = ((ParameterizedType) genericSuperclass).getActualTypeArguments()[0];
+                Type argument = ((ParameterizedType) genericSuperclass).getActualTypeArguments()[0];
+                return fillList(argument, creator);
             }
-            return fillList(rawType, creator);
         }
-        return newInstance(cla, creator);
+        return (List<?>) src.getOldObj();
     }
 
     private List<?> fillList(Type type, MockDataCreator.Creator creator) {
@@ -61,10 +60,17 @@ public class ListCreator implements DataCreator<List<?>> {
             }
         } else if (type instanceof ParameterizedType) {
             Type rawType = ((ParameterizedType) type).getRawType();
-            if (rawType instanceof Class && List.class.isAssignableFrom((Class<?>) rawType)) {
-                for (int i = 0; i < size; i++) {
-                    Object o = fillList(((ParameterizedType) type).getActualTypeArguments()[0], creator);
-                    list.add(o);
+            if (rawType instanceof Class) {
+                if (List.class.isAssignableFrom((Class<?>) rawType)) {
+                    for (int i = 0; i < size; i++) {
+                        Object o = fillList(((ParameterizedType) type).getActualTypeArguments()[0], creator);
+                        list.add(o);
+                    }
+                } else {
+                    for (int i = 0; i < size; i++) {
+                        Object o = creator.mockSrc(new MockSrc(type, null));
+                        list.add(o);
+                    }
                 }
             }
         }
@@ -79,6 +85,7 @@ public class ListCreator implements DataCreator<List<?>> {
     public List<Class<?>> types() {
         List<Class<?>> list = new ArrayList<>();
         list.add(List.class);
+        list.add(ArrayList.class);
         return list;
     }
 }

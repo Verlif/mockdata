@@ -5,6 +5,7 @@ import idea.verlif.mock.data.config.MockDataConfig;
 import idea.verlif.mock.data.creator.DataCreator;
 import idea.verlif.mock.data.creator.InstanceCreator;
 import idea.verlif.mock.data.creator.data.*;
+import idea.verlif.mock.data.domain.MockSrc;
 import idea.verlif.mock.data.domain.SFunction;
 import idea.verlif.mock.data.domain.counter.StringCounter;
 import idea.verlif.mock.data.util.NamingUtil;
@@ -186,6 +187,11 @@ public class MockDataCreator extends CommonConfig {
          * @return 目标类
          */
         public <T> T mockClass(Class<T> cla) {
+            return mockSrc(new MockSrc(cla));
+        }
+
+        public <T> T mockSrc(MockSrc src) {
+            Class<T> cla = (Class<T>) src.getRawClass();
             Class<?> realClass = getRealClass(cla);
             // 是否是忽略类
             if (isAllowedClass(realClass)) {
@@ -203,7 +209,7 @@ public class MockDataCreator extends CommonConfig {
                         fillArray(t, cla);
                     }
                 } else {
-                    t = (T) dataCreator.mock(cla, null, this);
+                    t = (T) dataCreator.mock(src, this);
                 }
                 return t;
             }
@@ -305,7 +311,7 @@ public class MockDataCreator extends CommonConfig {
                             DataCreator<?> configCreator = getDataCreator(field);
                             // 构造器存在则使用构造器进行构造
                             if (configCreator != null) {
-                                o = configCreator.mock(fieldCla, field, this);
+                                o = configCreator.mock(new MockSrc(field, o), this);
                             } else {
                                 // 判断属性是否允许级联构造
                                 o = newInstance(fieldCla);
