@@ -27,10 +27,7 @@ public class MockSrc {
     private final Object oldObj;
 
     public MockSrc(Class<?> cla) {
-        this.type = cla;
-        this.rawClass = cla;
-        this.oldObj = null;
-        this.field = null;
+        this(cla, null);
     }
 
     public MockSrc(Type type, Object oldObj) {

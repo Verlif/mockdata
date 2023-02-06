@@ -190,6 +190,12 @@ public class MockDataCreator extends CommonConfig {
             return mockSrc(new MockSrc(cla));
         }
 
+        /**
+         * mock源数据
+         *
+         * @param src 源数据
+         * @return 源数据对应数据
+         */
         public <T> T mockSrc(MockSrc src) {
             Class<T> cla = (Class<T>) src.getRawClass();
             Class<?> realClass = getRealClass(cla);

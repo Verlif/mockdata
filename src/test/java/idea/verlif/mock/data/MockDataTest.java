@@ -55,7 +55,7 @@ public class MockDataTest {
         check(creator.mock(Double.class), o -> o != 0);
         check(creator.mock(boolean.class), o -> true);
         check(creator.mock(Boolean.class), Objects::nonNull);
-        check(creator.mock(String.class), Objects::nonNull);
+        check(creator.mock(String.class), o -> o != null && o.length() > 0);
     }
 
     /**
@@ -96,19 +96,28 @@ public class MockDataTest {
     public void simpleObjectTest() {
         check(creator.mock(SimpleObject.class),
                 o -> o != null && o.getAnEnum() != null && o.getSi() != 0
+                        && o.getsSa().length > 0 && o.getsSa()[0] != 0
                         && o.getDoubleMap() != null && o.getDoubleMap().size() > 0
+                        && o.getaWithB() != null && o.getaWithB().getB() != null
                         && o.getStrings() != null && o.getStrings().size() > 0);
         check(creator.mock(new SimpleObject()),
                 o -> o != null && o.getAnEnum() != null && o.getSi() != 0
+                        && o.getsSa().length > 0 && o.getsSa()[0] != 0
+                        && o.getsSa().length > 0 && o.getsSa()[0] != 0
                         && o.getDoubleMap() != null && o.getDoubleMap().size() > 0
+                        && o.getaWithB() != null && o.getaWithB().getB() != null
                         && o.getStrings() != null && o.getStrings().size() > 0);
         check(creator.mock(SimpleObject[].class),
                 o -> o != null && o.length > 0 && o[0].getAnEnum() != null && o[0].getSi() != 0
+                        && o[0].getsSa().length > 0 && o[0].getsSa()[0] != 0
                         && o[0].getDoubleMap() != null && o[0].getDoubleMap().size() > 0
+                        && o[0].getaWithB() != null && o[0].getaWithB().getB() != null
                         && o[0].getStrings() != null && o[0].getStrings().size() > 0);
         check(creator.mock(new SimpleObject[2]),
                 o -> o != null && o.length == 2 && o[0].getAnEnum() != null && o[0].getSi() != 0
+                        && o[0].getsSa().length > 0 && o[0].getsSa()[0] != 0
                         && o[0].getDoubleMap() != null && o[0].getDoubleMap().size() > 0
+                        && o[0].getaWithB() != null && o[0].getaWithB().getB() != null
                         && o[0].getStrings() != null && o[0].getStrings().size() > 0);
     }
 
@@ -117,10 +126,14 @@ public class MockDataTest {
         check(creator.mock(ComplexObject.class), o -> o != null
                 && o.getMapExtend() != null && o.getMapExtend().size() > 0
                 && o.getMyArrayList() != null && o.getMyArrayList().size() > 0
+                && o.getListSetMap() != null && o.getListSetMap().size() > 0
+                && o.getArrayListHashMap() != null && o.getArrayListHashMap().size() > 0
                 && o.getMyListMyMap() != null && o.getMyListMyMap().size() > 0);
         check(creator.mock(new ComplexObject()), o -> o != null
                 && o.getMapExtend() != null && o.getMapExtend().size() > 0
                 && o.getMyArrayList() != null && o.getMyArrayList().size() > 0
+                && o.getListSetMap() != null && o.getListSetMap().size() > 0
+                && o.getArrayListHashMap() != null && o.getArrayListHashMap().size() > 0
                 && o.getMyListMyMap() != null && o.getMyListMyMap().size() > 0);
     }
 
