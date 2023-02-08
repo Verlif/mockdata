@@ -9,15 +9,15 @@
 - 各种场景下的随机数据测试
 - 场景演示下生成随机数据展示
 
-以下内容基于3.x版本，1.x版本请参考 [这里](readme-1.x.md)，2.x版本请参考 [这里](readme.md)。
+以下内容基于2.x版本，1.x版本请参考 [这里](readme-1.x.md)。
 
-如果还想知道其他的用法，可以看 [这里](docs/3.x/Directions.md)，或是直接查阅 [配置说明](docs/3.x/MockConfig.md)。
+如果还想知道其他的用法，可以看 [这里](docs/2.x/Directions.md)，或是直接查阅 [配置说明](docs/2.x/MockConfig.md)。
 
 ## 特点
 
-- __上手简单，三行代码即可开始使用__
+- __上手简单__
 - __自定义粒度到指定类的指定属性__
-- __提供数据池方式，规则式批量填充同类属性__
+- __生成数据规则完全自定义__
 - __零三方依赖__
 
 ## 举例
@@ -58,50 +58,55 @@
    Pet pet = creator.mock(Person::getPet);
    ```
 
-更多用法请参考 [使用手册](docs/3.x/Directions.md)
-
-## 用法举例
-
-1. 我想让person.weight的范围在3-200之间，person.height的范围在10-260之间，如何设置？
+### 拓展用法
 
    ```java
-   MockDataCreator creator = new MockDataCreator();
-   creator.getConfig()
-        // 开启级联构建并对默认值进行替换
-        .autoCascade(true).forceNew(true)
-        // 设定weight的范围
-        .fieldValue(Person::getWeight, new DoubleRandomCreator(3D, 200D))
-        // 设定height的范围
-        .fieldValue(Person::getHeight, new DoubleRandomCreator(10D, 260D))
-        // 如果需要，也可以设定其他double类型的默认范围
-        .fieldValue(double.class, new DoubleRandomCreator(0D, 1000D));
-   // 开始构建
-   Person person = creator.mock(Person.class);
+   config
+        // 设定通用的构造深度
+        .creatingDepth(4)
+        // 指定SelfIt的selfOne属性的构造深度为1
+        .creatingDepth(SelfIt::getSelfOne, 1)
+        // int类的数组默认大小为2，其他类随机大小
+        .arraySize(cla -> {
+            if (cla == int.class) {
+                return 2;
+            } else {
+                return new Random().nextInt(10);
+            }
+        })
+        // 使用字典生成name属性
+        .fieldValue(Student::getName, new DictDataCreator<>(new String[]{
+            "小明", "小红", "小王", "小赵", "小李", "小周", "小强"
+        }))
+        // 为nickname填充固定值
+        .fieldValue(Student::getNickname, "小屁孩"))
+        // 限制id属性生成范围
+        .fieldValue(Student::getId, new LongRandomCreator(0L, 9999L))
+        // 限制age属性生成范围
+        .fieldValue(Student::getAge, new IntegerRandomCreator(0, 200))
+        // 自定义secondChild属性
+        .fieldValue(Student::getSecondChild, new DataCreator<Student>() {
+
+            private final Random random = new Random();
+
+            @Override
+            public Student mock(Class<?> cla, Field field, MockDataCreator.Creator creator) {
+                if (random.nextBoolean()) {
+                    return new Student("这是自定义的构造");
+                } else {
+                    return null;
+                }
+            }
+        })
+        // 只允许private或protect的属性进行构建
+        .filter(new FieldModifierFilter()
+            .allowedModifiers(Modifier.PRIVATE, Modifier.PROTECT))
+        // 忽略Student下的score属性构建
+        .filter(new FieldKeyFilter()
+            .ignoredField(Student::getScore));
    ```
 
-   *上面的三个`fieldValue`方法的顺序可以随意交换，因为属性绑定的优先级是高于类型绑定的。*
-
-2. 这里有10多个类，但是基本的属性都很相似，如何让其中所有的address都填充正规的地址，name填充正常的名称呢？
-
-   ```java
-   MockDataCreator creator = new MockDataCreator();
-   FieldDataPool dataPool = new FieldDataPool()
-           // 通过一个类的属性举例，让属性数据池自动识别
-           .like(Person::getAddress)
-           .values("这里", "那里", "前边", "后边").next()
-           // 或是通过类型指定来匹配名称中包括name字符串的int属性
-           .like(int.class, "name")
-           .values("小明", "小红", "小王", "小张").next()
-           // 对Date类的所有名称中能匹配`.*day`和`.*time`的属性填充当前时间
-           .type(Date.class, ".*day", ".*time")
-           .values(new Date()).next();
-   // 设置属性数据池
-   creator.fieldDataPool(dataPool);
-   // 开始构建
-   Person person = creator.mock(Person.class);
-   ```
-
-   更多属性数据池的用法看 [这里](docs/3.x/FieldDataPool.md)
+更多用法请参考 [使用手册](docs/2.x/Directions.md)
 
 ## 支持的类型
 
@@ -125,12 +130,13 @@
 - __数组__
    - 支持任意维度数数组。
    - 通过`mock(new T[2][3][4][5])`的方式来手动指定数组大小
-- __自定义对象__
-  - 通过设定`autoCascade(true)`来自动构建内部属性
+
+### 注意
+
+__目前自动构建暂不支持非静态内部类，有需要请使用添加自定义构建器__
 
 ## 注意事项
 
-- __目前自动构建暂不支持非静态内部类，有需要请使用添加自定义构建器。__
 - __mock__ 无法实例化的类（例如接口或是抽象类）时，请给予实例构建器。
 - __mock__ 构建带有泛型但未指明泛型的类时，大概率无法构建成功，请指定泛型类型或实例构建器。
 - 在使用`fieldValue(DataCreator)`时请勿使用 __lambda__ 表达式，否则会无法识别`DataCreator`的匹配类型。
