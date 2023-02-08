@@ -58,6 +58,11 @@ public class CommonConfig {
      */
     protected final ArrayList<ClassFilter> classFilters;
 
+    /**
+     * 属性数据池
+     */
+    protected FieldDataPool fieldDataPool;
+
     public CommonConfig() {
         fieldCreatorMap = new HashMap<>();
         interfaceCreatorMap = new HashMap<>();
@@ -467,6 +472,29 @@ public class CommonConfig {
             }
         }
         return true;
+    }
+
+    /**
+     * 设置配置属性数据池
+     *
+     * @param pool 属性数据池
+     */
+    public CommonConfig fieldDataPool(FieldDataPool pool) {
+        this.fieldDataPool = pool;
+        return this;
+    }
+
+    public <T> T randomDataFromDataPool(Class<?> cl, String key) {
+        if (fieldDataPool == null) {
+            return null;
+        } else if (key == null) {
+            key = "";
+        }
+        T[] values = fieldDataPool.getValues(cl, key);
+        if (values == null) {
+            return null;
+        }
+        return values[new Random().nextInt(values.length)];
     }
 
     /**

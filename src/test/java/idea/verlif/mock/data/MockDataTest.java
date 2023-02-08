@@ -1,6 +1,7 @@
 package idea.verlif.mock.data;
 
 import com.alibaba.fastjson2.JSONObject;
+import idea.verlif.mock.data.config.FieldDataPool;
 import idea.verlif.mock.data.config.filter.impl.ClassKeyFilter;
 import idea.verlif.mock.data.config.filter.impl.FieldKeyFilter;
 import idea.verlif.mock.data.config.filter.impl.FieldModifierFilter;
@@ -327,6 +328,35 @@ public class MockDataTest {
                 .autoCascade(true);
         creator.getConfig().clearFieldFilter();
         creator.getConfig().clearClassFilter();
+    }
+
+    /**
+     * 属性数据池测试
+     */
+    @Test
+    public void dataPoolTest() {
+        FieldDataPool dataPool = new FieldDataPool()
+                // 自动识别同类型属性，包括int类型的所有名称中包含age的属性，忽略大小写，例如age、nominalAge
+                .like(Person::getAge)
+                .values(23, 24, 25, 26, 27).next()
+                // 添加FRUIT类的数据池，则会对所有的FRUIT类进行数据池选取，忽略名称
+                .type(Person.FRUIT.class)
+                .values(Person.FRUIT.APPLE).next()
+                // 对Date类的所有名称中能匹配`.*day`和`.*time`的属性进行数据池选取
+                .type(Date.class, ".*day", ".*time")
+                .values(new Date()).next();
+        creator.fieldDataPool(dataPool);
+        check(creator.mock(Person.class), o -> o != null
+                && o.getAge() > 22 && o.getAge() < 28 && o.getNominalAge() > 22 && o.getNominalAge() < 28
+                && o.getFavouriteFruit() == Person.FRUIT.APPLE);
+        Person.FRUIT fruit = null;
+        for (int i = 0; i < 20; i++) {
+            fruit = creator.mock(Person.FRUIT.class);
+            if (fruit != Person.FRUIT.APPLE) {
+                break;
+            }
+        }
+        check(fruit, o -> o == Person.FRUIT.APPLE);
     }
 
     private <T> void check(T t, Predicate<T> predicate) {

@@ -187,7 +187,12 @@ public class MockDataCreator extends CommonConfig {
          * @return 目标类
          */
         public <T> T mockClass(Class<T> cla) {
-            return mockSrc(new MockSrc(cla));
+            Object o = getObjectFromDataPool(cla, null);
+            if (o == null) {
+                return mockSrc(new MockSrc(cla));
+            } else {
+                return (T) o;
+            }
         }
 
         /**
@@ -312,21 +317,26 @@ public class MockDataCreator extends CommonConfig {
                         }
                         // 如果对象已存在则判断是否重新创建
                         if (o == null || mockConfig.isForceNew()) {
-                            int count = counter.count(fieldKey);
-                            // 判定类是否存在构造器
-                            DataCreator<?> configCreator = getDataCreator(field);
-                            // 构造器存在则使用构造器进行构造
-                            if (configCreator != null) {
-                                o = configCreator.mock(new MockSrc(field, o), this);
-                            } else {
-                                // 判断属性是否允许级联构造
-                                o = newInstance(fieldCla);
-                                if (fieldCla.isArray()) {
-                                    fillArray(o, fieldCla);
-                                } else if (isCascadeCreate(claKey) || isCascadeCreate(fieldKey)) {
-                                    // 进行级联构造
-                                    fillField(o, fieldCla);
+                            // 从属性数据池中获取数据
+                            o = randomDataFromDataPool(fieldCla, field.getName());
+                            if (o == null) {
+                                int count = counter.count(fieldKey);
+                                // 判定类是否存在构造器
+                                DataCreator<?> configCreator = getDataCreator(field);
+                                // 构造器存在则使用构造器进行构造
+                                if (configCreator != null) {
+                                    o = configCreator.mock(new MockSrc(field, o), this);
+                                } else {
+                                    // 判断属性是否允许级联构造
+                                    o = newInstance(fieldCla);
+                                    if (fieldCla.isArray()) {
+                                        fillArray(o, fieldCla);
+                                    } else if (isCascadeCreate(claKey) || isCascadeCreate(fieldKey)) {
+                                        // 进行级联构造
+                                        fillField(o, fieldCla);
+                                    }
                                 }
+                                counter.setCount(fieldKey, count - 1);
                             }
                             if (o != null) {
                                 try {
@@ -335,7 +345,6 @@ public class MockDataCreator extends CommonConfig {
                                     throw new RuntimeException(e);
                                 }
                             }
-                            counter.setCount(fieldKey, count - 1);
                         }
                         // 还原权限
                         if (!oldAcc) {
@@ -437,6 +446,21 @@ public class MockDataCreator extends CommonConfig {
                 creator = MockDataCreator.this.getInterfaceValue(cla);
             }
             return creator;
+        }
+
+        /**
+         * 从数据池获取随机数据
+         *
+         * @param cl  目标类
+         * @param key 目标key
+         * @return 随机数据
+         */
+        public Object getObjectFromDataPool(Class<?> cl, String key) {
+            Object o = mockConfig.randomDataFromDataPool(cl, key);
+            if (o == null) {
+                o = MockDataCreator.this.randomDataFromDataPool(cl, key);
+            }
+            return o;
         }
 
         /**

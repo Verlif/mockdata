@@ -47,6 +47,7 @@ public class MockDataConfig extends CommonConfig {
         config.fieldFilters.addAll(this.fieldFilters);
         config.classFilters.addAll(this.classFilters);
         config.forceNew = this.forceNew;
+        config.fieldDataPool = this.fieldDataPool;
 
         return config;
     }

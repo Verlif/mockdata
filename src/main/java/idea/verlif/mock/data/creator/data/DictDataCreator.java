@@ -16,7 +16,7 @@ import java.util.Random;
  */
 public class DictDataCreator<T> implements DataCreator<T> {
 
-    private final T[] arrays;
+    protected final T[] arrays;
 
     private final Random random;
 
