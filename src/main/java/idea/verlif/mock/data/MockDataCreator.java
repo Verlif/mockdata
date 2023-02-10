@@ -318,7 +318,7 @@ public class MockDataCreator extends CommonConfig {
                         // 如果对象已存在则判断是否重新创建
                         if (o == null || mockConfig.isForceNew()) {
                             // 从属性数据池中获取数据
-                            o = randomDataFromDataPool(fieldCla, field.getName());
+                            o = getObjectFromDataPool(fieldCla, field.getName());
                             if (o == null) {
                                 int count = counter.count(fieldKey);
                                 // 判定类是否存在构造器

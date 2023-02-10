@@ -1,24 +1,25 @@
 package idea.verlif.mock.data;
 
-import idea.verlif.mock.data.domain.MyMap;
+import com.alibaba.fastjson2.JSONObject;
+import idea.verlif.mock.data.domain.Person;
+import idea.verlif.mock.data.example.PropertiesDataPool;
 import org.junit.Test;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Array;
+import java.util.Arrays;
+import java.util.Date;
 
 public class SimpleTest {
 
     @Test
-    public void test() {
-        debug(new MyMap<String, Integer>());
+    public void test() throws IOException, ClassNotFoundException {
+        PropertiesDataPool dataPool = new PropertiesDataPool();
+        dataPool.load("src/test/resources/data-pool.properties");
+        MockDataCreator creator = new MockDataCreator();
+        creator.getConfig().forceNew(true).autoCascade(true).fieldDataPool(dataPool);
+        System.out.println(JSONObject.toJSONString(creator.mock(Person.class)));
     }
 
-    private void debug(Object o) {
-
-        Class<?> cla = o.getClass();
-        Type type = cla.getGenericSuperclass();
-        Type[] types = ((ParameterizedType) type).getActualTypeArguments();
-
-        System.out.println(types);
-    }
 }
