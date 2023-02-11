@@ -62,7 +62,7 @@
 
 ## 用法举例
 
-1. 我想让 __person.weight__ 的范围在*3-200*之间，__person.height__的范围在*10-260*之间，如何设置？
+1. 我想让 __person.weight__ 的范围在*3-200*之间，__person.height__ 的范围在*10-260*之间，如何设置？
 
    ```java
    MockDataCreator creator = new MockDataCreator();
