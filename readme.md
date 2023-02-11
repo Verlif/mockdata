@@ -62,7 +62,7 @@
 
 ## 用法举例
 
-1. 我想让person.weight的范围在3-200之间，person.height的范围在10-260之间，如何设置？
+1. 我想让 __person.weight__ 的范围在*3-200*之间，__person.height__的范围在*10-260*之间，如何设置？
 
    ```java
    MockDataCreator creator = new MockDataCreator();
@@ -81,20 +81,21 @@
 
    *上面的三个`fieldValue`方法的顺序可以随意交换，因为属性绑定的优先级是高于类型绑定的。*
 
-2. 这里有10多个类，但是基本的属性都很相似，如何让其中所有的address都填充正规的地址，name填充正常的名称呢？
+2. 这里有10多个类，但是基本的属性都很相似，如何让其中所有的 __address__ 都填充正规的地址，__name__ 填充正常的名称呢？
 
    ```java
    MockDataCreator creator = new MockDataCreator();
    FieldDataPool dataPool = new FieldDataPool()
-           // 通过一个类的属性举例，让属性数据池自动识别
-           .like(Person::getAddress)
-           .values("这里", "那里", "前边", "后边").next()
-           // 或是通过类型指定来匹配名称中包括name字符串的int属性
-           .like(int.class, "name")
-           .values("小明", "小红", "小王", "小张").next()
-           // 对Date类的所有名称中能匹配`.*day`和`.*time`的属性填充当前时间
-           .type(Date.class, ".*day", ".*time")
-           .values(new Date()).next();
+           // 自动识别同类型属性，包括int类型的所有名称中包含age的属性，忽略大小写，例如age、nominalAge
+           .like(Person::getAge, 23, 24, 25, 26, 27)
+           .next()
+           // 添加FRUIT类的数据池，则会对所有的FRUIT类进行数据池选取，忽略名称
+           .type(Person.FRUIT.class)
+           .values(Person.FRUIT.APPLE)
+           .next()
+           // 对Date类的所有名称中能匹配`.*day`和`.*time`的属性进行数据池选取
+           .type(Date.class)
+           .values(new Date[]{new Date()}, ".*day", ".*time").next();
    // 设置属性数据池
    creator.fieldDataPool(dataPool);
    // 开始构建
@@ -135,6 +136,7 @@
 - __mock__ 构建带有泛型但未指明泛型的类时，大概率无法构建成功，请指定泛型类型或实例构建器。
 - 在使用`fieldValue(DataCreator)`时请勿使用 __lambda__ 表达式，否则会无法识别`DataCreator`的匹配类型。
   - 例如`creator.fieldValue((DataCreator<String>) (cla, field, creator1) -> "String.String")`会抛出异常，可以使用匿名内部类表述或通过双参的方法显式指明匹配类型。
+- 对于基础类型（例如`int`）在进行构建时，其属性是有默认值*0*的，在没有设定`forceNew`的情况下会被跳过。
 
 ## 添加依赖
 

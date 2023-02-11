@@ -49,7 +49,7 @@ FieldDataPool dataPool = new FieldDataPool()
 
 ### 举例
 
-在test包中我新建了一个PropertiesDataPool，也就是通过properties配置来构建属性数据池，以下是配置文件内容
+在 __test__ 包中我新建了一个`PropertiesDataPool`，也就是通过`properties`配置来构建属性数据池，以下是配置文件内容
 
 ```properties
 int#age=[22, 23, 24, 25, 25, 27]

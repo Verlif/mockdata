@@ -491,7 +491,7 @@ public class CommonConfig {
             key = "";
         }
         T[] values = fieldDataPool.getValues(cl, key);
-        if (values == null) {
+        if (values == null || values.length == 0) {
             return null;
         }
         return values[new Random().nextInt(values.length)];

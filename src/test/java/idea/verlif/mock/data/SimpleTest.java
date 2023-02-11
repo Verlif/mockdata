@@ -5,11 +5,7 @@ import idea.verlif.mock.data.domain.Person;
 import idea.verlif.mock.data.example.PropertiesDataPool;
 import org.junit.Test;
 
-import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Array;
-import java.util.Arrays;
-import java.util.Date;
 
 public class SimpleTest {
 

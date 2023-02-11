@@ -41,25 +41,33 @@ public class FieldDataPool {
         return null;
     }
 
-    public <T> PatternValues<T> type(Class<? extends T> cl) {
+    public <T> PatternValues<T> type(Class<? extends T> cl, T... values) {
+        return type(cl, null, values);
+    }
+
+    public <T> PatternValues<T> type(Class<? extends T> cl, String fieldName, T... values) {
         PatternValues<T> pv = (PatternValues<T>) patternValuesMap.get(cl);
         if (pv == null) {
             pv = new PatternValues<>();
             patternValuesMap.put(cl, pv);
         }
-        return pv;
+        if (values.length == 0) {
+            return pv;
+        } else if (fieldName == null) {
+            return pv.values(values);
+        } else {
+            return pv.values(values, fieldName);
+        }
+    }
+
+    public <C, T> PatternValues<T> like(SFunction<C, T> function, T... values) {
+        Field field = ReflectUtil.getFieldFromLambda(function);
+        return like((Class<T>) field.getType(), field.getName(), values);
     }
 
     public <T> PatternValues<T> like(Class<? extends T> cl, String fieldName, T... values) {
         PatternValues<T> pv = type(cl);
         pv.values(values, ".*" + fieldName + ".*", Pattern.CASE_INSENSITIVE);
-        return pv;
-    }
-
-    public <C, T> PatternValues<T> like(SFunction<C, T> function, T... values) {
-        Field field = ReflectUtil.getFieldFromLambda(function);
-        PatternValues<T> pv = (PatternValues<T>) type(field.getType());
-        pv.values(values, ".*" + field.getName() + ".*", Pattern.CASE_INSENSITIVE);
         return pv;
     }
 
@@ -86,8 +94,8 @@ public class FieldDataPool {
             return this;
         }
 
-        public PatternValues<T> values(T[] values, String regex, int flag) {
-            patterns.add(Pattern.compile(regex, flag));
+        public PatternValues<T> values(T[] values, String regex, int flags) {
+            patterns.add(Pattern.compile(regex, flags));
             this.values.add(values);
             return this;
         }
@@ -99,8 +107,6 @@ public class FieldDataPool {
             for (Pattern pattern : pv.patterns) {
                 this.patterns.add(pattern);
             }
-//            this.values.addAll(pv.values);
-//            this.patterns.addAll(pv.patterns);
         }
 
         public FieldDataPool next() {
