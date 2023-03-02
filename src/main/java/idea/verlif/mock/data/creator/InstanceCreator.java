@@ -7,7 +7,7 @@ package idea.verlif.mock.data.creator;
  */
 public interface InstanceCreator<T> {
 
-    Class<? extends T> matched();
+    Class<?> matched();
 
     T newInstance();
 }

@@ -112,7 +112,7 @@ public class MockDataCreator extends CommonConfig {
      */
     public <T> T mock(T t, MockDataConfig config) {
         Creator creator = new Creator(config);
-        creator.mock(t, (Class<T>) t.getClass());
+        creator.mock(t, ReflectUtil.getClassGrc(t.getClass()));
         creator.counterClear();
         return t;
     }
@@ -137,8 +137,32 @@ public class MockDataCreator extends CommonConfig {
      * @return 返回新实例
      */
     public <T> T mock(Class<T> cla, MockDataConfig config) {
+        return mock(ReflectUtil.getClassGrc(cla), config);
+    }
+
+
+    /**
+     * mock数据
+     *
+     * @param classGrc 实例类信息
+     * @param <T>      目标泛型
+     * @return 返回新实例
+     */
+    public <T> T mock(ClassGrc classGrc) {
+        return mock(classGrc, config);
+    }
+
+    /**
+     * mock数据
+     *
+     * @param classGrc 实例类信息
+     * @param config   使用的配置
+     * @param <T>      目标泛型
+     * @return 返回新实例
+     */
+    public <T> T mock(ClassGrc classGrc, MockDataConfig config) {
         Creator creator = new Creator(config);
-        T t = creator.mockClass(ReflectUtil.getClassGrc(cla));
+        T t = creator.mockClass(classGrc);
         creator.counterClear();
         return t;
     }
@@ -184,26 +208,12 @@ public class MockDataCreator extends CommonConfig {
         /**
          * mock数据
          *
-         * @param cla 目标类
-         * @param <T> 目标类泛型
+         * @param classGrc 目标类信息
+         * @param <T>      目标类泛型
          * @return 目标类
          */
-        public <T> T mockClass(Class<T> cla) {
-            Object o = getObjectFromDataPool(cla, null);
-            if (o == null) {
-                return mockSrc(new MockSrc(cla));
-            } else {
-                return (T) o;
-            }
-        }
-
         public <T> T mockClass(ClassGrc classGrc) {
-            Object o = getObjectFromDataPool(classGrc.getTarget(), null);
-            if (o == null) {
-                return mockSrc(new MockSrc(classGrc, null));
-            } else {
-                return (T) o;
-            }
+            return mockSrc(new MockSrc(classGrc, null));
         }
 
         /**
@@ -214,39 +224,44 @@ public class MockDataCreator extends CommonConfig {
          */
         public <T> T mockSrc(MockSrc src) {
             Class<T> cla = (Class<T>) src.getClassGrc().getTarget();
-            Class<?> realClass = getComponentClass(cla);
-            // 是否是忽略类
-            if (isAllowedClass(realClass)) {
-                T t;
-                // 检测是否存在自定义构建器
-                DataCreator<?> dataCreator = getDataCreator(cla);
-                // 不存在则尝试新建对象
-                if (dataCreator == null) {
-                    t = newInstance(cla);
-                    String claKey = NamingUtil.getKeyName(realClass);
-                    // 如果此类允许级联构造则进行mock
-                    if (isCascadeCreate(claKey)) {
-                        mock(t, cla);
-                    } else if (cla.isArray()) {
-                        fillArray(t, cla);
+            // 从数据池中判断是否有值
+            Object o = getObjectFromDataPool(cla, null);
+            if (o == null) {
+                Class<?> componentClass = getComponentClass(cla);
+                // 是否是忽略类
+                if (isAllowedClass(componentClass)) {
+                    T t;
+                    // 检测是否存在自定义构建器
+                    DataCreator<?> dataCreator = getDataCreator(cla);
+                    // 不存在则尝试新建对象
+                    if (dataCreator == null) {
+                        t = newInstance(cla);
+                        String claKey = NamingUtil.getKeyName(componentClass);
+                        // 如果此类允许级联构造则进行mock
+                        if (isCascadeCreate(claKey)) {
+                            mock(t, src.getClassGrc());
+                        }
+                    } else {
+                        t = (T) dataCreator.mock(src, this);
                     }
-                } else {
-                    t = (T) dataCreator.mock(src, this);
+                    return t;
                 }
-                return t;
+                return null;
+            } else {
+                return (T) o;
             }
-            return null;
         }
 
         /**
          * mock数据，最终mock类
          *
-         * @param t   目标类实例
-         * @param cla 目标类
-         * @param <T> 目标类泛型
+         * @param t        目标类实例
+         * @param classGrc 目标类信息
+         * @param <T>      目标类泛型
          * @return 目标类
          */
-        private <T> T mock(T t, Class<T> cla) {
+        private <T> T mock(T t, ClassGrc classGrc) {
+            Class<T> cla = (Class<T>) classGrc.getTarget();
             // 判断是否是忽略类
             if (isAllowedClass(getComponentClass(cla))) {
                 // 按照类型进行填装
@@ -256,10 +271,9 @@ public class MockDataCreator extends CommonConfig {
                     fillArray(t, cla);
                 } else {
                     try {
-                        fillField(t, cla);
+                        fillField(t, classGrc);
                     } catch (NoSuchFieldException | IllegalAccessException | ClassNotFoundException e) {
-                        e.printStackTrace();
-                        return t;
+                        throw new RuntimeException(e);
                     }
                 }
             }
@@ -299,16 +313,17 @@ public class MockDataCreator extends CommonConfig {
         /**
          * 为对象填充属性
          *
-         * @param t   目标对象
-         * @param cla 目标对象类
+         * @param t        目标对象
+         * @param classGrc 目标对象类信息
          */
-        private void fillField(Object t, Class<?> cla) throws NoSuchFieldException, IllegalAccessException, ClassNotFoundException {
+        private void fillField(Object t, ClassGrc classGrc) throws NoSuchFieldException, IllegalAccessException, ClassNotFoundException {
             // 对象为空则忽略
             if (t == null) {
                 return;
             }
+            Class<?> cla = classGrc.getTarget();
             // 获取泛型映射表
-            Map<String, ClassGrc> genericsMap = ReflectUtil.getGenericsMap(cla);
+            Map<String, ClassGrc> genericsMap = ReflectUtil.getGenericsMap(classGrc);
             // 遍历属性进行填充
             List<Field> allFields = ReflectUtil.getAllFields(cla);
             for (Field field : allFields) {
@@ -317,11 +332,11 @@ public class MockDataCreator extends CommonConfig {
                 // 获取属性的当前类型
                 Class<?> fieldCla = fieldGrc.getTarget();
                 // 获取属性的元素类型
-                Class<?> realCla = getComponentClass(fieldCla);
+                Class<?> componentClass = getComponentClass(fieldCla);
                 // 判断此属性是否支持构建
-                if (isAllowedField(field) && isAllowedClass(realCla)) {
+                if (isAllowedField(field) && isAllowedClass(componentClass)) {
                     String fieldKey = NamingUtil.getKeyName(field);
-                    String claKey = NamingUtil.getKeyName(realCla);
+                    String claKey = NamingUtil.getKeyName(componentClass);
                     // 判定属性引用次数是否已到达最大值
                     int max = getCreatingDepth(fieldKey, claKey);
                     if (counter.getCount(fieldKey) < max) {
@@ -355,7 +370,7 @@ public class MockDataCreator extends CommonConfig {
                                         fillArray(o, fieldCla);
                                     } else if (isCascadeCreate(claKey) || isCascadeCreate(fieldKey)) {
                                         // 进行级联构造
-                                        fillField(o, fieldCla);
+                                        fillField(o, fieldGrc);
                                     }
                                 }
                                 counter.setCount(fieldKey, count - 1);

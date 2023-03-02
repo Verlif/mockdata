@@ -10,7 +10,12 @@ import java.io.IOException;
 public class SimpleTest {
 
     @Test
-    public void test() throws IOException, ClassNotFoundException {
+    public void test() {
+        MockDataCreator creator = new MockDataCreator();
+    }
+
+    @Test
+    public void PropertiesDataPoolTest() throws IOException, ClassNotFoundException {
         PropertiesDataPool dataPool = new PropertiesDataPool();
         dataPool.load("src/test/resources/data-pool.properties");
         MockDataCreator creator = new MockDataCreator();

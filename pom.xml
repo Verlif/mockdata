@@ -6,7 +6,7 @@
 
     <groupId>idea.verlif</groupId>
     <artifactId>mock-data</artifactId>
-    <version>3.1.0</version>
+    <version>3.1.1</version>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
@@ -19,7 +19,7 @@
         <dependency>
             <groupId>com.github.Verlif</groupId>
             <artifactId>reflection-kit</artifactId>
-            <version>1.2</version>
+            <version>1.2.1</version>
         </dependency>
 
         <dependency>
