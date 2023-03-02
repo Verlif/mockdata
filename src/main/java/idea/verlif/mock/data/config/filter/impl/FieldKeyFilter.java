@@ -1,10 +1,10 @@
 package idea.verlif.mock.data.config.filter.impl;
 
 import idea.verlif.mock.data.config.filter.FieldFilter;
-import idea.verlif.mock.data.domain.SFunction;
 import idea.verlif.mock.data.util.ContainsUtil;
 import idea.verlif.mock.data.util.NamingUtil;
-import idea.verlif.mock.data.util.ReflectUtil;
+import idea.verlif.reflection.domain.SFunction;
+import idea.verlif.reflection.util.ReflectUtil;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;

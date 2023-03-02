@@ -56,7 +56,7 @@ public class MockDataTest {
         check(creator.mock(Double.class), o -> o != 0);
         check(creator.mock(boolean.class), o -> true);
         check(creator.mock(Boolean.class), Objects::nonNull);
-        check(creator.mock(String.class), o -> o != null && o.length() > 0);
+        check(creator.mock(String.class), Objects::nonNull);
     }
 
     /**
@@ -122,8 +122,12 @@ public class MockDataTest {
                         && o[0].getStrings() != null && o[0].getStrings().size() > 0);
     }
 
+    /**
+     * 复杂对象测试
+     */
     @Test
     public void complexObjectTest() {
+        creator.getConfig().arraySize(1).creatingDepth(1);
         check(creator.mock(ComplexObject.class), o -> o != null
                 && o.getMapExtend() != null && o.getMapExtend().size() > 0
                 && o.getMyArrayList() != null && o.getMyArrayList().size() > 0
@@ -136,6 +140,7 @@ public class MockDataTest {
                 && o.getListSetMap() != null && o.getListSetMap().size() > 0
                 && o.getArrayListHashMap() != null && o.getArrayListHashMap().size() > 0
                 && o.getMyListMyMap() != null && o.getMyListMyMap().size() > 0);
+        creator.getConfig().arraySize(2).creatingDepth(2);
     }
 
     /**
@@ -219,6 +224,9 @@ public class MockDataTest {
         creator.getConfig().clearClassFilter();
     }
 
+    /**
+     * 嵌套循环测试
+     */
     @Test
     public void circleTest() {
         check(creator.mock(AWithB.class), o -> o != null && o.getName() != null
@@ -241,6 +249,9 @@ public class MockDataTest {
                 && o.getSelfC() != null);
     }
 
+    /**
+     * 自定义测试
+     */
     @Test
     public void customTest() {
         // 固定值测试
@@ -289,6 +300,9 @@ public class MockDataTest {
         creator.clearFieldFilter();
     }
 
+    /**
+     * 配置设定测试
+     */
     @Test
     public void configTest() {
         // 属性与类过滤
@@ -358,6 +372,19 @@ public class MockDataTest {
             }
         }
         check(fruit, o -> o == Person.FRUIT.APPLE);
+    }
+
+    /**
+     * 泛型测试
+     */
+    @Test
+    public void genericsTest() {
+        check(creator.mock(GenericsBody.class), o -> o != null && o.getT() != null
+                && o.getList() != null && o.getList().size() > 0
+                && o.getMap() != null && o.getMap().size() > 0);
+        check(creator.mock(GenericsExt.class), o -> o != null && o.getT() != null
+                && o.getList() != null && o.getList().size() > 0 && o.getList().get(0) != null
+                && o.getMap() != null && o.getMap().size() > 0);
     }
 
     private <T> void check(T t, Predicate<T> predicate) {

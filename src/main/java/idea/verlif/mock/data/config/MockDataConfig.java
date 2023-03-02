@@ -1,9 +1,9 @@
 package idea.verlif.mock.data.config;
 
-import idea.verlif.mock.data.domain.SFunction;
 import idea.verlif.mock.data.domain.counter.StringCounter;
 import idea.verlif.mock.data.util.NamingUtil;
-import idea.verlif.mock.data.util.ReflectUtil;
+import idea.verlif.reflection.domain.SFunction;
+import idea.verlif.reflection.util.ReflectUtil;
 
 /**
  * @author Verlif

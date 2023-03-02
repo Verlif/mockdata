@@ -1,7 +1,7 @@
 package idea.verlif.mock.data.config;
 
-import idea.verlif.mock.data.domain.SFunction;
-import idea.verlif.mock.data.util.ReflectUtil;
+import idea.verlif.reflection.domain.SFunction;
+import idea.verlif.reflection.util.ReflectUtil;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;

@@ -18,15 +18,7 @@ public interface DataFiller<T> extends DataCreator<T> {
 
     @Override
     default T mock(MockSrc src, MockDataCreator.Creator creator) {
-        Type type = src.getType();
-        Class<?> cla;
-        if (type instanceof ParameterizedType) {
-            cla = (Class<?>) ((ParameterizedType) type).getRawType();
-        } else {
-            cla = (Class<?>) type;
-        }
-        Field field = src.getField();
-        T t = newInstance(cla, creator);
+        T t = newInstance(src.getClassGrc().getTarget(), creator);
         fill(t, creator);
         return t;
     }

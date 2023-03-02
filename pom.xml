@@ -6,7 +6,7 @@
 
     <groupId>idea.verlif</groupId>
     <artifactId>mock-data</artifactId>
-    <version>3.0.0</version>
+    <version>3.1.0</version>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
@@ -17,26 +17,29 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.github.Verlif</groupId>
+            <artifactId>reflection-kit</artifactId>
+            <version>1.2</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.alibaba.fastjson2</groupId>
             <artifactId>fastjson2</artifactId>
             <version>2.0.23</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>com.github.Verlif</groupId>
             <artifactId>stopwatch</artifactId>
             <version>3.0</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.13.2</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>com.github.Verlif</groupId>
             <artifactId>param-parser</artifactId>

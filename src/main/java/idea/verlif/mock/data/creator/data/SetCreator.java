@@ -1,11 +1,10 @@
 package idea.verlif.mock.data.creator.data;
 
 import idea.verlif.mock.data.MockDataCreator;
-import idea.verlif.mock.data.creator.DataCreator;
+import idea.verlif.mock.data.creator.GenericDataFiller;
 import idea.verlif.mock.data.domain.MockSrc;
+import idea.verlif.reflection.domain.ClassGrc;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -16,66 +15,27 @@ import java.util.Set;
  *
  * @author Verlif
  */
-public class SetCreator implements DataCreator<Set<?>> {
+public class SetCreator extends GenericDataFiller<Set<?>> {
 
-    private Integer size;
-
-    private Class<?> target;
-
-    public SetCreator() {
-    }
-
-    public SetCreator(int size) {
-        this.size = size;
+    @Override
+    protected Class<?> collectTarget(MockSrc src) {
+        Class<?> target = src.getClassGrc().getTarget();
+        if (target == Set.class) {
+            target = HashSet.class;
+        }
+        return target;
     }
 
     @Override
-    public Set<?> mock(MockSrc src, MockDataCreator.Creator creator) {
-        Type type = src.getType();
-        this.target = src.getRawClass();
-        if (this.target == Set.class) {
-            this.target = HashSet.class;
-        }
-        if (this.size == null) {
-            this.size = creator.getMockConfig().getArraySize(this.target);
-        }
-        if (type instanceof ParameterizedType) {
-            Type[] arguments = ((ParameterizedType) type).getActualTypeArguments();
-            return fillSet(arguments[0], creator);
-        } else if (type instanceof Class) {
-            Type genericSuperclass = this.target.getGenericSuperclass();
-            if (genericSuperclass instanceof ParameterizedType) {
-                Type argument = ((ParameterizedType) genericSuperclass).getActualTypeArguments()[0];
-                return fillSet(argument, creator);
-            }
-        }
-        return (Set<?>) src.getOldObj();
-    }
-
-    private Set<?> fillSet(Type type, MockDataCreator.Creator creator) {
-        Set<Object> Set = newInstance(target, creator);
-        if (type instanceof Class) {
+    protected Set<?> mock(Class<?> target, ClassGrc[] generics, MockDataCreator.Creator creator) {
+        Set<Object> set = newInstance(target, creator);
+        if (generics.length > 0) {
             for (int i = 0; i < size; i++) {
-                Object o = creator.mockClass((Class<?>) type);
-                Set.add(o);
-            }
-        } else if (type instanceof ParameterizedType) {
-            Type rawType = ((ParameterizedType) type).getRawType();
-            if (rawType instanceof Class) {
-                if (Set.class.isAssignableFrom((Class<?>) rawType)) {
-                    for (int i = 0; i < size; i++) {
-                        Object o = fillSet(((ParameterizedType) type).getActualTypeArguments()[0], creator);
-                        Set.add(o);
-                    }
-                } else {
-                    for (int i = 0; i < size; i++) {
-                        Object o = creator.mockSrc(new MockSrc(type, null));
-                        Set.add(o);
-                    }
-                }
+                Object o = creator.mockClass(generics[0]);
+                set.add(o);
             }
         }
-        return Set;
+        return set;
     }
 
     public Set<Object> newInstance(Class<?> cla, MockDataCreator.Creator creator) {
