@@ -47,8 +47,8 @@
    creator.getConfig()
            // 自动级联构建
            .autoCascade(true)
-           // 替换目标对象中已存在的对象，例如基础类型
-           .forceNew(true)
+           // 只替换基础类型
+           .appendFieldOption(FieldOption.IGNORED_VALUE | FieldOption.ALLOWED_PRIMITIVE)
    // 通过类来实例化对象
    Person person = creator.mock(Person.class);
    // 或是手动实例化对象，然后填充数据

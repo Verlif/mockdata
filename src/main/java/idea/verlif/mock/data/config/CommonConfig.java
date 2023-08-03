@@ -451,9 +451,9 @@ public class CommonConfig {
      *
      * @param field 目标属性
      */
-    public boolean isAllowedField(Field field) {
+    public boolean isAllowedField(Object target, Field field) {
         for (FieldFilter filter : fieldFilters) {
-            if (!filter.accept(field)) {
+            if (!filter.accept(target, field)) {
                 return false;
             }
         }

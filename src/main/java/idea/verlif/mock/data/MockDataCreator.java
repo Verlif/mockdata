@@ -1,6 +1,7 @@
 package idea.verlif.mock.data;
 
 import idea.verlif.mock.data.config.CommonConfig;
+import idea.verlif.mock.data.config.FieldOption;
 import idea.verlif.mock.data.config.MockDataConfig;
 import idea.verlif.mock.data.creator.DataCreator;
 import idea.verlif.mock.data.creator.InstanceCreator;
@@ -334,7 +335,7 @@ public class MockDataCreator extends CommonConfig {
                 // 获取属性的元素类型
                 Class<?> componentClass = getComponentClass(fieldCla);
                 // 判断此属性是否支持构建
-                if (isAllowedField(field) && isAllowedClass(componentClass)) {
+                if (isAllowedField(t, field) && isAllowedClass(componentClass)) {
                     String fieldKey = NamingUtil.getKeyName(field);
                     String claKey = NamingUtil.getKeyName(componentClass);
                     // 判定属性引用次数是否已到达最大值
@@ -353,7 +354,7 @@ public class MockDataCreator extends CommonConfig {
                             throw new RuntimeException(e);
                         }
                         // 如果对象已存在则判断是否重新创建
-                        if (o == null || mockConfig.isForceNew()) {
+                        if (isAcceptField(o, field, fieldCla)) {
                             // 从属性数据池中获取数据
                             o = getObjectFromDataPool(fieldCla, field.getName());
                             if (o == null) {
@@ -415,8 +416,17 @@ public class MockDataCreator extends CommonConfig {
             return MockDataCreator.this.isCascadeCreate(key) && mockConfig.isCascadeCreate(key);
         }
 
-        private boolean isAllowedField(Field field) {
-            return MockDataCreator.this.isAllowedField(field) && mockConfig.isAllowedField(field);
+        private boolean isAllowedField(Object target, Field field) {
+            return MockDataCreator.this.isAllowedField(target, field) && mockConfig.isAllowedField(target, field);
+        }
+
+        private boolean isAcceptField(Object fieldObject, Field field, Class<?> fieldCla) {
+            if (mockConfig.getFieldOptions() == 0) {
+                return true;
+            }
+            int options = (fieldObject == null ? FieldOption.ALLOWED_NULL : FieldOption.ALLOWED_NOTNULL)
+                    | (fieldCla.isPrimitive() ? FieldOption.ALLOWED_PRIMITIVE : FieldOption.ALLOWED_CLASS);
+            return mockConfig.acceptFieldOption(options);
         }
 
         private boolean isAllowedClass(Class<?> cla) {

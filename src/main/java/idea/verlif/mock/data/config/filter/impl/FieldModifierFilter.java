@@ -80,7 +80,7 @@ public class FieldModifierFilter implements FieldFilter {
     }
 
     @Override
-    public boolean accept(Field field) {
+    public boolean accept(Object target, Field field) {
         return (field.getModifiers() | modifiers) == modifiers;
     }
 

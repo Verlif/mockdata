@@ -77,7 +77,7 @@ dataPool.load("src/test/resources/data-pool.properties");
 // 新建MockDataCreator
 MockDataCreator creator = new MockDataCreator();
 // 进行基础设定并加载属性数据池
-creator.getConfig().forceNew(true).autoCascade(true).fieldDataPool(dataPool);
+creator.getConfig().autoCascade(true).fieldDataPool(dataPool);
 // 开始mock
 System.out.println(JSONObject.toJSONString(creator.mock(Person.class)));
 ```

@@ -34,11 +34,27 @@ __级联设定__ 优先度 __最低__，如果有对应的数据构建器，则�
 
 - `setArraySize(int)`
 
-## 强制新建对象
+## ~~强制新建对象~~
 
-在默认情况下，当属性有值时则会跳过此属性的创建。可以通过设定强制创建来重新创建对象。
+~~在默认情况下，当属性有值时则会跳过此属性的创建。可以通过设定强制创建来重新创建对象。~~
 
-- `setForceNew(boolean)`
+- ~~`setForceNew(boolean)`~~
+
+## 设定属性生成选项
+
+在默认情况下，构建器会对每一个值进行生成并替换。
+通过`FieldOption`来设定是否忽略已存在的值或是否只针对基础类型做处理。
+
+- `appendFieldOption(int)`
+
+允许的值如下：
+
+- `ALLOWED_NULL` - 允许对空值属性生成值
+- `ALLOWED_NOTNULL` - 允许对非空值属性生成值
+- `ALLOWED_PRIMITIVE` - 忽略值是否非空，都重新生成值
+- `ALLOWED_CLASS` - 允许对class类型的属性生成值
+- `ALLOWED_PRIMITIVE` - 允许对基础类型的属性生成值
+- `IGNORED_TYPE` - 忽略属性类型，都重新生成值
 
 ## 添加指定属性的构建器
 

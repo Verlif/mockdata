@@ -29,10 +29,10 @@ public class MockDataConfig extends CommonConfig {
     private boolean autoCascade;
 
     /**
-     * 强制生成新对象。<br>
-     * 例如基础属性在声明时就存在默认对象，此时在forceNew为false的情况下就会被忽略。
+     * 属性选项值。<br>
+     * 用于生成属性值时，选择性忽略。
      */
-    private boolean forceNew = false;
+    private int fieldOptions = 0;
 
     public MockDataConfig copy() {
         MockDataConfig config = new MockDataConfig();
@@ -46,7 +46,7 @@ public class MockDataConfig extends CommonConfig {
         config.cascadeCreatePattern.addAll(this.cascadeCreatePattern);
         config.fieldFilters.addAll(this.fieldFilters);
         config.classFilters.addAll(this.classFilters);
-        config.forceNew = this.forceNew;
+        config.fieldOptions = this.fieldOptions;
         config.fieldDataPool = this.fieldDataPool;
 
         return config;
@@ -114,12 +114,30 @@ public class MockDataConfig extends CommonConfig {
         return this;
     }
 
+    public boolean acceptFieldOption(int fieldOptions) {
+        return (this.fieldOptions | fieldOptions) == this.fieldOptions;
+    }
+
+    public MockDataConfig appendFieldOption(int fieldOptions) {
+        this.fieldOptions |= fieldOptions;
+        return this;
+    }
+
     public boolean isForceNew() {
-        return forceNew;
+        return (fieldOptions & FieldOption.ALLOWED_NOTNULL) > 0;
     }
 
     public MockDataConfig forceNew(boolean forceNew) {
-        this.forceNew = forceNew;
+        this.fieldOptions |= FieldOption.ALLOWED_NOTNULL | FieldOption.IGNORED_TYPE;
+        return this;
+    }
+
+    public int getFieldOptions() {
+        return fieldOptions;
+    }
+
+    public MockDataConfig setFieldOptions(int fieldOptions) {
+        this.fieldOptions = fieldOptions;
         return this;
     }
 

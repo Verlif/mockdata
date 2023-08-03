@@ -13,5 +13,5 @@ public interface FieldFilter {
      * @param field 目标属性
      * @return 是否允许构建
      */
-    boolean accept(Field field);
+    boolean accept(Object target, Field field);
 }
