@@ -1,5 +1,7 @@
 package idea.verlif.mock.data.creator;
 
+import idea.verlif.mock.data.MockDataCreator;
+
 /**
  * 实例构造器
  *
@@ -9,5 +11,5 @@ public interface InstanceCreator<T> {
 
     Class<?> matched();
 
-    T newInstance();
+    T newInstance(MockDataCreator creator);
 }

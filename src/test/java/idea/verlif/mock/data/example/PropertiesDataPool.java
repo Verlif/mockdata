@@ -2,6 +2,7 @@ package idea.verlif.mock.data.example;
 
 import com.alibaba.fastjson2.JSONArray;
 import idea.verlif.mock.data.config.FieldDataPool;
+import idea.verlif.mock.data.exception.MockDataException;
 import idea.verlif.parser.ParamParserService;
 
 import java.io.File;
@@ -97,7 +98,7 @@ public class PropertiesDataPool extends FieldDataPool {
         try {
             return Class.forName(pkgName);
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
+            throw new MockDataException(e);
         }
     }
 

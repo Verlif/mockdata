@@ -6,6 +6,7 @@ import idea.verlif.mock.data.config.filter.impl.ClassKeyFilter;
 import idea.verlif.mock.data.config.filter.impl.FieldKeyFilter;
 import idea.verlif.mock.data.config.filter.impl.FieldModifierFilter;
 import idea.verlif.mock.data.creator.DataCreator;
+import idea.verlif.mock.data.creator.InstanceCreator;
 import idea.verlif.mock.data.creator.data.DictDataCreator;
 import idea.verlif.mock.data.domain.*;
 import org.junit.*;
@@ -373,17 +374,33 @@ public class MockDataTest {
         check(fruit, o -> o == Person.FRUIT.APPLE);
     }
 
+    @Test
+    public void instanceCreatorTest() {
+        creator.getConfig().instanceCreator(new InstanceCreator<IpAddr>() {
+            @Override
+            public Class<?> matched() {
+                return IpAddr.class;
+            }
+
+            @Override
+            public IpAddr newInstance(MockDataCreator creator) {
+                return new IpAddr(creator.mock(String.class));
+            }
+        });
+        check(creator.mock(IpAddr.class), ipAddr -> ipAddr.getIp() != null);
+    }
+
     /**
      * 泛型测试
      */
     @Test
     public void genericsTest() {
         check(creator.mock(GenericsBody.class), o -> o != null && o.getT() != null
-                && o.getList() != null && o.getList().size() > 0
-                && o.getMap() != null && o.getMap().size() > 0);
+                && o.getList() != null && !o.getList().isEmpty()
+                && o.getMap() != null && !o.getMap().isEmpty());
         check(creator.mock(GenericsExt.class), o -> o != null && o.getT() != null
-                && o.getList() != null && o.getList().size() > 0 && o.getList().get(0) != null
-                && o.getMap() != null && o.getMap().size() > 0);
+                && o.getList() != null && !o.getList().isEmpty() && o.getList().get(0) != null
+                && o.getMap() != null && !o.getMap().isEmpty());
     }
 
     private <T> void check(T t, Predicate<T> predicate) {
