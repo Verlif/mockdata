@@ -12,6 +12,8 @@ import idea.verlif.mock.data.util.NamingUtil;
 import idea.verlif.reflection.domain.ClassGrc;
 import idea.verlif.reflection.domain.FieldGrc;
 import idea.verlif.reflection.domain.SFunction;
+import idea.verlif.reflection.util.FieldUtil;
+import idea.verlif.reflection.util.MethodUtil;
 import idea.verlif.reflection.util.ReflectUtil;
 
 import java.lang.reflect.Array;
@@ -88,7 +90,7 @@ public class MockDataCreator extends CommonConfig {
      * @return 返回构建数据
      */
     public <T, V> V mock(SFunction<T, V> function) {
-        Method method = ReflectUtil.getMethodFromLambda(function);
+        Method method = MethodUtil.getMethodFromLambda(function);
         return (V) mock(method.getReturnType());
     }
 
@@ -326,10 +328,10 @@ public class MockDataCreator extends CommonConfig {
             // 获取泛型映射表
             Map<String, ClassGrc> genericsMap = ReflectUtil.getGenericsMap(classGrc);
             // 遍历属性进行填充
-            List<Field> allFields = ReflectUtil.getAllFields(cla);
+            List<Field> allFields = FieldUtil.getAllFields(cla);
             for (Field field : allFields) {
                 // 获取属性的完整类型
-                FieldGrc fieldGrc = ReflectUtil.getFieldGrc(field, genericsMap);
+                FieldGrc fieldGrc = FieldUtil.getFieldGrc(field, genericsMap);
                 // 获取属性的当前类型
                 Class<?> fieldCla = fieldGrc.getTarget();
                 // 获取属性的元素类型

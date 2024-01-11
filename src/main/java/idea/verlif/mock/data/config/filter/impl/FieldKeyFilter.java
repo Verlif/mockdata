@@ -4,6 +4,7 @@ import idea.verlif.mock.data.config.filter.FieldFilter;
 import idea.verlif.mock.data.util.ContainsUtil;
 import idea.verlif.mock.data.util.NamingUtil;
 import idea.verlif.reflection.domain.SFunction;
+import idea.verlif.reflection.util.FieldUtil;
 import idea.verlif.reflection.util.ReflectUtil;
 
 import java.lang.reflect.Field;
@@ -39,7 +40,7 @@ public class FieldKeyFilter implements FieldFilter {
      * 增加忽略的属性
      */
     private <T> void addIgnoredField(SFunction<T, ?> function) {
-        ignoredFiledSet.add(NamingUtil.getKeyName(ReflectUtil.getFieldFromLambda(function)));
+        ignoredFiledSet.add(NamingUtil.getKeyName(FieldUtil.getFieldFromLambda(function)));
     }
 
     /**

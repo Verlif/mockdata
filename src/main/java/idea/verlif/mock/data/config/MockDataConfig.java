@@ -3,7 +3,7 @@ package idea.verlif.mock.data.config;
 import idea.verlif.mock.data.domain.counter.StringCounter;
 import idea.verlif.mock.data.util.NamingUtil;
 import idea.verlif.reflection.domain.SFunction;
-import idea.verlif.reflection.util.ReflectUtil;
+import idea.verlif.reflection.util.FieldUtil;
 
 /**
  * @author Verlif
@@ -75,7 +75,7 @@ public class MockDataConfig extends CommonConfig {
      * @param depth    属性的构建深度
      */
     public <T> MockDataConfig creatingDepth(SFunction<T, ?> function, int depth) {
-        setKeyDepth(NamingUtil.getKeyName(ReflectUtil.getFieldFromLambda(function)), depth);
+        setKeyDepth(NamingUtil.getKeyName(FieldUtil.getFieldFromLambda(function)), depth);
         return this;
     }
 

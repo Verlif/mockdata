@@ -1,6 +1,7 @@
 package idea.verlif.mock.data.config;
 
 import idea.verlif.reflection.domain.SFunction;
+import idea.verlif.reflection.util.FieldUtil;
 import idea.verlif.reflection.util.ReflectUtil;
 
 import java.lang.reflect.Field;
@@ -61,7 +62,7 @@ public class FieldDataPool {
     }
 
     public <C, T> PatternValues<T> like(SFunction<C, T> function, T... values) {
-        Field field = ReflectUtil.getFieldFromLambda(function);
+        Field field = FieldUtil.getFieldFromLambda(function);
         return like((Class<T>) field.getType(), field.getName(), values);
     }
 

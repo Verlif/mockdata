@@ -12,6 +12,7 @@ import idea.verlif.mock.data.exception.MockDataException;
 import idea.verlif.mock.data.util.ContainsUtil;
 import idea.verlif.mock.data.util.NamingUtil;
 import idea.verlif.reflection.domain.SFunction;
+import idea.verlif.reflection.util.FieldUtil;
 import idea.verlif.reflection.util.ReflectUtil;
 
 import java.lang.reflect.Field;
@@ -85,7 +86,7 @@ public class CommonConfig {
      * @param creator  数据创造器
      */
     protected <T> void addFieldValue(SFunction<T, ?> function, DataCreator<?> creator) {
-        Field field = ReflectUtil.getFieldFromLambda(function);
+        Field field = FieldUtil.getFieldFromLambda(function);
         addFieldValue(NamingUtil.getKeyName(field), creator);
     }
 
@@ -307,7 +308,7 @@ public class CommonConfig {
      * @param function 需要级联构造的属性
      */
     protected <T> void addCascadeCreateKey(SFunction<T, ?> function) {
-        addCascadeCreateKey(NamingUtil.getKeyName(ReflectUtil.getFieldFromLambda(function)));
+        addCascadeCreateKey(NamingUtil.getKeyName(FieldUtil.getFieldFromLambda(function)));
     }
 
     /**
@@ -396,7 +397,7 @@ public class CommonConfig {
      * @param function 需要级联构造的属性
      */
     public <T> void removeCascadeCreateKey(SFunction<T, ?> function) {
-        removeCascadeCreateKey(NamingUtil.getKeyName(ReflectUtil.getFieldFromLambda(function)));
+        removeCascadeCreateKey(NamingUtil.getKeyName(FieldUtil.getFieldFromLambda(function)));
     }
 
     /**
