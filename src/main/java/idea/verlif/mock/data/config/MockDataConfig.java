@@ -32,7 +32,7 @@ public class MockDataConfig extends CommonConfig {
      * 属性选项值。<br>
      * 用于生成属性值时，选择性忽略。
      */
-    private int fieldOptions = 0;
+    private int fieldOptions = FieldOption.ALLOWED_NULL | FieldOption.ALLOWED_NOTNULL | FieldOption.ALLOWED_CLASS | FieldOption.ALLOWED_PRIMITIVE;
 
     public MockDataConfig copy() {
         MockDataConfig config = new MockDataConfig();
@@ -123,12 +123,22 @@ public class MockDataConfig extends CommonConfig {
         return this;
     }
 
+    public MockDataConfig blockFieldOption(int fieldOptions) {
+        this.fieldOptions &= ~fieldOptions;
+        return this;
+    }
+
     public boolean isForceNew() {
         return (fieldOptions & FieldOption.ALLOWED_NOTNULL) > 0;
     }
 
     public MockDataConfig forceNew(boolean forceNew) {
-        this.fieldOptions |= FieldOption.ALLOWED_NOTNULL | FieldOption.IGNORED_TYPE;
+        // 只考虑变更情况
+        if (!isForceNew() && forceNew) {
+            appendFieldOption(FieldOption.ALLOWED_NOTNULL);
+        } else if (isForceNew() && !forceNew) {
+            blockFieldOption(FieldOption.ALLOWED_NOTNULL);
+        }
         return this;
     }
 

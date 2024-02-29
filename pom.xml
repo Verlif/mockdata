@@ -6,7 +6,7 @@
 
     <groupId>idea.verlif</groupId>
     <artifactId>mock-data</artifactId>
-    <version>3.3</version>
+    <version>3.3.1</version>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
