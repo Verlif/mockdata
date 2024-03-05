@@ -8,7 +8,7 @@
 - 批量生成假数据，填充数据库
 - 其他需要自动生成对象的场景
 
-如果还想知道其他的用法，可以看 [这里](docs/1.x/Directions.md)，或是直接查阅 [配置说明](docs/1.x/MockConfig.md)。
+如果还想知道其他的用法，可以看 [这里](/docs/1.x/Directions.md)，或是直接查阅 [配置说明](docs/1.x/MockConfig.md)。
 
 ## 特点
 

@@ -71,4 +71,4 @@ __mock-data__ 并不提供类似 __JavaFaker__ 这种字典库使用，实际上
 - __指定级联构建__
   - 开发者可以通过属性key、Lambda表达式、类、包名甚至正则表达式来设定需要构建的属性或类。
 
-更多的设置在 [MockConfig方法说明](MockConfig.md) 中有说明。
+更多的设置在 [MockConfig方法说明](/docs/1.x/MockConfig.md) 中有说明。

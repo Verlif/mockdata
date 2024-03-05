@@ -256,7 +256,7 @@ public class MockDataTest {
     public void customTest() {
         // 固定值测试
         creator.getConfig()
-                .fieldValue(IEnum.class, IEnum.HELLO);
+                .fieldObject(IEnum.class, IEnum.HELLO);
         boolean flag = true;
         for (int i = 0; i < 20; i++) {
             IEnum iEnum = creator.mock(IEnum.class);
@@ -279,7 +279,7 @@ public class MockDataTest {
 
         // 特选属性固定值测试
         creator.getConfig()
-                .fieldValue(AWithB::getName, name);
+                .fieldObject(AWithB::getName, name);
         printlnFormatted("DataCreator testing result", name.equals(creator.mock(AWithB.class).getName()));
 
         // 过滤器测试
@@ -323,8 +323,8 @@ public class MockDataTest {
                 .autoCascade(false)
                 .cascadeCreateKey(SimpleObject.class)
                 .cascadeCreateKey(SimpleObject::getSelfC)
-                .fieldValue(int.class, 5)
-                .fieldValue(SimpleObject::getSc, '=')
+                .fieldObject(int.class, 5)
+                .fieldObject(SimpleObject::getSc, '=')
                 .fieldValue(SimpleObject::getStrings, (DataCreator<List<String>>) (src, creator) -> {
                     List<String> list = new ArrayList<>();
                     list.add(testStr);

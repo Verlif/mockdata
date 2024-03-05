@@ -5,7 +5,6 @@ import idea.verlif.mock.data.util.ContainsUtil;
 import idea.verlif.mock.data.util.NamingUtil;
 import idea.verlif.reflection.domain.SFunction;
 import idea.verlif.reflection.util.FieldUtil;
-import idea.verlif.reflection.util.ReflectUtil;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;

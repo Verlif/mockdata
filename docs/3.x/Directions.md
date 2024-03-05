@@ -90,4 +90,4 @@ __mock-data__ 就提供了很多自定义的功能，方便开发者根据自己
 - __填充型接口构建__
   - 类似`List`这类的接口实现类的构建可以通过`MockDataCreator.addInterfaceValue(List.class, new ListCreator())`的方式添加接口构建器，让构建器能识别此类接口并使用添加的构建器进行自动填充操作。
 
-更多的设置在 [MockConfig方法说明](MockConfig.md) 中有说明。
+更多的设置在 [MockConfig方法说明](/docs/3.x/MockConfig.md) 中有说明。

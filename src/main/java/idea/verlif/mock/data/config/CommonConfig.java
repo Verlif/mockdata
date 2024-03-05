@@ -13,7 +13,6 @@ import idea.verlif.mock.data.util.ContainsUtil;
 import idea.verlif.mock.data.util.NamingUtil;
 import idea.verlif.reflection.domain.SFunction;
 import idea.verlif.reflection.util.FieldUtil;
-import idea.verlif.reflection.util.ReflectUtil;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -118,7 +117,7 @@ public class CommonConfig {
      * @param function 属性获取表达式
      * @param o        属性对应数据
      */
-    public <T> CommonConfig fieldValue(SFunction<T, ?> function, Object o) {
+    public <T> CommonConfig fieldObject(SFunction<T, ?> function, Object o) {
         addFieldValue(function, new StaticValueCreator(o));
         return this;
     }
@@ -233,7 +232,7 @@ public class CommonConfig {
      * @param cla 目标类
      * @param o   属性对应数据
      */
-    public <T> CommonConfig fieldValue(Class<T> cla, Object o) {
+    public <T> CommonConfig fieldObject(Class<T> cla, Object o) {
         addFieldValue(cla, new StaticValueCreator(o));
         return this;
     }

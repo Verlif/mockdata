@@ -3,10 +3,6 @@ package idea.verlif.mock.data.creator;
 import idea.verlif.mock.data.MockDataCreator;
 import idea.verlif.mock.data.domain.MockSrc;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-
 /**
  * @author Verlif
  */
