@@ -19,7 +19,6 @@ public class SimpleTest {
         System.out.println(config.getFieldOptions() + "-" + config.isForceNew());
         config.forceNew(false);
         System.out.println(config.getFieldOptions() + "-" + config.isForceNew());
-
     }
 
     @Test

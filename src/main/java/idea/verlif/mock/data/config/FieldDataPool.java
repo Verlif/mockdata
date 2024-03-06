@@ -29,6 +29,13 @@ public class FieldDataPool {
         }
     }
 
+    /**
+     * 追加属性数据池
+     */
+    public void appendFieldDataPool(FieldDataPool fieldDataPool) {
+        this.patternValuesMap.putAll(fieldDataPool.patternValuesMap);
+    }
+
     public <T> T[] getValues(Class<?> cl) {
         return getValues(cl, "");
     }
