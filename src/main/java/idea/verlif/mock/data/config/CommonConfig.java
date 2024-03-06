@@ -484,6 +484,13 @@ public class CommonConfig {
         return this;
     }
 
+    /**
+     * 获取当前配置的属性数据池
+     */
+    public FieldDataPool getFieldDataPool() {
+        return fieldDataPool;
+    }
+
     public <T> T randomDataFromDataPool(Class<?> cl, String key) {
         if (fieldDataPool == null) {
             return null;
