@@ -1,5 +1,6 @@
 package idea.verlif.mock.data.config;
 
+import idea.verlif.reflection.domain.ClassGrc;
 import idea.verlif.reflection.domain.SFunction;
 import idea.verlif.reflection.util.FieldUtil;
 
@@ -36,12 +37,14 @@ public class FieldDataPool {
         this.patternValuesMap.putAll(fieldDataPool.patternValuesMap);
     }
 
-    public <T> T[] getValues(Class<?> cl) {
-        return getValues(cl, "");
+    public <T> T[] getValues(ClassGrc classGrc) {
+        return getValues(classGrc, "");
     }
 
-    public <T> T[] getValues(Class<?> cl, String key) {
-        PatternValues<?> patternValues = patternValuesMap.get(cl);
+    public <T> T[] getValues(ClassGrc classGrc, String key) {
+        // Map的key只支持包装类型
+        Class<?> target = classGrc.getTarget();
+        PatternValues<?> patternValues = patternValuesMap.get(target);
         if (patternValues != null) {
             return (T[]) patternValues.getValues(key);
         }
@@ -49,10 +52,10 @@ public class FieldDataPool {
     }
 
     public <T> PatternValues<T> type(Class<? extends T> cl, T... values) {
-        return type(cl, null, values);
+        return typeName(cl, null, values);
     }
 
-    public <T> PatternValues<T> type(Class<? extends T> cl, String fieldName, T... values) {
+    public <T> PatternValues<T> typeName(Class<? extends T> cl, String fieldName, T... values) {
         PatternValues<T> pv = (PatternValues<T>) patternValuesMap.get(cl);
         if (pv == null) {
             pv = new PatternValues<>();
@@ -69,15 +72,21 @@ public class FieldDataPool {
 
     public <C, T> PatternValues<T> like(SFunction<C, T> function, T... values) {
         Field field = FieldUtil.getFieldFromLambda(function);
-        return like((Class<T>) field.getType(), field.getName(), values);
+        return likeName((Class<T>) field.getType(), field.getName(), values);
     }
 
-    public <T> PatternValues<T> like(Class<? extends T> cl, String fieldName, T... values) {
+    public <T> PatternValues<T> likeName(Class<? extends T> cl, String fieldName, T... values) {
         PatternValues<T> pv = type(cl);
         pv.values(values, ".*" + fieldName + ".*", Pattern.CASE_INSENSITIVE);
         return pv;
     }
 
+    /**
+     * 正则key值数组存储。<br/>
+     * 通常是一个类对应一个存储器，key则表示了值数组名称。
+     *
+     * @param <T> 值类型
+     */
     public final class PatternValues<T> {
 
         private final ArrayList<Pattern> patterns;
@@ -111,9 +120,7 @@ public class FieldDataPool {
             for (Object[] value : pv.values) {
                 this.values.add((T[]) value);
             }
-            for (Pattern pattern : pv.patterns) {
-                this.patterns.add(pattern);
-            }
+            this.patterns.addAll(pv.patterns);
         }
 
         public FieldDataPool next() {
@@ -121,7 +128,7 @@ public class FieldDataPool {
         }
 
         public boolean isMatched(String str) {
-            if (patterns.size() == 0) {
+            if (patterns.isEmpty()) {
                 return true;
             }
             for (Pattern pattern : patterns) {

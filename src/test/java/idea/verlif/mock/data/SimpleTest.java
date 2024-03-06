@@ -2,7 +2,7 @@ package idea.verlif.mock.data;
 
 import com.alibaba.fastjson2.JSONObject;
 import idea.verlif.mock.data.config.FieldOption;
-import idea.verlif.mock.data.config.MockDataConfig;
+import idea.verlif.mock.data.creator.InstanceCreator;
 import idea.verlif.mock.data.domain.Person;
 import idea.verlif.mock.data.example.PropertiesDataPool;
 import org.junit.Test;
@@ -13,12 +13,13 @@ public class SimpleTest {
 
     @Test
     public void test() {
-        MockDataConfig config = new MockDataConfig();
-        System.out.println(config.getFieldOptions() + "-" + config.isForceNew());
-        config.forceNew(true);
-        System.out.println(config.getFieldOptions() + "-" + config.isForceNew());
-        config.forceNew(false);
-        System.out.println(config.getFieldOptions() + "-" + config.isForceNew());
+        InstanceCreator<?> creator = new InstanceCreator<Person>() {
+            @Override
+            public Person newInstance(MockDataCreator creator) {
+                return new Person();
+            }
+        };
+        System.out.println(creator.matched());
     }
 
     @Test

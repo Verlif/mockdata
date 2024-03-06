@@ -229,7 +229,7 @@ public class MockDataCreator extends CommonConfig {
         public <T> T mockSrc(MockSrc src) {
             Class<T> cla = (Class<T>) src.getClassGrc().getTarget();
             // 从数据池中判断是否有值
-            Object o = getObjectFromDataPool(cla, null);
+            Object o = getObjectFromDataPool(src.getClassGrc(), null);
             if (o == null) {
                 Class<?> componentClass = getComponentClass(cla);
                 // 是否是忽略类
@@ -359,7 +359,7 @@ public class MockDataCreator extends CommonConfig {
                         // 如果对象已存在则判断是否重新创建
                         if (isAcceptField(o, field, fieldCla)) {
                             // 从属性数据池中获取数据
-                            o = getObjectFromDataPool(fieldCla, field.getName());
+                            o = getObjectFromDataPool(fieldGrc, field.getName());
                             if (o == null) {
                                 int count = counter.count(fieldKey);
                                 // 判定类是否存在构造器
@@ -504,14 +504,14 @@ public class MockDataCreator extends CommonConfig {
         /**
          * 从数据池获取随机数据
          *
-         * @param cl  目标类
-         * @param key 目标key
+         * @param classGrc 目标类
+         * @param key      目标key
          * @return 随机数据
          */
-        public Object getObjectFromDataPool(Class<?> cl, String key) {
-            Object o = mockConfig.randomDataFromDataPool(cl, key);
+        public Object getObjectFromDataPool(ClassGrc classGrc, String key) {
+            Object o = mockConfig.randomDataFromDataPool(classGrc, key);
             if (o == null) {
-                o = MockDataCreator.this.randomDataFromDataPool(cl, key);
+                o = MockDataCreator.this.randomDataFromDataPool(classGrc, key);
             }
             return o;
         }

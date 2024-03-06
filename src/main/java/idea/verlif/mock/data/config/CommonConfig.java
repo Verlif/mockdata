@@ -11,6 +11,7 @@ import idea.verlif.mock.data.exception.ClassNotMatchException;
 import idea.verlif.mock.data.exception.MockDataException;
 import idea.verlif.mock.data.util.ContainsUtil;
 import idea.verlif.mock.data.util.NamingUtil;
+import idea.verlif.reflection.domain.ClassGrc;
 import idea.verlif.reflection.domain.SFunction;
 import idea.verlif.reflection.util.FieldUtil;
 
@@ -491,13 +492,13 @@ public class CommonConfig {
         return fieldDataPool;
     }
 
-    public <T> T randomDataFromDataPool(Class<?> cl, String key) {
+    public <T> T randomDataFromDataPool(ClassGrc classGrc, String key) {
         if (fieldDataPool == null) {
             return null;
         } else if (key == null) {
             key = "";
         }
-        T[] values = fieldDataPool.getValues(cl, key);
+        T[] values = fieldDataPool.getValues(classGrc, key);
         if (values == null || values.length == 0) {
             return null;
         }
