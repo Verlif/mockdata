@@ -380,11 +380,7 @@ public class MockDataCreator extends CommonConfig {
                                 counter.setCount(fieldKey, count - 1);
                             }
                             if (o != null) {
-                                try {
-                                    field.set(t, o);
-                                } catch (IllegalAccessException e) {
-                                    throw new MockDataException(e);
-                                }
+                                setFiled(cla, t, field, o);
                             }
                         }
                         // 还原权限
@@ -392,6 +388,25 @@ public class MockDataCreator extends CommonConfig {
                             field.setAccessible(false);
                         }
                     }
+                }
+            }
+        }
+
+        private void setFiled(Class<?> cla, Object t, Field field, Object value) {
+            if (config.isUseSetter()) {
+                Method setter = MethodUtil.getSetter(cla, field);
+                try {
+                    if (setter != null) {
+                        setter.invoke(t, value);
+                    }
+                } catch (IllegalAccessException | InvocationTargetException e) {
+                    throw new MockDataException(e);
+                }
+            } else {
+                try {
+                    field.set(t, value);
+                } catch (IllegalAccessException e) {
+                    throw new MockDataException(e);
                 }
             }
         }

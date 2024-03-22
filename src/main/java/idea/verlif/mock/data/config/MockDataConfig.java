@@ -29,6 +29,11 @@ public class MockDataConfig extends CommonConfig {
     private boolean autoCascade;
 
     /**
+     * 使用setter方法进行参数填充
+     */
+    private boolean useSetter;
+
+    /**
      * 属性选项值。<br>
      * 用于生成属性值时，选择性忽略。
      */
@@ -158,6 +163,24 @@ public class MockDataConfig extends CommonConfig {
      */
     public MockDataConfig autoCascade(boolean autoCascade) {
         this.autoCascade = autoCascade;
+        return this;
+    }
+
+    public boolean isUseSetter() {
+        return useSetter;
+    }
+
+    public void setUseSetter(boolean useSetter) {
+        this.useSetter = useSetter;
+    }
+
+    /**
+     * 使用setter方法进行参数填充
+     *
+     * @param useSetter 是否使用setter方式进行参数填充
+     */
+    public MockDataConfig useSetter(boolean useSetter) {
+        this.useSetter = useSetter;
         return this;
     }
 
