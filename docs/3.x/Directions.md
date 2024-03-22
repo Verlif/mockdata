@@ -76,7 +76,7 @@
 **mock-data** 就提供了很多自定义的功能，方便开发者根据自己的实际需要去调整，例如以下功能：
 
 - **采用setter方式进行属性值填充**
-  - 默认情况下，**mock-data**会使用直接反射的方式进行值填充，若有特别需求，可通过设置
+  - 默认情况下，**mock-data**会使用直接反射的方式进行值填充，若有特别需求，可通过`creator.getConfig().useSetter(true)`开启。
 - **控制值的生成范围**
   - 在内置的数据构建器中，绝大部分都提供了范围参数，例如`new LongRandomCreator(-100, 200)`，
     开发者只需要通过`creator.addDefaultCreator(new LongRandomCreator(-100, 200))`即可对所有的 **Long** 属性进行构建范围控制。
