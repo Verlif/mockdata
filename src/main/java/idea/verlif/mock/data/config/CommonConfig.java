@@ -4,7 +4,6 @@ import idea.verlif.mock.data.MockDataCreator;
 import idea.verlif.mock.data.config.filter.ClassFilter;
 import idea.verlif.mock.data.config.filter.FieldFilter;
 import idea.verlif.mock.data.creator.DataCreator;
-import idea.verlif.mock.data.creator.DataFiller;
 import idea.verlif.mock.data.creator.InstanceCreator;
 import idea.verlif.mock.data.domain.MockSrc;
 import idea.verlif.mock.data.exception.ClassNotMatchException;
@@ -62,7 +61,7 @@ public class CommonConfig {
     /**
      * 属性数据池
      */
-    protected FieldDataPool fieldDataPool;
+    protected DataPool dataPool;
 
     public CommonConfig() {
         fieldCreatorMap = new HashMap<>();
@@ -98,17 +97,6 @@ public class CommonConfig {
      */
     public <T> CommonConfig fieldValue(SFunction<T, ?> function, DataCreator<?> creator) {
         addFieldValue(function, creator);
-        return this;
-    }
-
-    /**
-     * 添加或替换属性数据填充器
-     *
-     * @param function 属性获取表达式
-     * @param filler   数据填充器
-     */
-    public <T> CommonConfig fieldValue(SFunction<T, ?> function, DataFiller<?> filler) {
-        addFieldValue(function, filler);
         return this;
     }
 
@@ -205,26 +193,15 @@ public class CommonConfig {
     /**
      * 添加或替换属性接口创造器
      *
-     * @param cla    目标类
-     * @param filler 数据填充器
+     * @param cla     目标类
+     * @param creator 数据填充器
      */
-    protected void addInterfaceValue(Class<?> cla, DataCreator<?> filler) {
+    protected void addInterfaceValue(Class<?> cla, DataCreator<?> creator) {
         if (cla.isInterface()) {
-            this.interfaceCreatorMap.put(cla, filler);
+            this.interfaceCreatorMap.put(cla, creator);
         } else {
             throw new ClassNotMatchException(cla + " is not interface!");
         }
-    }
-
-    /**
-     * 添加或替换属性数据创造器
-     *
-     * @param cla    目标类
-     * @param filler 数据创造器
-     */
-    public <T> CommonConfig fieldValue(Class<T> cla, DataFiller<?> filler) {
-        addFieldValue(cla, filler);
-        return this;
     }
 
     /**
@@ -480,25 +457,25 @@ public class CommonConfig {
      *
      * @param pool 属性数据池
      */
-    public CommonConfig fieldDataPool(FieldDataPool pool) {
-        this.fieldDataPool = pool;
+    public CommonConfig fieldDataPool(DataPool pool) {
+        this.dataPool = pool;
         return this;
     }
 
     /**
      * 获取当前配置的属性数据池
      */
-    public FieldDataPool getFieldDataPool() {
-        return fieldDataPool;
+    public DataPool getDataPool() {
+        return dataPool;
     }
 
     public <T> T randomDataFromDataPool(ClassGrc classGrc, String key) {
-        if (fieldDataPool == null) {
+        if (dataPool == null) {
             return null;
         } else if (key == null) {
             key = "";
         }
-        T[] values = fieldDataPool.getValues(classGrc, key);
+        T[] values = dataPool.getValues(classGrc, key);
         if (values == null || values.length == 0) {
             return null;
         }

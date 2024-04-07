@@ -2,19 +2,29 @@ package idea.verlif.mock.data.creator;
 
 import idea.verlif.mock.data.MockDataCreator;
 import idea.verlif.mock.data.domain.MockSrc;
+import idea.verlif.mock.data.exception.MockDataException;
+import idea.verlif.reflection.util.ReflectUtil;
+
+import java.lang.reflect.InvocationTargetException;
 
 /**
- * @author Verlif
+ * 数据填充器，用于生成数据值
  */
-public interface DataFiller<T> extends DataCreator<T> {
+public interface DataFiller<R> extends DataCreator<R> {
 
-    void fill(T t, MockDataCreator.Creator creator);
+    void fill(R t, MockDataCreator.Creator creator);
 
-    T newInstance(Class<?> cla, MockDataCreator.Creator creator);
+    default R newInstance(Class<R> cla) {
+        try {
+            return ReflectUtil.newInstance(cla);
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            throw new MockDataException(e);
+        }
+    }
 
     @Override
-    default T mock(MockSrc src, MockDataCreator.Creator creator) {
-        T t = newInstance(src.getClassGrc().getTarget(), creator);
+    default R mock(MockSrc src, MockDataCreator.Creator creator) {
+        R t = newInstance((Class<R>) src.getClassGrc().getTarget());
         fill(t, creator);
         return t;
     }

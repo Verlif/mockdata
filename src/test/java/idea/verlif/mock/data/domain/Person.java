@@ -20,6 +20,8 @@ public class Person {
 
     private FRUIT favouriteFruit;
 
+    private String address;
+
     public Person() {
     }
 
@@ -89,6 +91,14 @@ public class Person {
 
     public void setFavouriteFruit(FRUIT favouriteFruit) {
         this.favouriteFruit = favouriteFruit;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public enum FRUIT {

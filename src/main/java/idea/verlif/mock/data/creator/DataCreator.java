@@ -3,10 +3,14 @@ package idea.verlif.mock.data.creator;
 import idea.verlif.mock.data.MockDataCreator;
 import idea.verlif.mock.data.domain.MockSrc;
 import idea.verlif.mock.data.domain.TypeGetter;
+import idea.verlif.mock.data.exception.MockDataException;
+import idea.verlif.reflection.domain.ClassGrc;
+import idea.verlif.reflection.util.ReflectUtil;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 数据构建器
@@ -14,6 +18,8 @@ import java.util.List;
  * @author Verlif
  */
 public interface DataCreator<R> extends TypeGetter {
+
+    String GENERICS_KEY = "R";
 
     /**
      * 生成数据
@@ -29,12 +35,22 @@ public interface DataCreator<R> extends TypeGetter {
     @Override
     default List<Class<?>> types() {
         List<Class<?>> list = new ArrayList<>();
-        try {
-            Method method = this.getClass().getMethod("mock", MockSrc.class, MockDataCreator.Creator.class);
-            Class<?> type = method.getReturnType();
-            list.add(type);
-        } catch (NoSuchMethodException ignored) {
-        }
+        Class<?> type = type();
+        list.add(type);
         return list;
+    }
+
+    default Class<?> type() {
+        Map<String, ClassGrc> genericsMap;
+        try {
+            genericsMap = ReflectUtil.getGenericsMap(this.getClass());
+        } catch (NoSuchFieldException | IllegalAccessException exception) {
+            throw new MockDataException(exception);
+        }
+        ClassGrc grc = genericsMap.get(GENERICS_KEY);
+        if (grc != null) {
+            return grc.getTarget();
+        }
+        return null;
     }
 }

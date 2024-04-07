@@ -97,4 +97,4 @@ System.out.println(JSONObject.toJSONString(creator.mock(Person.class)));
 }
 ```
 
-这种数据应该是符合正常标准的，当然，开发者可以根据需要自己继承`FieldDataPool`，实现类似`JavaFaker`的效果。
+这种数据应该是符合正常标准的，当然，开发者可以根据需要自己实现`DataPool`，实现类似`JavaFaker`的效果。

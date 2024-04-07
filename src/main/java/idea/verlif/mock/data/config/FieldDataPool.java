@@ -13,8 +13,9 @@ import java.util.regex.Pattern;
 /**
  * 属性数据池
  */
-public class FieldDataPool {
+public class FieldDataPool implements DataPool {
 
+    private static final String EMPTY = "";
     private final Map<Class<?>, PatternValues<?>> patternValuesMap;
 
     public FieldDataPool() {
@@ -38,9 +39,10 @@ public class FieldDataPool {
     }
 
     public <T> T[] getValues(ClassGrc classGrc) {
-        return getValues(classGrc, "");
+        return getValues(classGrc, EMPTY);
     }
 
+    @Override
     public <T> T[] getValues(ClassGrc classGrc, String key) {
         // Map的key只支持包装类型
         Class<?> target = classGrc.getTarget();

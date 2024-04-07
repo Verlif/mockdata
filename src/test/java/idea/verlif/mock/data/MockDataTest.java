@@ -32,7 +32,6 @@ public class MockDataTest {
 
     {
         creator.getConfig()
-                .autoCascade(true)
                 .arraySize(2)
                 .creatingDepth(3);
     }

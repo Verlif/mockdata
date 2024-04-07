@@ -26,7 +26,7 @@ public class MockDataConfig extends CommonConfig {
     /**
      * 自动级联构建
      */
-    private boolean autoCascade;
+    private boolean autoCascade = true;
 
     /**
      * 使用setter方法进行参数填充
@@ -52,7 +52,7 @@ public class MockDataConfig extends CommonConfig {
         config.fieldFilters.addAll(this.fieldFilters);
         config.classFilters.addAll(this.classFilters);
         config.fieldOptions = this.fieldOptions;
-        config.fieldDataPool = this.fieldDataPool;
+        config.dataPool = this.dataPool;
 
         return config;
     }

@@ -8,7 +8,7 @@ import java.lang.reflect.Method;
 /**
  * 实例构造器
  *
- * @author Verlif
+ * 实例创建器，用于对类进行自定义实例化
  */
 public interface InstanceCreator<T> {
 
