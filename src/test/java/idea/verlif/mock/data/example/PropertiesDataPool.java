@@ -13,8 +13,17 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
+/**
+ * Properties文件数据池<br/>
+ * 解析的格式如下：<br/>
+ * string#name|nickname=["小明", "小红", "小张", "小丽"]<br/>
+ * 这里#以前的表示类型，除了八个基本类型外，都要填写全类名。
+ * #后面的是属性名，如果不指定属性名，则可以没有#号<br/>
+ * =后面的是数据池，使用英文,分隔开。
+ */
 public class PropertiesDataPool extends FieldDataPool {
 
+    private static final char SIGN = '#';
     private static final String SPLIT = "#";
     private static final String SPLIT_OR = "\\|";
 
@@ -34,7 +43,7 @@ public class PropertiesDataPool extends FieldDataPool {
         for (Map.Entry<Object, Object> entry : properties.entrySet()) {
             String key = (String) entry.getKey();
             String value = (String) entry.getValue();
-            Class<?> type = parseClass(key.substring(0, key.indexOf(SPLIT.charAt(0))));
+            Class<?> type = parseClass(key.substring(0, key.indexOf(SIGN)));
             PatternValues<?> pv = parsePV(key, value);
             if (pv != null) {
                 addPatternValues(type, pv);

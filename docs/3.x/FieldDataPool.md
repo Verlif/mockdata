@@ -58,6 +58,7 @@ double#height=[120, 130, 140, 150, 160, 170, 180, 190, 200]
 double#weight=[40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160]
 String#name=["假装这个名字", "这么长的姓名"]
 String#nickname=["小明", "小红", "小张", "小丽"]
+string#address=["这里街那里巷", "那里街那里巷", "这里街这里巷", "那里街这里巷"]
 java.util.Date#birthday=["1998-01-08", "1998-03-08", "1998-05-08", "1998-07-08"]
 ```
 
@@ -77,7 +78,7 @@ dataPool.load("src/test/resources/data-pool.properties");
 // 新建MockDataCreator
 MockDataCreator creator = new MockDataCreator();
 // 进行基础设定并加载属性数据池
-creator.getConfig().autoCascade(true).fieldDataPool(dataPool);
+creator.getConfig().fieldDataPool(dataPool);
 // 开始mock
 System.out.println(JSONObject.toJSONString(creator.mock(Person.class)));
 ```
@@ -86,14 +87,15 @@ System.out.println(JSONObject.toJSONString(creator.mock(Person.class)));
 
 ```json
 {
-  "age": 25,
+  "address": "那里街这里巷",
+  "age": 24,
   "birthday": "1998-01-08 00:00:00",
-  "favouriteFruit": 2,
-  "height": 190.0,
-  "name": "假装这个名字",
-  "nickname": "小丽",
-  "nominalAge": 25,
-  "weight": 150.0
+  "favouriteFruit": 0,
+  "height": 120.0,
+  "name": "这么长的姓名",
+  "nickname": "小红",
+  "nominalAge": 23,
+  "weight": 50.0
 }
 ```
 

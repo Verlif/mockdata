@@ -23,6 +23,8 @@ import java.util.regex.Pattern;
  */
 public class CommonConfig {
 
+    protected final Random random;
+
     /**
      * 属性创造器表
      */
@@ -64,6 +66,7 @@ public class CommonConfig {
     protected DataPool dataPool;
 
     public CommonConfig() {
+        random = new Random();
         fieldCreatorMap = new HashMap<>();
         interfaceCreatorMap = new HashMap<>();
         instanceCreatorMap = new HashMap<>();
@@ -457,7 +460,7 @@ public class CommonConfig {
      *
      * @param pool 属性数据池
      */
-    public CommonConfig fieldDataPool(DataPool pool) {
+    public CommonConfig dataPool(DataPool pool) {
         this.dataPool = pool;
         return this;
     }
@@ -478,8 +481,10 @@ public class CommonConfig {
         T[] values = dataPool.getValues(classGrc, key);
         if (values == null || values.length == 0) {
             return null;
+        } else if (values.length == 1) {
+            return values[0];
         }
-        return values[new Random().nextInt(values.length)];
+        return values[random.nextInt(values.length)];
     }
 
     /**

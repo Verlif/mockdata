@@ -34,6 +34,11 @@ public class MockDataConfig extends CommonConfig {
     private boolean useSetter;
 
     /**
+     * 使用getter方法进行参数填充
+     */
+    private boolean useGetter;
+
+    /**
      * 属性选项值。<br>
      * 用于生成属性值时，选择性忽略。
      */
@@ -174,6 +179,21 @@ public class MockDataConfig extends CommonConfig {
         this.useSetter = useSetter;
     }
 
+    public boolean isUseGetter() {
+        return useGetter;
+    }
+
+    public void setUseGetter(boolean useGetter) {
+        this.useGetter = useGetter;
+    }
+
+    /**
+     * 使用setter方法进行参数填充
+     */
+    public MockDataConfig useSetter() {
+        return useSetter(true);
+    }
+
     /**
      * 使用setter方法进行参数填充
      *
@@ -181,6 +201,23 @@ public class MockDataConfig extends CommonConfig {
      */
     public MockDataConfig useSetter(boolean useSetter) {
         this.useSetter = useSetter;
+        return this;
+    }
+
+    /**
+     * 使用getter方法进行参数获取
+     */
+    public MockDataConfig useGetter() {
+        return useGetter(true);
+    }
+
+    /**
+     * 使用getter方法进行参数获取
+     *
+     * @param useGetter 是否使用getter方式进行参数获取
+     */
+    public MockDataConfig useGetter(boolean useGetter) {
+        this.useGetter = useGetter;
         return this;
     }
 

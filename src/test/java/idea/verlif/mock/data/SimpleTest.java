@@ -47,21 +47,23 @@ public class SimpleTest {
                 .next()
                 .likeName(String.class, "address", "这里", "那里")
                 .next();
-        creator.fieldDataPool(dataPool);
+        creator.dataPool(dataPool);
+        creator.getConfig().forceNew(false).useGetter(true);
         System.out.println(instanceCreator.matched());
         Person mock = creator.mock(Person.class);
         System.out.println(mock.getName());
+        System.out.println(mock.getNickname());
     }
 
     @Test
-    public void PropertiesDataPoolTest() throws IOException, ClassNotFoundException {
+    public void PropertiesDataPoolTest() throws IOException {
         PropertiesDataPool dataPool = new PropertiesDataPool();
         dataPool.load("src/test/resources/data-pool.properties");
         MockDataCreator creator = new MockDataCreator();
         creator.getConfig()
                 .appendFieldOption(FieldOption.IGNORED_VALUE | FieldOption.ALLOWED_PRIMITIVE)
                 .autoCascade(true)
-                .fieldDataPool(dataPool);
+                .dataPool(dataPool);
         Person person = new Person();
         person.setName("啊这");
         System.out.println(JSONObject.toJSONString(creator.mock(person)));

@@ -359,7 +359,7 @@ public class MockDataTest {
                 // 对Date类的所有名称中能匹配`.*day`和`.*time`的属性进行数据池选取
                 .type(Date.class)
                 .values(new Date[]{new Date()}, ".*day", ".*time").next();
-        creator.fieldDataPool(dataPool);
+        creator.dataPool(dataPool);
         check(creator.mock(Person.class), o -> o != null
                 && o.getAge() > 22 && o.getAge() < 28 && o.getNominalAge() > 22 && o.getNominalAge() < 28
                 && o.getFavouriteFruit() == Person.FRUIT.APPLE);

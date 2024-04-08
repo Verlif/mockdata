@@ -349,13 +349,8 @@ public class MockDataCreator extends CommonConfig {
                         if (!oldAcc) {
                             field.setAccessible(true);
                         }
-                        Object o;
-                        try {
-                            // 获取属性可能存在的对象
-                            o = field.get(t);
-                        } catch (IllegalAccessException e) {
-                            throw new MockDataException(e);
-                        }
+                        // 获取属性可能存在的对象
+                        Object o = getField(t, field);
                         // 如果对象已存在则判断是否重新创建
                         if (isAcceptField(o, field, fieldCla)) {
                             // 从属性数据池中获取数据
@@ -392,22 +387,40 @@ public class MockDataCreator extends CommonConfig {
             }
         }
 
+        private Object getField(Object t, Field field) {
+            if (config.isUseGetter()) {
+                Method getter = MethodUtil.getGetter(field);
+                try {
+                    if (getter != null) {
+                        return getter.invoke(t);
+                    }
+                } catch (IllegalAccessException | InvocationTargetException e) {
+                    throw new MockDataException(e);
+                }
+            }
+            try {
+                return field.get(t);
+            } catch (IllegalAccessException e) {
+                throw new MockDataException(e);
+            }
+        }
+
         private void setFiled(Class<?> cla, Object t, Field field, Object value) {
             if (config.isUseSetter()) {
                 Method setter = MethodUtil.getSetter(cla, field);
                 try {
                     if (setter != null) {
                         setter.invoke(t, value);
+                        return;
                     }
                 } catch (IllegalAccessException | InvocationTargetException e) {
                     throw new MockDataException(e);
                 }
-            } else {
-                try {
-                    field.set(t, value);
-                } catch (IllegalAccessException e) {
-                    throw new MockDataException(e);
-                }
+            }
+            try {
+                field.set(t, value);
+            } catch (IllegalAccessException e) {
+                throw new MockDataException(e);
             }
         }
 
