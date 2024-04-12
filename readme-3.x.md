@@ -9,9 +9,9 @@
 - 各种场景下的随机数据测试
 - 场景演示下生成随机数据展示
 
-以下内容基于4.x版本，1.x版本请参考 [这里](readme-1.x.md)，2.x版本请参考 [这里](readme-2.x.md)，2.x版本请参考 [这里](readme-3.x.md)。
+以下内容基于3.x版本，1.x版本请参考 [这里](readme-1.x.md)，2.x版本请参考 [这里](readme-2.x.md)。
 
-如果还想知道其他的用法，可以看 [这里](docs/4.x/Directions.md)，或是直接查阅 [配置说明](docs/4.x/MockConfig.md)。
+如果还想知道其他的用法，可以看 [这里](docs/3.x/Directions.md)，或是直接查阅 [配置说明](docs/3.x/MockConfig.md)。
 
 ## 特点
 
@@ -53,7 +53,7 @@
    Pet pet = creator.mock(Person::getPet);
    ```
 
-更多用法请参考 [使用手册](docs/4.x/Directions.md)
+更多用法请参考 [使用手册](docs/3.x/Directions.md)
 
 ## 更多特性
 
@@ -98,7 +98,7 @@
    Person person = creator.mock(Person.class);
    ```
 
-   更多属性数据池的用法看 [这里](docs/4.x/FieldDataPool.md)
+   更多属性数据池的用法看 [这里](docs/3.x/FieldDataPool.md)
 
 ## 支持的类型
 
