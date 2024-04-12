@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>idea.verlif</groupId>
-    <artifactId>mock-data</artifactId>
+    <artifactId>mockdata</artifactId>
     <version>4.0.0</version>
     <packaging>pom</packaging>
     <modules>
@@ -30,7 +30,7 @@
             </dependency>
             <dependency>
                 <groupId>idea.verlif</groupId>
-                <artifactId>mock-data-core</artifactId>
+                <artifactId>mockdata-core</artifactId>
                 <version>${version}</version>
             </dependency>
             <dependency>
