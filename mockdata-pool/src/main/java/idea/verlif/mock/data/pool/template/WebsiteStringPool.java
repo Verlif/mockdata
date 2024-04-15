@@ -48,4 +48,9 @@ public class WebsiteStringPool implements SimplePool {
     public Object fetch(ClassGrc classGrc, String key) {
         return mock();
     }
+
+    @Override
+    public Class<?> type() {
+        return String.class;
+    }
 }

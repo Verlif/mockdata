@@ -1,9 +1,9 @@
 package idea.verlif.test;
 
-import com.alibaba.fastjson2.JSONObject;
 import idea.verlif.mock.data.MockDataCreator;
 import idea.verlif.mock.data.pool.SimplePool;
 import idea.verlif.mock.data.pool.VirtualDataPool;
+import idea.verlif.mock.data.pool.template.ContinuousIntPool;
 import idea.verlif.reflection.domain.ClassGrc;
 import idea.verlif.test.entity.Person;
 import idea.verlif.test.entity.Pet;
@@ -41,5 +41,14 @@ public class DataTest {
         for (int i = 0; i < 100; i++) {
             creator.mock(pet);
         }
+    }
+
+    @Test
+    public void dataCreatorTest() {
+        ContinuousIntPool continuousIntPool = new ContinuousIntPool();
+        MockDataCreator creator = new MockDataCreator();
+        creator.dataPool(new VirtualDataPool().withTemplate());
+        Person person = creator.mock(Person.class);
+        System.out.println(person.getId());
     }
 }

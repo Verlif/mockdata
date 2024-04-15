@@ -29,6 +29,11 @@ public class PhoneNumStringPool implements SimplePool {
         return mock();
     }
 
+    @Override
+    public Class<?> type() {
+        return String.class;
+    }
+
     public enum Operator {
         YIDONG(
                 "134", "135", "136", "137", "138", "139", "144", "147", "148", "150",

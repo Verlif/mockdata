@@ -17,7 +17,7 @@ public class MineralRandom implements DataRandom<String> {
         return RANDOM;
     }
 
-    private static final String[] MINERALS = new String[]{
+    public static final String[] MINERALS = new String[]{
             "金刚石", "石墨", "水晶", "刚玉", "石棉",
             "云母", "石膏", "萤石", "玛瑙", "石灰岩",
             "白云岩", "石英岩", "陶瓷土", "耐火粘土", "大理岩",

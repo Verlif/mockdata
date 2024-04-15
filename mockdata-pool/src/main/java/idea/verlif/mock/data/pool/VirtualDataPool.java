@@ -2,9 +2,7 @@ package idea.verlif.mock.data.pool;
 
 import idea.verlif.mock.data.config.DataPool;
 import idea.verlif.mock.data.pool.template.*;
-import idea.verlif.parser.ParamParserService;
 import idea.verlif.reflection.domain.ClassGrc;
-import idea.verlif.reflection.util.ReflectUtil;
 
 import java.time.LocalDate;
 import java.util.Collections;
@@ -15,12 +13,10 @@ public class VirtualDataPool implements DataPool {
 
     private final Map<String, SimplePool> poolMap;
     private final Map<String, String> aliasMap;
-    private final ParamParserService paramParserService;
 
     public VirtualDataPool() {
         this.poolMap = new HashMap<>();
         this.aliasMap = new HashMap<>();
-        this.paramParserService = new ParamParserService();
     }
 
     /**
@@ -37,7 +33,7 @@ public class VirtualDataPool implements DataPool {
         mapType("weight", "weight");
         replace("height", new LimitIntPool(140, 200, 150, 175));
         mapType("height", "height");
-        replace("id", new IdStringPool());
+        replace("id", new ContinuousIntPool());
         mapType("id", "id", "idCard", "identityCard");
         replace("address", new AddressStringPool());
         mapType("address", "address", "addr");
@@ -100,10 +96,6 @@ public class VirtualDataPool implements DataPool {
         }
     }
 
-    public ParamParserService getParamParserService() {
-        return paramParserService;
-    }
-
     @Override
     public <T> T[] getValues(ClassGrc classGrc, String key) {
         String type = aliasMap.get(key);
@@ -114,14 +106,7 @@ public class VirtualDataPool implements DataPool {
                 if (mock == null) {
                     return null;
                 }
-                Object val = mock;
-                // 如果对象类型不匹配
-                if (ReflectUtil.likeClass(mock.getClass(), classGrc.getTarget())) {
-                    val = paramParserService.parse(classGrc.getTarget(), mock.toString());
-                }
-                if (val != null) {
-                    return (T[]) Collections.singletonList(val).toArray();
-                }
+                return (T[]) Collections.singletonList(mock).toArray();
             }
         }
         return null;

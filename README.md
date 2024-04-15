@@ -13,6 +13,8 @@
 
 如果还想知道其他的用法，可以看 [这里](docs/4.x/Directions.md)，或是直接查阅 [配置说明](docs/4.x/MockConfig.md)。
 
+如果希望用于接口上协助Web开发，可以参考 [MockApi](https://github.com/Verlif/mock-api)。
+
 ## 特点
 
 - **上手简单，两行代码即可开始使用（一行新建，一行使用）**

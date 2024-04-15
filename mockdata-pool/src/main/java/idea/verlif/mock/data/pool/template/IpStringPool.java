@@ -38,6 +38,11 @@ public class IpStringPool implements SimplePool {
         return mock();
     }
 
+    @Override
+    public Class<?> type() {
+        return String.class;
+    }
+
     public enum TYPE {
         IPV4, IPV6
     }

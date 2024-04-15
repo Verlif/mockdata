@@ -4,52 +4,63 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2767781d-8ee1-4880-800c-51e249e78541" name="变更" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/idea/verlif/mock/data/MockDataCreator.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/idea/verlif/mock/data/annotation/MockData.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/idea/verlif/mock/data/config/MockDataConfig.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/idea/verlif/mock/data/creator/DataCreator.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/idea/verlif/mock/data/creator/InstanceCreator.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/idea/verlif/mock/data/creator/data/ByteRandomCreator.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/idea/verlif/mock/data/creator/data/CharacterRandomCreator.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/idea/verlif/mock/data/creator/data/DictDataCreator.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/idea/verlif/mock/data/creator/data/DoubleRandomCreator.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/idea/verlif/mock/data/creator/data/FloatRandomCreator.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/idea/verlif/mock/data/creator/data/IntegerRandomCreator.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/idea/verlif/mock/data/creator/data/ListCreator.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/idea/verlif/mock/data/creator/data/LongRandomCreator.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/idea/verlif/mock/data/creator/data/ShortRandomCreator.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/idea/verlif/mock/data/creator/data/StringRandomCreator.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/idea/verlif/mock/data/domain/Counter.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/idea/verlif/mock/data/domain/MockField.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/idea/verlif/mock/data/domain/MockObject.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/idea/verlif/mock/data/domain/SFunction.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/idea/verlif/mock/data/domain/TypeGetter.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/idea/verlif/mock/data/domain/counter/MockFieldCounter.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/idea/verlif/mock/data/domain/counter/StringCounter.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/idea/verlif/mock/data/exception/NoMatchedCreatorException.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/idea/verlif/mock/data/util/NamingUtil.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/idea/verlif/mock/data/util/ReflectUtil.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/idea/verlif/mock/data/BaseTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/idea/verlif/mock/data/FieldTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/idea/verlif/mock/data/annotation/TestMockData.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/idea/verlif/mock/data/domain/A.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/idea/verlif/mock/data/domain/B.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/idea/verlif/mock/data/domain/IList.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/idea/verlif/mock/data/domain/IListExtend.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/idea/verlif/mock/data/domain/Person.java" afterDir="false" />
+    <list default="true" id="2767781d-8ee1-4880-800c-51e249e78541" name="变更" comment="构建核心：&#10;1. 增加了数据转义器，允许通过转义器尝试将数据构造器构造的数据填充到类型不同但key值匹配的属性中&#10;2. 修复了一些临时配置不生效的问题&#10;虚拟数据池：&#10;1. 修复赋值时类型转换时的错误&#10;2. 新增自增数字池（ContinuousIntPool）和受限的字符池（LimitedStringPool）&#10;3. SimplePool现在继承DataCreator接口">
+      <change afterPath="$PROJECT_DIR$/docs/4.x/DataTranspiler.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mockdata-core/src/main/java/idea/verlif/mock/data/transfer/DataTranspiler.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mockdata-core/src/main/java/idea/verlif/mock/data/transfer/ObjectTranspiler.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mockdata-core/src/main/java/idea/verlif/mock/data/transfer/base/ToStringTranspiler.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mockdata-pool/src/main/java/idea/verlif/mock/data/pool/random/TypeStringRandom.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mockdata-pool/src/main/java/idea/verlif/mock/data/pool/template/ContinuousIntPool.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mockdata-pool/src/main/java/idea/verlif/mock/data/pool/template/LimitedStringPool.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mockdata-core/src/main/java/idea/verlif/mock/data/MockDataCreator.java" beforeDir="false" afterPath="$PROJECT_DIR$/mockdata-core/src/main/java/idea/verlif/mock/data/MockDataCreator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mockdata-core/src/main/java/idea/verlif/mock/data/config/CommonConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/mockdata-core/src/main/java/idea/verlif/mock/data/config/CommonConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mockdata-core/src/main/java/idea/verlif/mock/data/config/FieldDataPool.java" beforeDir="false" afterPath="$PROJECT_DIR$/mockdata-core/src/main/java/idea/verlif/mock/data/config/FieldDataPool.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mockdata-core/src/test/java/idea/verlif/mock/data/MockDataTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/mockdata-core/src/test/java/idea/verlif/mock/data/MockDataTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mockdata-core/src/test/java/idea/verlif/mock/data/SimpleTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/mockdata-core/src/test/java/idea/verlif/mock/data/SimpleTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mockdata-core/src/test/java/idea/verlif/mock/data/domain/Person.java" beforeDir="false" afterPath="$PROJECT_DIR$/mockdata-core/src/test/java/idea/verlif/mock/data/domain/Person.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mockdata-pool/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/mockdata-pool/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mockdata-pool/src/main/java/idea/verlif/mock/data/pool/SimplePool.java" beforeDir="false" afterPath="$PROJECT_DIR$/mockdata-pool/src/main/java/idea/verlif/mock/data/pool/SimplePool.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mockdata-pool/src/main/java/idea/verlif/mock/data/pool/VirtualDataPool.java" beforeDir="false" afterPath="$PROJECT_DIR$/mockdata-pool/src/main/java/idea/verlif/mock/data/pool/VirtualDataPool.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mockdata-pool/src/main/java/idea/verlif/mock/data/pool/random/ChineseFirstNameRandom.java" beforeDir="false" afterPath="$PROJECT_DIR$/mockdata-pool/src/main/java/idea/verlif/mock/data/pool/random/ChineseFirstNameRandom.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mockdata-pool/src/main/java/idea/verlif/mock/data/pool/random/ChineseSecondNameRandom.java" beforeDir="false" afterPath="$PROJECT_DIR$/mockdata-pool/src/main/java/idea/verlif/mock/data/pool/random/ChineseSecondNameRandom.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mockdata-pool/src/main/java/idea/verlif/mock/data/pool/random/EnglishFirstNameRandom.java" beforeDir="false" afterPath="$PROJECT_DIR$/mockdata-pool/src/main/java/idea/verlif/mock/data/pool/random/EnglishFirstNameRandom.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mockdata-pool/src/main/java/idea/verlif/mock/data/pool/random/EnglishSecondNameRandom.java" beforeDir="false" afterPath="$PROJECT_DIR$/mockdata-pool/src/main/java/idea/verlif/mock/data/pool/random/EnglishSecondNameRandom.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mockdata-pool/src/main/java/idea/verlif/mock/data/pool/random/FlowerRandom.java" beforeDir="false" afterPath="$PROJECT_DIR$/mockdata-pool/src/main/java/idea/verlif/mock/data/pool/random/FlowerRandom.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mockdata-pool/src/main/java/idea/verlif/mock/data/pool/random/FruitRandom.java" beforeDir="false" afterPath="$PROJECT_DIR$/mockdata-pool/src/main/java/idea/verlif/mock/data/pool/random/FruitRandom.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mockdata-pool/src/main/java/idea/verlif/mock/data/pool/random/MineralRandom.java" beforeDir="false" afterPath="$PROJECT_DIR$/mockdata-pool/src/main/java/idea/verlif/mock/data/pool/random/MineralRandom.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mockdata-pool/src/main/java/idea/verlif/mock/data/pool/random/VegetableRandom.java" beforeDir="false" afterPath="$PROJECT_DIR$/mockdata-pool/src/main/java/idea/verlif/mock/data/pool/random/VegetableRandom.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mockdata-pool/src/main/java/idea/verlif/mock/data/pool/template/AddressStringPool.java" beforeDir="false" afterPath="$PROJECT_DIR$/mockdata-pool/src/main/java/idea/verlif/mock/data/pool/template/AddressStringPool.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mockdata-pool/src/main/java/idea/verlif/mock/data/pool/template/ChineseNameStringPool.java" beforeDir="false" afterPath="$PROJECT_DIR$/mockdata-pool/src/main/java/idea/verlif/mock/data/pool/template/ChineseNameStringPool.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mockdata-pool/src/main/java/idea/verlif/mock/data/pool/template/EmailStringPool.java" beforeDir="false" afterPath="$PROJECT_DIR$/mockdata-pool/src/main/java/idea/verlif/mock/data/pool/template/EmailStringPool.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mockdata-pool/src/main/java/idea/verlif/mock/data/pool/template/EnglishNameStringPool.java" beforeDir="false" afterPath="$PROJECT_DIR$/mockdata-pool/src/main/java/idea/verlif/mock/data/pool/template/EnglishNameStringPool.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mockdata-pool/src/main/java/idea/verlif/mock/data/pool/template/FruitStringPool.java" beforeDir="false" afterPath="$PROJECT_DIR$/mockdata-pool/src/main/java/idea/verlif/mock/data/pool/template/FruitStringPool.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mockdata-pool/src/main/java/idea/verlif/mock/data/pool/template/GenderStringPool.java" beforeDir="false" afterPath="$PROJECT_DIR$/mockdata-pool/src/main/java/idea/verlif/mock/data/pool/template/GenderStringPool.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mockdata-pool/src/main/java/idea/verlif/mock/data/pool/template/IdStringPool.java" beforeDir="false" afterPath="$PROJECT_DIR$/mockdata-pool/src/main/java/idea/verlif/mock/data/pool/template/IdStringPool.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mockdata-pool/src/main/java/idea/verlif/mock/data/pool/template/IpStringPool.java" beforeDir="false" afterPath="$PROJECT_DIR$/mockdata-pool/src/main/java/idea/verlif/mock/data/pool/template/IpStringPool.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mockdata-pool/src/main/java/idea/verlif/mock/data/pool/template/LimitDateDatePool.java" beforeDir="false" afterPath="$PROJECT_DIR$/mockdata-pool/src/main/java/idea/verlif/mock/data/pool/template/LimitDateDatePool.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mockdata-pool/src/main/java/idea/verlif/mock/data/pool/template/LimitIntPool.java" beforeDir="false" afterPath="$PROJECT_DIR$/mockdata-pool/src/main/java/idea/verlif/mock/data/pool/template/LimitIntPool.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mockdata-pool/src/main/java/idea/verlif/mock/data/pool/template/PhoneNumStringPool.java" beforeDir="false" afterPath="$PROJECT_DIR$/mockdata-pool/src/main/java/idea/verlif/mock/data/pool/template/PhoneNumStringPool.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mockdata-pool/src/main/java/idea/verlif/mock/data/pool/template/VegetableStringPool.java" beforeDir="false" afterPath="$PROJECT_DIR$/mockdata-pool/src/main/java/idea/verlif/mock/data/pool/template/VegetableStringPool.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mockdata-pool/src/main/java/idea/verlif/mock/data/pool/template/WebsiteStringPool.java" beforeDir="false" afterPath="$PROJECT_DIR$/mockdata-pool/src/main/java/idea/verlif/mock/data/pool/template/WebsiteStringPool.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mockdata-pool/src/test/java/idea/verlif/test/DataTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/mockdata-pool/src/test/java/idea/verlif/test/DataTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mockdata-pool/src/test/java/idea/verlif/test/PoolTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/mockdata-pool/src/test/java/idea/verlif/test/PoolTest.java" afterDir="false" />
+    </list>
+    <list id="4d0a49d7-b1e1-46d0-9271-102272edfccb" name="ignored" comment="ignored">
+      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ChangesViewManager">
+    <option name="groupingKeys">
+      <option value="directory" />
+    </option>
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -61,76 +72,172 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="master" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GoLibraries">
+    <option name="indexEntireGoPath" value="true" />
+  </component>
+  <component name="LineStatusTrackerManager">
+    <file path="$PROJECT_DIR$/.idea/workspace.xml">
+      <ranges>
+        <range start1="2" end1="2" start2="2" end2="5" changelist="4d0a49d7-b1e1-46d0-9271-102272edfccb" />
+        <range start1="6" end1="47" start2="9" end2="54" changelist="2767781d-8ee1-4880-800c-51e249e78541" />
+        <range start1="52" end1="52" start2="59" end2="64" changelist="2767781d-8ee1-4880-800c-51e249e78541" />
+        <range start1="63" end1="63" start2="75" end2="80" changelist="2767781d-8ee1-4880-800c-51e249e78541" />
+        <range start1="64" end1="64" start2="81" end2="120" changelist="2767781d-8ee1-4880-800c-51e249e78541" />
+        <range start1="68" end1="74" start2="124" end2="131" changelist="2767781d-8ee1-4880-800c-51e249e78541" />
+        <range start1="75" end1="77" start2="132" end2="132" changelist="2767781d-8ee1-4880-800c-51e249e78541" />
+        <range start1="81" end1="90" start2="136" end2="185" changelist="2767781d-8ee1-4880-800c-51e249e78541" />
+        <range start1="91" end1="92" start2="186" end2="187" changelist="2767781d-8ee1-4880-800c-51e249e78541" />
+        <range start1="93" end1="93" start2="188" end2="198" changelist="2767781d-8ee1-4880-800c-51e249e78541" />
+        <range start1="94" end1="96" start2="199" end2="204" changelist="2767781d-8ee1-4880-800c-51e249e78541" />
+        <range start1="98" end1="101" start2="206" end2="209" changelist="2767781d-8ee1-4880-800c-51e249e78541" />
+        <range start1="103" end1="104" start2="211" end2="212" changelist="2767781d-8ee1-4880-800c-51e249e78541" />
+        <range start1="107" end1="110" start2="215" end2="218" changelist="2767781d-8ee1-4880-800c-51e249e78541" />
+        <range start1="115" end1="117" start2="223" end2="225" changelist="2767781d-8ee1-4880-800c-51e249e78541" />
+        <range start1="119" end1="120" start2="227" end2="228" changelist="2767781d-8ee1-4880-800c-51e249e78541" />
+        <range start1="123" end1="126" start2="231" end2="234" changelist="2767781d-8ee1-4880-800c-51e249e78541" />
+        <range start1="131" end1="133" start2="239" end2="241" changelist="2767781d-8ee1-4880-800c-51e249e78541" />
+        <range start1="140" end1="143" start2="248" end2="250" changelist="2767781d-8ee1-4880-800c-51e249e78541" />
+        <range start1="147" end1="149" start2="254" end2="256" changelist="2767781d-8ee1-4880-800c-51e249e78541" />
+        <range start1="156" end1="158" start2="263" end2="265" changelist="2767781d-8ee1-4880-800c-51e249e78541" />
+        <range start1="163" end1="165" start2="270" end2="272" changelist="2767781d-8ee1-4880-800c-51e249e78541" />
+        <range start1="172" end1="174" start2="279" end2="281" changelist="2767781d-8ee1-4880-800c-51e249e78541" />
+        <range start1="181" end1="186" start2="288" end2="293" changelist="2767781d-8ee1-4880-800c-51e249e78541" />
+        <range start1="197" end1="197" start2="304" end2="372" changelist="2767781d-8ee1-4880-800c-51e249e78541" />
+        <range start1="198" end1="198" start2="373" end2="587" changelist="2767781d-8ee1-4880-800c-51e249e78541" />
+        <range start1="200" end1="200" start2="589" end2="641" changelist="2767781d-8ee1-4880-800c-51e249e78541" />
+        <range start1="204" end1="205" start2="645" end2="646" changelist="2767781d-8ee1-4880-800c-51e249e78541" />
+        <range start1="207" end1="207" start2="648" end2="673" changelist="2767781d-8ee1-4880-800c-51e249e78541" />
+        <range start1="210" end1="210" start2="676" end2="688" changelist="4d0a49d7-b1e1-46d0-9271-102272edfccb" />
+      </ranges>
+    </file>
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
-  <component name="MavenImportPreferences">
-    <option name="importingSettings">
-      <MavenImportingSettings>
-        <option name="workspaceImportEnabled" value="true" />
-      </MavenImportingSettings>
-    </option>
-  </component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 0
+}</component>
   <component name="ProjectId" id="2KPLoWUmPzC7t3Yyq0wyP61nYn4" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <OptionsSetting value="false" id="Update" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;F:/Code/JAVA/loader-jar&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;模块&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.17&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2857143&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "JUnit.DataTest.dataCreatorTest.executor": "Run",
+    "JUnit.DataTest.diyTest.executor": "Debug",
+    "JUnit.DataTest.mainTest.executor": "Debug",
+    "JUnit.MockDataTest.DataTranspilerTest.executor": "Run",
+    "JUnit.MockDataTest.executor": "Run",
+    "JUnit.MockDataTest.instanceCreatorTest.executor": "Run",
+    "JUnit.PoolTest.IdStringPoolTest.executor": "Run",
+    "JUnit.PoolTest.addressStringPoolTest.executor": "Run",
+    "JUnit.PoolTest.ageIntPoolTest.executor": "Run",
+    "JUnit.PoolTest.continuousIntPoolTest.executor": "Run",
+    "JUnit.PoolTest.emailStringPoolTest.executor": "Run",
+    "JUnit.PoolTest.ipStringTest.executor": "Run",
+    "JUnit.PoolTest.limitedStringPoolTest.executor": "Run",
+    "JUnit.PoolTest.nameStringTest.executor": "Run",
+    "JUnit.PoolTest.phoneNumStringPoolTest.executor": "Run",
+    "JUnit.PoolTest.simpleTest.executor": "Debug",
+    "JUnit.SimpleTest.PropertiesDataPoolTest.executor": "Run",
+    "JUnit.SimpleTest.test.executor": "Debug",
+    "JUnit.SimpleTest.transpilerTest.executor": "Run",
+    "Maven.mock-data [install].executor": "Run",
+    "Maven.mock-data [package].executor": "Run",
+    "Maven.mock-data-core [install].executor": "Run",
+    "Maven.mockdata [install].executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.go.formatter.settings.were.checked": "true",
+    "RunOnceActivity.go.migrated.go.modules.settings": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "SONARLINT_PRECOMMIT_ANALYSIS": "false",
+    "WebServerToolWindowFactoryState": "false",
+    "git-widget-placeholder": "4.0",
+    "go.import.settings.migrated": "true",
+    "ignore.virus.scanning.warn.message": "true",
+    "jdk.selected.JAVA_MODULE": "1.8",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "D:/Code/Java/mock-data/docs",
+    "node.js.detected.package.eslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "库",
+    "project.structure.proportion": "0.17",
+    "project.structure.side.proportion": "0.23792697",
+    "run.code.analysis.last.selected.profile": "pProject Default",
+    "settings.editor.selected.configurable": "com.intellij.jarRepository.settings.RemoteRepositoriesConfigurable",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\Code\Java\mock-data\docs" />
+      <recent name="D:\Code\Java\mock-data" />
+      <recent name="D:\Code\Java\mock-data\src\main\java\idea\verlif\mock\data" />
+      <recent name="D:\Code\Java\mock-data\src\test\resources" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\Code\Java\mock-data\mock-data-core\src\test\java" />
+      <recent name="D:\Code\Java\mock-data\mock-data-core\src\main\java\idea\verlif\mock\data\core" />
+    </key>
     <key name="CopyClassDialog.RECENTS_KEY">
-      <recent name="idea.verlif.mock.data.creator.data" />
-      <recent name="idea.verlif.mock.data.domain" />
+      <recent name="idea.verlif.mock.data.pool.template" />
+      <recent name="idea.verlif.mock.data.pool.random" />
+      <recent name="idea.verlif.mock.data.pool.base" />
+      <recent name="idea.verlif.mock.data.pool.extend" />
+      <recent name="idea.verlif.mock.data.util" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.BaseTest.mockTest">
-    <configuration name="BaseTest.charNumberPrint" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="mock-data" />
+  <component name="RunManager" selected="JUnit.DataTest.dataCreatorTest">
+    <configuration name="DataTest.dataCreatorTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="mockdata-pool" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="idea.verlif.mock.data.*" />
+          <option name="PATTERN" value="idea.verlif.test.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="PACKAGE_NAME" value="idea.verlif.mock.data" />
-      <option name="MAIN_CLASS_NAME" value="idea.verlif.mock.data.BaseTest" />
-      <option name="METHOD_NAME" value="charNumberPrint" />
+      <option name="PACKAGE_NAME" value="idea.verlif.test" />
+      <option name="MAIN_CLASS_NAME" value="idea.verlif.test.DataTest" />
+      <option name="METHOD_NAME" value="dataCreatorTest" />
       <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="BaseTest.fieldTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="mock-data" />
+    <configuration name="DataTest.mainTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="mockdata-pool" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="idea.verlif.mock.data.*" />
+          <option name="PATTERN" value="idea.verlif.test.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="PACKAGE_NAME" value="idea.verlif.mock.data" />
-      <option name="MAIN_CLASS_NAME" value="idea.verlif.mock.data.BaseTest" />
-      <option name="METHOD_NAME" value="fieldTest" />
+      <option name="PACKAGE_NAME" value="idea.verlif.test" />
+      <option name="MAIN_CLASS_NAME" value="idea.verlif.test.DataTest" />
+      <option name="METHOD_NAME" value="mainTest" />
       <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="BaseTest.mockTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="mock-data" />
+    <configuration name="MockDataTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="mockdata-core" />
       <extension name="coverage">
         <pattern>
           <option name="PATTERN" value="idea.verlif.mock.data.*" />
@@ -138,15 +245,30 @@
         </pattern>
       </extension>
       <option name="PACKAGE_NAME" value="idea.verlif.mock.data" />
-      <option name="MAIN_CLASS_NAME" value="idea.verlif.mock.data.BaseTest" />
-      <option name="METHOD_NAME" value="mockTest" />
+      <option name="MAIN_CLASS_NAME" value="idea.verlif.mock.data.MockDataTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="MockDataTest.DataTranspilerTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="mockdata-core" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="idea.verlif.mock.data.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="idea.verlif.mock.data" />
+      <option name="MAIN_CLASS_NAME" value="idea.verlif.mock.data.MockDataTest" />
+      <option name="METHOD_NAME" value="DataTranspilerTest" />
       <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="BaseTest.randomTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="mock-data" />
+    <configuration name="SimpleTest.transpilerTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="mockdata-core" />
       <extension name="coverage">
         <pattern>
           <option name="PATTERN" value="idea.verlif.mock.data.*" />
@@ -154,24 +276,8 @@
         </pattern>
       </extension>
       <option name="PACKAGE_NAME" value="idea.verlif.mock.data" />
-      <option name="MAIN_CLASS_NAME" value="idea.verlif.mock.data.BaseTest" />
-      <option name="METHOD_NAME" value="randomTest" />
-      <option name="TEST_OBJECT" value="method" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="FieldTest.annotation" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="mock-data" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="idea.verlif.mock.data.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="idea.verlif.mock.data" />
-      <option name="MAIN_CLASS_NAME" value="idea.verlif.mock.data.FieldTest" />
-      <option name="METHOD_NAME" value="annotation" />
+      <option name="MAIN_CLASS_NAME" value="idea.verlif.mock.data.SimpleTest" />
+      <option name="METHOD_NAME" value="transpilerTest" />
       <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -179,11 +285,11 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="JUnit.BaseTest.mockTest" />
-        <item itemvalue="JUnit.BaseTest.randomTest" />
-        <item itemvalue="JUnit.FieldTest.annotation" />
-        <item itemvalue="JUnit.BaseTest.charNumberPrint" />
-        <item itemvalue="JUnit.BaseTest.fieldTest" />
+        <item itemvalue="JUnit.DataTest.dataCreatorTest" />
+        <item itemvalue="JUnit.MockDataTest" />
+        <item itemvalue="JUnit.MockDataTest.DataTranspilerTest" />
+        <item itemvalue="JUnit.SimpleTest.transpilerTest" />
+        <item itemvalue="JUnit.DataTest.mainTest" />
       </list>
     </recent_temporary>
   </component>
@@ -195,16 +301,370 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1673871448751</updated>
+      <workItem from="1675386231144" duration="4617000" />
+      <workItem from="1675395498336" duration="148000" />
+      <workItem from="1675402353669" duration="19000" />
+      <workItem from="1675403500901" duration="500000" />
+      <workItem from="1675408467710" duration="3605000" />
+      <workItem from="1675414601413" duration="2260000" />
+      <workItem from="1675645359647" duration="8923000" />
+      <workItem from="1675668986904" duration="1105000" />
+      <workItem from="1675671714250" duration="179000" />
+      <workItem from="1675672548924" duration="534000" />
+      <workItem from="1675673280432" duration="350000" />
+      <workItem from="1675745882719" duration="853000" />
+      <workItem from="1675818520551" duration="12083000" />
+      <workItem from="1675839202040" duration="5530000" />
+      <workItem from="1675845698429" duration="10003000" />
+      <workItem from="1676010883669" duration="7354000" />
+      <workItem from="1676080423394" duration="4684000" />
+      <workItem from="1676086778933" duration="241000" />
+      <workItem from="1676123479689" duration="1566000" />
+      <workItem from="1676249784292" duration="11000" />
+      <workItem from="1676256213752" duration="8000" />
+      <workItem from="1676364099151" duration="10000" />
+      <workItem from="1676531455324" duration="277000" />
+      <workItem from="1677328062968" duration="6026000" />
+      <workItem from="1677401201008" duration="5064000" />
+      <workItem from="1677458327490" duration="20000" />
+      <workItem from="1677468825247" duration="10648000" />
+      <workItem from="1677486582038" duration="667000" />
+      <workItem from="1677495607470" duration="282000" />
+      <workItem from="1677545131037" duration="5011000" />
+      <workItem from="1677567989474" duration="427000" />
+      <workItem from="1677570244814" duration="8000" />
+      <workItem from="1677583254065" duration="737000" />
+      <workItem from="1677650815486" duration="3686000" />
+      <workItem from="1677659106030" duration="4449000" />
+      <workItem from="1677718108518" duration="5258000" />
+      <workItem from="1677724815897" duration="12523000" />
+      <workItem from="1677755303231" duration="14000" />
+      <workItem from="1677807191276" duration="22000" />
+      <workItem from="1677826393816" duration="217000" />
+      <workItem from="1677921542475" duration="27000" />
+      <workItem from="1678238237038" duration="325000" />
+      <workItem from="1679210145473" duration="433000" />
+      <workItem from="1679210908461" duration="11000" />
+      <workItem from="1679380309022" duration="14000" />
+      <workItem from="1679380392730" duration="3000" />
+      <workItem from="1679380406530" duration="596000" />
+      <workItem from="1684205331069" duration="801000" />
+      <workItem from="1691046090213" duration="7958000" />
+      <workItem from="1704954334031" duration="368000" />
+      <workItem from="1704955805074" duration="1650000" />
+      <workItem from="1708400893639" duration="12000" />
+      <workItem from="1709172613948" duration="1862000" />
+      <workItem from="1709189083992" duration="177000" />
+      <workItem from="1709624003710" duration="5204000" />
+      <workItem from="1709689676055" duration="11265000" />
+      <workItem from="1711088835869" duration="2108000" />
+      <workItem from="1711093209198" duration="162000" />
+      <workItem from="1711094100698" duration="2287000" />
+      <workItem from="1712452636758" duration="8808000" />
+      <workItem from="1712461465629" duration="1289000" />
+      <workItem from="1712468798462" duration="52000" />
+      <workItem from="1712468953074" duration="1416000" />
+      <workItem from="1712543250495" duration="2403000" />
+      <workItem from="1712714778039" duration="19502000" />
+      <workItem from="1712797696956" duration="20444000" />
+      <workItem from="1712884686726" duration="10411000" />
+      <workItem from="1713144063636" duration="18179000" />
     </task>
+    <task id="LOCAL-00001" summary="1. 修复了属性过滤器类过滤失效的问题&#10;2. 修复枚举类无法正确构建的问题">
+      <created>1675395445244</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1675395445244</updated>
+    </task>
+    <task id="LOCAL-00002" summary="1. 完善测试流程">
+      <created>1675411857943</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1675411857943</updated>
+    </task>
+    <task id="LOCAL-00003" summary="1. 解除了双参的fieldValue方法的lambda表达式限制">
+      <created>1675647729999</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1675647729999</updated>
+    </task>
+    <task id="LOCAL-00004" summary="1. DataCreator中的参数Class与Field合并到MockSrc&#10;2. 现在对泛型的兼容性更强了">
+      <created>1675653970858</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1675653970858</updated>
+    </task>
+    <task id="LOCAL-00005" summary="1. 统一了MockSrc的构造方法&#10;2. 对测试用例进行了补充">
+      <created>1675670010762</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1675670010762</updated>
+    </task>
+    <task id="LOCAL-00006" summary="1. 增加了数据池方式">
+      <created>1675838825022</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1675838825022</updated>
+    </task>
+    <task id="LOCAL-00007" summary="1. 文档修改">
+      <created>1675844732383</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1675844732383</updated>
+    </task>
+    <task id="LOCAL-00008" summary="1. 修改了FieldDataPool的数据填入方式&#10;2. 修复了MockDataCreator无法从属性数据池获取数据的问题&#10;3. 新增属性数据池用例">
+      <created>1676018261999</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1676018261999</updated>
+    </task>
+    <task id="LOCAL-00009" summary="1. 优化了FieldDataPool调用方式&#10;2. 3.0.0">
+      <created>1676086289253</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1676086289253</updated>
+    </task>
+    <task id="LOCAL-00010" summary="1. 修改了MockSrc属性，现在可以更方便更准确地获取属性类与泛型了&#10;2. 调整了mock方式，现在支持泛型属性了&#10;3. 3.1.0">
+      <created>1677723349364</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1677723349364</updated>
+    </task>
+    <task id="LOCAL-00011" summary="1. 完善了对ClassGrc的支持">
+      <created>1677755248415</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1677755248415</updated>
+    </task>
+    <task id="LOCAL-00012" summary="1. 调整了配置中的isAllowedField方法参数&#10;2. 配置增加了FieldOption参数用于处理属性类型判断&#10;3. 3.2">
+      <option name="closed" value="true" />
+      <created>1691054374315</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1691054374315</updated>
+    </task>
+    <task id="LOCAL-00013" summary="1. 升级reflection-kit依赖版本">
+      <option name="closed" value="true" />
+      <created>1704954611475</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1704954611475</updated>
+    </task>
+    <task id="LOCAL-00014" summary="1. 替换RuntimeException为MockDataException&#10;2. 对InstanceCreator.newInstance方法添加了构造器对象入参">
+      <option name="closed" value="true" />
+      <created>1704959127980</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1704959127980</updated>
+    </task>
+    <task id="LOCAL-00015" summary="1. 修改fieldOptions判断逻辑，避免使用forceNew方法时导致的选项值错误&#10;2. 增加blockFieldOption方法">
+      <option name="closed" value="true" />
+      <created>1709174526300</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1709174526300</updated>
+    </task>
+    <task id="LOCAL-00016" summary="1. 清理无用引入&#10;2. CommonConfig中的fieldValue(?, Object)方法更名为CommonConfig.fieldObject(?, Object)，隔离类型&#10;3. 3.4.0">
+      <option name="closed" value="true" />
+      <created>1709629050058</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1709629050058</updated>
+    </task>
+    <task id="LOCAL-00017" summary="1. 清理无用引入&#10;2. CommonConfig中的fieldValue(?, Object)方法更名为CommonConfig.fieldObject(?, Object)，隔离类型&#10;3. 更新文档&#10;4. 3.4.0">
+      <option name="closed" value="true" />
+      <created>1709629501469</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1709629501469</updated>
+    </task>
+    <task id="LOCAL-00018" summary="1. 增加CommonConfig.getFieldDataPool方法">
+      <option name="closed" value="true" />
+      <created>1709690463907</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1709690463907</updated>
+    </task>
+    <task id="LOCAL-00019" summary="1. 增加FieldDataPool.appendFieldDataPool方法">
+      <option name="closed" value="true" />
+      <created>1709692773041</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1709692773041</updated>
+    </task>
+    <task id="LOCAL-00020" summary="1. InstanceCreator增加默认matched方法&#10;2. 数据池相关的值获取方法入参从Class改为ClassGrc，适配更多场景&#10;3. 数据池部分方法名修改">
+      <option name="closed" value="true" />
+      <created>1709710145375</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1709710145375</updated>
+    </task>
+    <task id="LOCAL-00021" summary="1. 增加useSetter选项，开发者可选择set的方式进行值填充&#10;2. 3.4.1">
+      <option name="closed" value="true" />
+      <created>1711092417394</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1711092417394</updated>
+    </task>
+    <task id="LOCAL-00022" summary="1. 更新文档">
+      <option name="closed" value="true" />
+      <created>1711093292610</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1711093292610</updated>
+    </task>
+    <task id="LOCAL-00023" summary="1. 新增DataPool接口，FieldDataPool更改为DataPool的实现类&#10;2. 删除CommonConfig中DataFiller相关方法，避免与DataCreator冲突&#10;3. 更新DataCreator的types方法&#10;4. 重写DataFiller接口，现在只需要实现fill方法即可&#10;5. MockDataCreator的自动级联构建改为默认true&#10;6. 版本3.5.0">
+      <option name="closed" value="true" />
+      <created>1712468714586</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1712468714586</updated>
+    </task>
+    <task id="LOCAL-00024" summary="1. 修正index.html">
+      <option name="closed" value="true" />
+      <created>1712468841032</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1712468841032</updated>
+    </task>
+    <task id="LOCAL-00025" summary="1. 文档更新&#10;2. CommonConfig下fieldDataPool方法更名为dataPool&#10;3. MockDataConfig增加useGetter方法&#10;4. 一些奇怪的修复&#10;5. 版本3.5.1">
+      <option name="closed" value="true" />
+      <created>1712545566786</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1712545566786</updated>
+    </task>
+    <task id="LOCAL-00026" summary="1. 更新项目结构&#10;2. 原mock-data模块更新到mock-data-core子模块&#10;3. 新增mock-data-pool子模块">
+      <option name="closed" value="true" />
+      <created>1712906258292</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1712906258292</updated>
+    </task>
+    <task id="LOCAL-00027" summary="1. 更新模块artifactId">
+      <option name="closed" value="true" />
+      <created>1712908316784</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1712908316784</updated>
+    </task>
+    <task id="LOCAL-00028" summary="1. 更新子模块名称">
+      <option name="closed" value="true" />
+      <created>1713146457182</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1713146457182</updated>
+    </task>
+    <option name="localTasksCounter" value="29" />
     <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="COLUMN_ID_WIDTH">
+                <map>
+                  <entry key="Table.Space.CommitStatus.ColumnIdWidth" value="45" />
+                </map>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="1. 增加了数据池" />
+    <MESSAGE value="1. 增加了数据池方式" />
+    <MESSAGE value="1. 文档修改" />
+    <MESSAGE value="1. 修改了FieldDataPool的数据填入方式&#10;2. 修复了MockDataCreator无法从属性数据池获取数据的问题&#10;3. 新增属性数据池用例" />
+    <MESSAGE value="1. 优化了FieldDataPool调用方式&#10;2. 3.0.0" />
+    <MESSAGE value="1. 修改了MockSrc属性，现在可以更方便更准确地获取属性类与泛型了&#10;2. 调整了mock方式，现在支持泛型属性了&#10;3. 3.1.0" />
+    <MESSAGE value="1. 完善了对ClassGrc的支持" />
+    <MESSAGE value="1. 调整了配置中的isAllowedField方法参数&#10;2. 配置增加了FieldOption参数用于处理属性类型判断&#10;3. 3.2" />
+    <MESSAGE value="1. 升级reflection-kit依赖版本" />
+    <MESSAGE value="1. 替换RuntimeException为MockDataException&#10;2. 对InstanceCreator.newInstance方法添加了构造器对象入参" />
+    <MESSAGE value="1. 修改fieldOptions判断逻辑，避免使用forceNew方法时导致的选项值错误&#10;2. 增加blockFieldOption方法" />
+    <MESSAGE value="1. 清理无用引入&#10;2. CommonConfig中的fieldValue(?, Object)方法更名为CommonConfig.fieldObject(?, Object)，隔离类型&#10;3. 3.4.0" />
+    <MESSAGE value="1. 清理无用引入&#10;2. CommonConfig中的fieldValue(?, Object)方法更名为CommonConfig.fieldObject(?, Object)，隔离类型&#10;3. 更新文档&#10;4. 3.4.0" />
+    <MESSAGE value="1. 增加CommonConfig.getFieldDataPool方法" />
+    <MESSAGE value="1. 增加FieldDataPool.appendFieldDataPool方法" />
+    <MESSAGE value="1. InstanceCreator增加默认matched方法&#10;2. 数据池相关的值获取方法入参从Class改为ClassGrc，适配更多场景&#10;3. 数据池部分方法名修改" />
+    <MESSAGE value="1. 增加useSetter选项，开发者可选择set的方式进行值填充&#10;2. 3.4.1" />
+    <MESSAGE value="1. 更新文档" />
+    <MESSAGE value="1. 新增DataPool接口，FieldDataPool更改为DataPool的实现类&#10;2. 删除CommonConfig中DataFiller相关方法，避免与DataCreator冲突&#10;3. 更新DataCreator的types方法&#10;4. 重写DataFiller接口，现在只需要实现fill方法即可&#10;5. MockDataCreator的自动级联构建改为默认true&#10;6. 版本3.5.0" />
+    <MESSAGE value="1. 修正index.html" />
+    <MESSAGE value="ignored" />
+    <MESSAGE value="1. 文档更新&#10;2. CommonConfig下fieldDataPool方法更名为dataPool&#10;3. MockDataConfig增加useGetter方法&#10;4. 一些奇怪的修复&#10;5. 版本3.5.1" />
+    <MESSAGE value="1. 更新项目结构&#10;2. 原mock-data模块更新到mock-data-core子模块&#10;3. 新增mock-data-pool子模块" />
+    <MESSAGE value="1. 更新模块artifactId" />
+    <MESSAGE value="1. 更新子模块名称" />
+    <option name="LAST_COMMIT_MESSAGE" value="1. 更新子模块名称" />
+  </component>
+  <component name="VgoProject">
+    <integration-enabled>false</integration-enabled>
+    <settings-migrated>true</settings-migrated>
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/test/java/idea/verlif/mock/data/BaseTest.java</url>
+          <url>file://$PROJECT_DIR$/mockdata-core/src/test/java/idea/verlif/mock/data/BaseTest.java</url>
           <line>47</line>
           <option name="timeStamp" value="46" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/mockdata-core/src/test/java/idea/verlif/mock/data/MockDataTest.java</url>
+          <line>361</line>
+          <option name="timeStamp" value="76" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/mockdata-core/src/test/java/idea/verlif/mock/data/MockDataTest.java</url>
+          <line>96</line>
+          <option name="timeStamp" value="79" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/mockdata-core/src/test/java/idea/verlif/mock/data/SimpleTest.java</url>
+          <line>54</line>
+          <option name="timeStamp" value="82" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/mockdata-pool/src/test/java/idea/verlif/test/DataTest.java</url>
+          <line>19</line>
+          <option name="timeStamp" value="83" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

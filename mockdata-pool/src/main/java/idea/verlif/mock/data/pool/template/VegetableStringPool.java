@@ -19,4 +19,9 @@ public class VegetableStringPool implements SimplePool {
     public Object fetch(ClassGrc classGrc, String key) {
         return vegetableRandom.next();
     }
+
+    @Override
+    public Class<?> type() {
+        return String.class;
+    }
 }

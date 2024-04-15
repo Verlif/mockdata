@@ -20,6 +20,8 @@ public class Person {
 
     private FRUIT favouriteFruit;
 
+    private String unlikeFruit;
+
     private String address;
 
     public Person() {
@@ -91,6 +93,14 @@ public class Person {
 
     public void setFavouriteFruit(FRUIT favouriteFruit) {
         this.favouriteFruit = favouriteFruit;
+    }
+
+    public String getUnlikeFruit() {
+        return unlikeFruit;
+    }
+
+    public void setUnlikeFruit(String unlikeFruit) {
+        this.unlikeFruit = unlikeFruit;
     }
 
     public String getAddress() {

@@ -22,10 +22,6 @@
             <groupId>idea.verlif</groupId>
             <artifactId>mockdata-core</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.github.Verlif</groupId>
-            <artifactId>param-parser</artifactId>
-        </dependency>
 
         <dependency>
             <groupId>com.alibaba.fastjson2</groupId>

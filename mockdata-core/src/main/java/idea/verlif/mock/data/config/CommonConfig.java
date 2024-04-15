@@ -8,6 +8,8 @@ import idea.verlif.mock.data.creator.InstanceCreator;
 import idea.verlif.mock.data.domain.MockSrc;
 import idea.verlif.mock.data.exception.ClassNotMatchException;
 import idea.verlif.mock.data.exception.MockDataException;
+import idea.verlif.mock.data.transfer.DataTranspiler;
+import idea.verlif.mock.data.transfer.ObjectTranspiler;
 import idea.verlif.mock.data.util.ContainsUtil;
 import idea.verlif.mock.data.util.NamingUtil;
 import idea.verlif.reflection.domain.ClassGrc;
@@ -21,7 +23,7 @@ import java.util.regex.Pattern;
 /**
  * @author Verlif
  */
-public class CommonConfig {
+public class CommonConfig extends DataTranspiler {
 
     protected final Random random;
 
@@ -121,15 +123,13 @@ public class CommonConfig {
      * @param creator 数据创造器
      */
     protected void addFieldValue(String key, DataCreator<?> creator) {
-        fieldCreatorMap.put(
-                key,
-                creator);
+        fieldCreatorMap.put(key, creator);
     }
 
     /**
      * 添加或替换属性数据创造器
      *
-     * @param key     属性key值
+     * @param key     属性key值。示例：int.class、demo.Person.name
      * @param creator 数据创造器
      */
     public CommonConfig fieldValue(String key, DataCreator<?> creator) {
@@ -168,7 +168,7 @@ public class CommonConfig {
      * @param cla     目标类
      * @param creator 数据填充器
      */
-    public <T> CommonConfig fieldValue(Class<T> cla, DataCreator<T> creator) {
+    public CommonConfig fieldValue(Class<?> cla, DataCreator<?> creator) {
         addFieldValue(cla, creator);
         return this;
     }

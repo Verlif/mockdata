@@ -17,7 +17,7 @@ public class EnglishFirstNameRandom implements DataRandom<String> {
         return RANDOM;
     }
 
-    private static final String[] FIRST = new String[]{
+    public static final String[] FIRST = new String[]{
             "Smith", "Johnson", "Williams", "Brown", "Jones",
             "Miller", "Davis", "Wilson", "Anderson", "Taylor",
             "Thomas", "Jackson", "White", "Harris", "Martin",

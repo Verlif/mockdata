@@ -10,4 +10,9 @@ public class GenderStringPool extends DictSimplePool<String> {
     public GenderStringPool() {
         super(new String[]{"男", "女"});
     }
+
+    @Override
+    public Class<?> type() {
+        return String.class;
+    }
 }

@@ -1,6 +1,7 @@
 package idea.verlif.test;
 
 import idea.verlif.mock.data.pool.VirtualDataPool;
+import idea.verlif.mock.data.pool.random.TypeStringRandom;
 import idea.verlif.mock.data.pool.template.*;
 import org.junit.Test;
 
@@ -98,6 +99,22 @@ public class PoolTest {
         PhoneNumStringPool phoneNumStringPool = new PhoneNumStringPool();
         for (int i = 0; i < 10; i++) {
             System.out.println(phoneNumStringPool.mock());
+        }
+    }
+
+    @Test
+    public void continuousIntPoolTest() {
+        ContinuousIntPool continuousIntPool = new ContinuousIntPool(2, 2);
+        for (int i = 0; i < 10; i++) {
+            System.out.println(continuousIntPool.mock());
+        }
+    }
+
+    @Test
+    public void limitedStringPoolTest() {
+        LimitedStringPool limitedStringPool = new LimitedStringPool(8, 9, TypeStringRandom.CharType.LETTER, TypeStringRandom.CharType.NUMBER);
+        for (int i = 0; i < 10; i++) {
+            System.out.println(limitedStringPool.next());
         }
     }
 }

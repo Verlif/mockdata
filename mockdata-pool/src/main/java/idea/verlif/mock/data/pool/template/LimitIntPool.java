@@ -5,6 +5,9 @@ import idea.verlif.mock.data.pool.SimplePool;
 import idea.verlif.mock.data.pool.util.RandomUtil;
 import idea.verlif.reflection.domain.ClassGrc;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * 带期望的数字范围池，一般可做年龄、年份等存在正太分布的整数中。
  */
@@ -80,4 +83,8 @@ public class LimitIntPool implements SimplePool {
         return mock();
     }
 
+    @Override
+    public List<Class<?>> types() {
+        return Arrays.asList(int.class, Integer.class);
+    }
 }

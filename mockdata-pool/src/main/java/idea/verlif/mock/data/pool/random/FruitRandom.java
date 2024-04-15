@@ -17,7 +17,7 @@ public class FruitRandom implements DataRandom<String> {
         return RANDOM;
     }
 
-    private static final String[] FRUITS = new String[]{
+    public static final String[] FRUITS = new String[]{
             "苹果", "香蕉", "橙子", "葡萄", "草莓", "樱桃", "桃子", "菠萝", "柠檬", "西瓜",
             "芒果", "火龙果", "李子", "石榴", "哈密瓜", "木瓜", "柚子", "椰子", "橄榄", "蓝莓",
             "黑莓", "覆盆子", "杨桃", "杏子", "柿子", "桑葚", "金桔", "青梅", "山楂", "释迦果"

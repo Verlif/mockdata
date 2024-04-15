@@ -10,6 +10,8 @@ import idea.verlif.mock.data.creator.InstanceCreator;
 import idea.verlif.mock.data.domain.MockSrc;
 import idea.verlif.mock.data.domain.Person;
 import idea.verlif.mock.data.example.PropertiesDataPool;
+import idea.verlif.mock.data.transfer.DataTranspiler;
+import idea.verlif.mock.data.transfer.ObjectTranspiler;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -69,4 +71,21 @@ public class SimpleTest {
         System.out.println(JSONObject.toJSONString(creator.mock(person)));
     }
 
+    @Test
+    public void transpilerTest() {
+        ObjectTranspiler<Integer> transpiler = new ObjectTranspiler<Integer>() {
+            @Override
+            public Object trans(Integer integer) {
+                return integer + "-xixi";
+            }
+
+            @Override
+            public Class<?>[] targets() {
+                return new Class[]{String.class};
+            }
+        };
+        DataTranspiler dataTranspiler = new DataTranspiler();
+        dataTranspiler.addTranspiler(transpiler);
+        System.out.println(dataTranspiler.trans(12, String.class));
+    }
 }

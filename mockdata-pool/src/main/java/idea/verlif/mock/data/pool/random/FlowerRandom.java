@@ -17,7 +17,7 @@ public class FlowerRandom implements DataRandom<String> {
         return RANDOM;
     }
 
-    private static final String[] FLOWERS = new String[]{
+    public static final String[] FLOWERS = new String[]{
             "玫瑰", "牡丹", "菊", "兰", "月季",
             "杜鹃", "荷", "水仙", "桂", "茶",
             "茉莉", "梅", "樱", "海棠", "康乃馨",

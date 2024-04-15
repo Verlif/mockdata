@@ -17,7 +17,7 @@ public class VegetableRandom implements DataRandom<String> {
         return RANDOM;
     }
 
-    private static final String[] VEGETABLES = new String[]{
+    public static final String[] VEGETABLES = new String[]{
             "白菜", "菠菜", "芹菜", "青菜", "西兰花", "花菜", "卷心菜", "生菜", "空心菜", "油麦菜",
             "苋菜", "芥菜", "豆芽", "豆角", "茄子", "黄瓜", "西红柿", "南瓜", "冬瓜", "丝瓜", "苦瓜",
             "青椒", "红椒", "土豆", "红薯", "山药", "芋头", "莲藕", "胡萝卜", "白萝卜", "洋葱",

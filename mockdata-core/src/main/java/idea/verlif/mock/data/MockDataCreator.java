@@ -388,7 +388,7 @@ public class MockDataCreator extends CommonConfig {
         }
 
         private Object getField(Object t, Field field) {
-            if (config.isUseGetter()) {
+            if (mockConfig.isUseGetter()) {
                 Method getter = MethodUtil.getGetter(field);
                 try {
                     if (getter != null) {
@@ -405,8 +405,27 @@ public class MockDataCreator extends CommonConfig {
             }
         }
 
+        /**
+         * 设置属性值
+         *
+         * @param cla   属性所属类
+         * @param t     属性所属类对象
+         * @param field 属性自身对象
+         * @param value 将要设置的属性值
+         */
         private void setFiled(Class<?> cla, Object t, Field field, Object value) {
-            if (config.isUseSetter()) {
+            Class<?> fCla = field.getType();
+            // 若设置的值与目标属性类型不匹配，则进行转义
+            if (!ReflectUtil.likeClass(fCla, value.getClass())) {
+                Object trans = mockConfig.trans(value, fCla);
+                if (trans == null) {
+                    trans = trans(value, fCla);
+                }
+                if (trans != null) {
+                    value = trans;
+                }
+            }
+            if (mockConfig.isUseSetter()) {
                 Method setter = MethodUtil.getSetter(cla, field);
                 try {
                     if (setter != null) {
@@ -421,6 +440,8 @@ public class MockDataCreator extends CommonConfig {
                 field.set(t, value);
             } catch (IllegalAccessException e) {
                 throw new MockDataException(e);
+            } catch (IllegalArgumentException ignored) {
+                // 类型错误直接忽略
             }
         }
 

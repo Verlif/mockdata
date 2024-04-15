@@ -47,6 +47,9 @@ public class FieldDataPool implements DataPool {
         // Map的key只支持包装类型
         Class<?> target = classGrc.getTarget();
         PatternValues<?> patternValues = patternValuesMap.get(target);
+        if (patternValues == null) {
+            patternValues = patternValuesMap.get(null);
+        }
         if (patternValues != null) {
             return (T[]) patternValues.getValues(key);
         }
@@ -55,6 +58,10 @@ public class FieldDataPool implements DataPool {
 
     public <T> PatternValues<T> type(Class<? extends T> cl, T... values) {
         return typeName(cl, null, values);
+    }
+
+    public <T> PatternValues<T> typeName(String fieldName, T... values) {
+        return typeName(null, fieldName, values);
     }
 
     public <T> PatternValues<T> typeName(Class<? extends T> cl, String fieldName, T... values) {
@@ -75,6 +82,10 @@ public class FieldDataPool implements DataPool {
     public <C, T> PatternValues<T> like(SFunction<C, T> function, T... values) {
         Field field = FieldUtil.getFieldFromLambda(function);
         return likeName((Class<T>) field.getType(), field.getName(), values);
+    }
+
+    public <T> PatternValues<T> likeName(String fieldName, T... values) {
+        return likeName(null, fieldName, values);
     }
 
     public <T> PatternValues<T> likeName(Class<? extends T> cl, String fieldName, T... values) {

@@ -17,7 +17,7 @@ public class EnglishSecondNameRandom implements DataRandom<String> {
         return RANDOM;
     }
 
-    private static final String[] LAST = new String[]{
+    public static final String[] LAST = new String[]{
             "Michael", "James", "John", "Robert", "William",
             "David", "Richard", "Charles", "Joseph", "Thomas",
             "Christopher", "Daniel", "Paul", "Mark", "Donald",

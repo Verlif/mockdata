@@ -34,6 +34,11 @@ public class LimitDateDatePool extends LocalDateRandom implements SimplePool {
         return mock();
     }
 
+    @Override
+    public Class<?> type() {
+        return Date.class;
+    }
+
     public LocalDate getMin() {
         return min;
     }

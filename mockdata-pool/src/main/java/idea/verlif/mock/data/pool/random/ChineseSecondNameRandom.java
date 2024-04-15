@@ -17,7 +17,7 @@ public class ChineseSecondNameRandom implements DataRandom<String> {
         return RANDOM;
     }
 
-    private static final String[] LAST = new String[]{
+    public static final String[] LAST = new String[]{
             "明轩", "睿诚", "昊天", "文博", "俊杰",
             "欣怡", "雅婷", "思涵", "雨婷", "晓萱",
             "宇航", "浩然", "天宇", "泽洋", "煜城",

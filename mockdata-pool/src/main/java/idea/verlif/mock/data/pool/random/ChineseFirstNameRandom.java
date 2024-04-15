@@ -17,7 +17,7 @@ public class ChineseFirstNameRandom implements DataRandom<String> {
         return RANDOM;
     }
 
-    private static final String[] FIRST = new String[]{
+    public static final String[] FIRST = new String[]{
             "李", "王", "张", "刘", "陈", "杨", "赵", "黄", "周", "吴",
             "徐", "孙", "胡", "朱", "高", "林", "何", "郭", "马", "罗",
             "梁", "宋", "郑", "谢", "韩", "唐", "冯", "于", "董", "萧",

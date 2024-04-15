@@ -2,13 +2,16 @@ package idea.verlif.mock.data;
 
 import com.alibaba.fastjson2.JSONObject;
 import idea.verlif.mock.data.config.FieldDataPool;
+import idea.verlif.mock.data.config.MockDataConfig;
 import idea.verlif.mock.data.config.filter.impl.ClassKeyFilter;
 import idea.verlif.mock.data.config.filter.impl.FieldKeyFilter;
 import idea.verlif.mock.data.config.filter.impl.FieldModifierFilter;
 import idea.verlif.mock.data.creator.DataCreator;
+import idea.verlif.mock.data.creator.DataFiller;
 import idea.verlif.mock.data.creator.InstanceCreator;
 import idea.verlif.mock.data.creator.data.DictDataCreator;
 import idea.verlif.mock.data.domain.*;
+import idea.verlif.mock.data.transfer.ObjectTranspiler;
 import org.junit.*;
 import stopwatch.Stopwatch;
 
@@ -400,6 +403,29 @@ public class MockDataTest {
         check(creator.mock(GenericsExt.class), o -> o != null && o.getT() != null
                 && o.getList() != null && !o.getList().isEmpty() && o.getList().get(0) != null
                 && o.getMap() != null && !o.getMap().isEmpty());
+    }
+
+    @Test
+    public void DataTranspilerTest() {
+        MockDataConfig config = creator.getConfig().copy();
+        FieldDataPool dataPool = new FieldDataPool();
+        dataPool.likeName(".*Fruit", Person.FRUIT.APPLE.name());
+        config.dataPool(dataPool);
+        check(creator.mock(Person.class, config), person -> person.getFavouriteFruit() == null
+                && Person.FRUIT.APPLE.name().equals(person.getUnlikeFruit()));
+        ObjectTranspiler<String> transpiler = new ObjectTranspiler<String>() {
+            @Override
+            public Object trans(String s) {
+                return Person.FRUIT.valueOf(s.toUpperCase());
+            }
+            @Override
+            public Class<?>[] targets() {
+                return new Class[]{Person.FRUIT.class};
+            }
+        };
+        config.addTranspiler(transpiler);
+        check(creator.mock(Person.class, config), person -> person.getFavouriteFruit() == Person.FRUIT.APPLE
+                && Person.FRUIT.APPLE.name().equals(person.getUnlikeFruit()));
     }
 
     private <T> void check(T t, Predicate<T> predicate) {
