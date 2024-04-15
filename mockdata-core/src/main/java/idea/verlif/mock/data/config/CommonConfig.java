@@ -9,7 +9,6 @@ import idea.verlif.mock.data.domain.MockSrc;
 import idea.verlif.mock.data.exception.ClassNotMatchException;
 import idea.verlif.mock.data.exception.MockDataException;
 import idea.verlif.mock.data.transfer.DataTranspiler;
-import idea.verlif.mock.data.transfer.ObjectTranspiler;
 import idea.verlif.mock.data.util.ContainsUtil;
 import idea.verlif.mock.data.util.NamingUtil;
 import idea.verlif.reflection.domain.ClassGrc;

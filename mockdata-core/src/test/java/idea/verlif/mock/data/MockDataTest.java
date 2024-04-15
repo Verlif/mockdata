@@ -7,7 +7,6 @@ import idea.verlif.mock.data.config.filter.impl.ClassKeyFilter;
 import idea.verlif.mock.data.config.filter.impl.FieldKeyFilter;
 import idea.verlif.mock.data.config.filter.impl.FieldModifierFilter;
 import idea.verlif.mock.data.creator.DataCreator;
-import idea.verlif.mock.data.creator.DataFiller;
 import idea.verlif.mock.data.creator.InstanceCreator;
 import idea.verlif.mock.data.creator.data.DictDataCreator;
 import idea.verlif.mock.data.domain.*;
@@ -100,28 +99,28 @@ public class MockDataTest {
         check(creator.mock(SimpleObject.class),
                 o -> o != null && o.getAnEnum() != null && o.getSi() != 0
                         && o.getsSa().length > 0 && o.getsSa()[0] != 0
-                        && o.getDoubleMap() != null && o.getDoubleMap().size() > 0
+                        && o.getDoubleMap() != null && !o.getDoubleMap().isEmpty()
                         && o.getaWithB() != null && o.getaWithB().getB() != null
-                        && o.getStrings() != null && o.getStrings().size() > 0);
+                        && o.getStrings() != null && !o.getStrings().isEmpty());
         check(creator.mock(new SimpleObject()),
                 o -> o != null && o.getAnEnum() != null && o.getSi() != 0
                         && o.getsSa().length > 0 && o.getsSa()[0] != 0
                         && o.getsSa().length > 0 && o.getsSa()[0] != 0
-                        && o.getDoubleMap() != null && o.getDoubleMap().size() > 0
+                        && o.getDoubleMap() != null && !o.getDoubleMap().isEmpty()
                         && o.getaWithB() != null && o.getaWithB().getB() != null
-                        && o.getStrings() != null && o.getStrings().size() > 0);
+                        && o.getStrings() != null && !o.getStrings().isEmpty());
         check(creator.mock(SimpleObject[].class),
                 o -> o != null && o.length > 0 && o[0].getAnEnum() != null && o[0].getSi() != 0
                         && o[0].getsSa().length > 0 && o[0].getsSa()[0] != 0
-                        && o[0].getDoubleMap() != null && o[0].getDoubleMap().size() > 0
+                        && o[0].getDoubleMap() != null && !o[0].getDoubleMap().isEmpty()
                         && o[0].getaWithB() != null && o[0].getaWithB().getB() != null
-                        && o[0].getStrings() != null && o[0].getStrings().size() > 0);
+                        && o[0].getStrings() != null && !o[0].getStrings().isEmpty());
         check(creator.mock(new SimpleObject[2]),
                 o -> o != null && o.length == 2 && o[0].getAnEnum() != null && o[0].getSi() != 0
                         && o[0].getsSa().length > 0 && o[0].getsSa()[0] != 0
-                        && o[0].getDoubleMap() != null && o[0].getDoubleMap().size() > 0
+                        && o[0].getDoubleMap() != null && !o[0].getDoubleMap().isEmpty()
                         && o[0].getaWithB() != null && o[0].getaWithB().getB() != null
-                        && o[0].getStrings() != null && o[0].getStrings().size() > 0);
+                        && o[0].getStrings() != null && !o[0].getStrings().isEmpty());
     }
 
     /**
@@ -131,17 +130,17 @@ public class MockDataTest {
     public void complexObjectTest() {
         creator.getConfig().arraySize(1).creatingDepth(1);
         check(creator.mock(ComplexObject.class), o -> o != null
-                && o.getMapExtend() != null && o.getMapExtend().size() > 0
-                && o.getMyArrayList() != null && o.getMyArrayList().size() > 0
-                && o.getListSetMap() != null && o.getListSetMap().size() > 0
-                && o.getArrayListHashMap() != null && o.getArrayListHashMap().size() > 0
-                && o.getMyListMyMap() != null && o.getMyListMyMap().size() > 0);
+                && o.getMapExtend() != null && !o.getMapExtend().isEmpty()
+                && o.getMyArrayList() != null && !o.getMyArrayList().isEmpty()
+                && o.getListSetMap() != null && !o.getListSetMap().isEmpty()
+                && o.getArrayListHashMap() != null && !o.getArrayListHashMap().isEmpty()
+                && o.getMyListMyMap() != null && !o.getMyListMyMap().isEmpty());
         check(creator.mock(new ComplexObject()), o -> o != null
-                && o.getMapExtend() != null && o.getMapExtend().size() > 0
-                && o.getMyArrayList() != null && o.getMyArrayList().size() > 0
-                && o.getListSetMap() != null && o.getListSetMap().size() > 0
-                && o.getArrayListHashMap() != null && o.getArrayListHashMap().size() > 0
-                && o.getMyListMyMap() != null && o.getMyListMyMap().size() > 0);
+                && o.getMapExtend() != null && !o.getMapExtend().isEmpty()
+                && o.getMyArrayList() != null && !o.getMyArrayList().isEmpty()
+                && o.getListSetMap() != null && !o.getListSetMap().isEmpty()
+                && o.getArrayListHashMap() != null && !o.getArrayListHashMap().isEmpty()
+                && o.getMyListMyMap() != null && !o.getMyListMyMap().isEmpty());
         creator.getConfig().arraySize(2).creatingDepth(2);
     }
 
@@ -151,27 +150,27 @@ public class MockDataTest {
     @Test
     public void listTest() {
         check(creator.mock(List.class), Objects::nonNull);
-        check(creator.mock(MyArrayList.class), o -> o != null && o.size() > 0 && o.get(0) != null);
+        check(creator.mock(MyArrayList.class), o -> o != null && !o.isEmpty() && o.get(0) != null);
         check(creator.mock(IList.class), o -> o != null
-                && o.getListList() != null && o.getListList().size() > 0 && o.getListList().get(0).size() > 0
-                && o.getMapList() != null && o.getMapList().size() > 0 && o.getMapList().get(0).size() > 0
-                && o.getMyArrayList() != null && o.getMyArrayList().size() > 0
-                && o.getDoubles() != null && o.getDoubles().size() > 0 && o.getDoubles().get(0) != 0);
+                && o.getListList() != null && !o.getListList().isEmpty() && !o.getListList().get(0).isEmpty()
+                && o.getMapList() != null && !o.getMapList().isEmpty() && !o.getMapList().get(0).isEmpty()
+                && o.getMyArrayList() != null && !o.getMyArrayList().isEmpty()
+                && o.getDoubles() != null && !o.getDoubles().isEmpty() && o.getDoubles().get(0) != 0);
         check(creator.mock(new IList()), o -> o != null
-                && o.getListList() != null && o.getListList().size() > 0 && o.getListList().get(0).size() > 0
-                && o.getMapList() != null && o.getMapList().size() > 0 && o.getMapList().get(0).size() > 0
-                && o.getMyArrayList() != null && o.getMyArrayList().size() > 0
-                && o.getDoubles() != null && o.getDoubles().size() > 0 && o.getDoubles().get(0) != 0);
+                && o.getListList() != null && !o.getListList().isEmpty() && !o.getListList().get(0).isEmpty()
+                && o.getMapList() != null && !o.getMapList().isEmpty() && !o.getMapList().get(0).isEmpty()
+                && o.getMyArrayList() != null && !o.getMyArrayList().isEmpty()
+                && o.getDoubles() != null && !o.getDoubles().isEmpty() && o.getDoubles().get(0) != 0);
         check(creator.mock(IListExtend.class), o -> o != null
-                && o.getListList() != null && o.getListList().size() > 0 && o.getListList().get(0).size() > 0
-                && o.getMapList() != null && o.getMapList().size() > 0 && o.getMapList().get(0).size() > 0
-                && o.getMyArrayList() != null && o.getMyArrayList().size() > 0
-                && o.getDoubles() != null && o.getDoubles().size() > 0 && o.getDoubles().get(0) != 0);
+                && o.getListList() != null && !o.getListList().isEmpty() && !o.getListList().get(0).isEmpty()
+                && o.getMapList() != null && !o.getMapList().isEmpty() && !o.getMapList().get(0).isEmpty()
+                && o.getMyArrayList() != null && !o.getMyArrayList().isEmpty()
+                && o.getDoubles() != null && !o.getDoubles().isEmpty() && o.getDoubles().get(0) != 0);
         check(creator.mock(new IListExtend()), o -> o != null
-                && o.getListList() != null && o.getListList().size() > 0 && o.getListList().get(0).size() > 0
-                && o.getMapList() != null && o.getMapList().size() > 0 && o.getMapList().get(0).size() > 0
-                && o.getMyArrayList() != null && o.getMyArrayList().size() > 0
-                && o.getDoubles() != null && o.getDoubles().size() > 0 && o.getDoubles().get(0) != 0);
+                && o.getListList() != null && !o.getListList().isEmpty() && !o.getListList().get(0).isEmpty()
+                && o.getMapList() != null && !o.getMapList().isEmpty() && !o.getMapList().get(0).isEmpty()
+                && o.getMyArrayList() != null && !o.getMyArrayList().isEmpty()
+                && o.getDoubles() != null && !o.getDoubles().isEmpty() && o.getDoubles().get(0) != 0);
     }
 
     /**
@@ -181,17 +180,17 @@ public class MockDataTest {
     public void setTest() {
         check(creator.mock(Set.class), Objects::nonNull);
         check(creator.mock(MySet.class), Objects::nonNull);
-        check(creator.mock(MyHashSet.class), o -> o != null && o.size() > 0);
+        check(creator.mock(MyHashSet.class), o -> o != null && !o.isEmpty());
         check(creator.mock(ISet.class), o -> o != null
-                && o.getSetSet() != null && o.getSetSet().size() > 0 && o.getSetSet().toArray(new Set<?>[0])[0].size() > 0
-                && o.getListSet() != null && o.getListSet().size() > 0 && o.getListSet().toArray()[0] != null
-                && o.getMySet() != null && o.getMySet().size() > 0
-                && o.getMyHashSet() != null && o.getMyHashSet().size() > 0);
+                && o.getSetSet() != null && !o.getSetSet().isEmpty() && !o.getSetSet().toArray(new Set<?>[0])[0].isEmpty()
+                && o.getListSet() != null && !o.getListSet().isEmpty() && o.getListSet().toArray()[0] != null
+                && o.getMySet() != null && !o.getMySet().isEmpty()
+                && o.getMyHashSet() != null && !o.getMyHashSet().isEmpty());
         check(creator.mock(new ISet()), o -> o != null
-                && o.getSetSet() != null && o.getSetSet().size() > 0 && o.getSetSet().toArray(new Set<?>[0])[0].size() > 0
-                && o.getListSet() != null && o.getListSet().size() > 0 && o.getListSet().toArray()[0] != null
-                && o.getMySet() != null && o.getMySet().size() > 0
-                && o.getMyHashSet() != null && o.getMyHashSet().size() > 0);
+                && o.getSetSet() != null && !o.getSetSet().isEmpty() && !o.getSetSet().toArray(new Set<?>[0])[0].isEmpty()
+                && o.getListSet() != null && !o.getListSet().isEmpty() && o.getListSet().toArray()[0] != null
+                && o.getMySet() != null && !o.getMySet().isEmpty()
+                && o.getMyHashSet() != null && !o.getMyHashSet().isEmpty());
     }
 
     /**
@@ -204,17 +203,17 @@ public class MockDataTest {
         }));
         // 未指明泛型，无法添加数据
         check(creator.mock(Map.class), Objects::nonNull);
-        check(creator.mock(MyHashMap.class), o -> o != null && o.size() > 0);
+        check(creator.mock(MyHashMap.class), o -> o != null && !o.isEmpty());
         check(creator.mock(IMap.class), o -> o != null
-                && o.getStringMapMap() != null && o.getStringMapMap().size() > 0
-                && o.getEnumListMap() != null && o.getEnumListMap().size() > 0 && o.getEnumListMap().values().size() > 0
-                && o.getMapExtend() != null && o.getMapExtend().size() > 0
-                && o.getDoubleMyMap() != null && o.getDoubleMyMap().size() > 0);
+                && o.getStringMapMap() != null && !o.getStringMapMap().isEmpty()
+                && o.getEnumListMap() != null && !o.getEnumListMap().isEmpty() && !o.getEnumListMap().values().isEmpty()
+                && o.getMapExtend() != null && !o.getMapExtend().isEmpty()
+                && o.getDoubleMyMap() != null && !o.getDoubleMyMap().isEmpty());
         check(creator.mock(new IMap()), o -> o != null
-                && o.getStringMapMap() != null && o.getStringMapMap().size() > 0
-                && o.getEnumListMap() != null && o.getEnumListMap().size() > 0 && o.getEnumListMap().values().size() > 0
-                && o.getMapExtend() != null && o.getMapExtend().size() > 0
-                && o.getDoubleMyMap() != null && o.getDoubleMyMap().size() > 0);
+                && o.getStringMapMap() != null && !o.getStringMapMap().isEmpty()
+                && o.getEnumListMap() != null && !o.getEnumListMap().isEmpty() && !o.getEnumListMap().values().isEmpty()
+                && o.getMapExtend() != null && !o.getMapExtend().isEmpty()
+                && o.getDoubleMyMap() != null && !o.getDoubleMyMap().isEmpty());
         // 未指明泛型，无法添加数据
         check(creator.mock(MyMap.class), Objects::nonNull);
         // 以下不被允许
@@ -222,7 +221,7 @@ public class MockDataTest {
                 .filter(new ClassKeyFilter()
                         .ignoredClass(MyMap.class));
         check(creator.mock(new MyMap<String, Double>()), Objects::nonNull);
-        check(creator.mock(MyMapExtend.class), o -> o != null && o.size() > 0);
+        check(creator.mock(MyMapExtend.class), o -> o != null && !o.isEmpty());
         creator.getConfig().clearClassFilter();
     }
 

@@ -1,7 +1,6 @@
 package idea.verlif.mock.data.pool.template;
 
 import idea.verlif.mock.data.pool.SimplePool;
-import idea.verlif.mock.data.pool.random.EnglishFirstNameRandom;
 import idea.verlif.mock.data.pool.random.EnglishSecondNameRandom;
 import idea.verlif.mock.data.pool.util.RandomUtil;
 import idea.verlif.reflection.domain.ClassGrc;

@@ -174,7 +174,7 @@ public class MockDataCreator extends CommonConfig {
     @Override
     public boolean isCascadeCreate(String key) {
         // 默认级联构建
-        if (cascadeCreateSet.size() == 0 && cascadeCreatePattern.size() == 0) {
+        if (cascadeCreateSet.isEmpty() && cascadeCreatePattern.isEmpty()) {
             return true;
         } else {
             return super.isCascadeCreate(key);

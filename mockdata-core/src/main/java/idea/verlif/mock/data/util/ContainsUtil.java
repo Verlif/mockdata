@@ -13,7 +13,7 @@ public class ContainsUtil {
         if (stringSet != null && stringSet.contains(key)) {
             return true;
         }
-        if (patternList != null && patternList.size() != 0) {
+        if (patternList != null && !patternList.isEmpty()) {
             for (Pattern pattern : patternList) {
                 if (pattern.matcher(key).matches()) {
                     return true;
