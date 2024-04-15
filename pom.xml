@@ -9,8 +9,8 @@
     <version>4.0.0</version>
     <packaging>pom</packaging>
     <modules>
-        <module>mock-data-pool</module>
-        <module>mock-data-core</module>
+        <module>mockdata-pool</module>
+        <module>mockdata-core</module>
     </modules>
 
     <properties>
