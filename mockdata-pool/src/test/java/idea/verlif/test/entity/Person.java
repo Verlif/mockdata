@@ -5,6 +5,19 @@ import java.util.Date;
 public class Person {
 
     /**
+     * 用户唯一标识
+     */
+    private String uuid;
+
+    /**
+     * 身份证
+     */
+    private String id;
+    /**
+     * 身份证件号
+     */
+    private String idCard;
+    /**
      * 姓名
      */
     private String name;
@@ -35,11 +48,6 @@ public class Person {
     private String address;
 
     /**
-     * 身份证
-     */
-    private String id;
-
-    /**
      * 现用IP
      */
     private String ip;
@@ -52,6 +60,30 @@ public class Person {
      * 个人地址
      */
     private String url;
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getIdCard() {
+        return idCard;
+    }
+
+    public void setIdCard(String idCard) {
+        this.idCard = idCard;
+    }
 
     public String getName() {
         return name;
@@ -101,14 +133,6 @@ public class Person {
         this.address = address;
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
     public String getIp() {
         return ip;
     }
@@ -123,5 +147,13 @@ public class Person {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 }

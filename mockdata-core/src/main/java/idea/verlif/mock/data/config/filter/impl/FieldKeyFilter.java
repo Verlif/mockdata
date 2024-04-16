@@ -75,10 +75,17 @@ public class FieldKeyFilter implements FieldFilter {
     }
 
     /**
-     * 增加忽略的属性key的正则表达
+     * 增加忽略的属性key的正则表达。
+     *
+     * @param regexes 需要忽略的正则表达式列表。此处的参数格式会被用于匹配demo.Person.name这种key值。<br/>
+     *                示例：
+     *                <ul>
+     *                <li>{@code .*name} - 所有的name属性或以name结尾的属性会被忽略。</li>
+     *                <li>{@code demo.Person.id} - demo.Person类下的id属性会被忽略。</li>
+     *                </ul>
      */
-    public FieldKeyFilter ignoredFieldRegex(String... regex) {
-        for (String s : regex) {
+    public FieldKeyFilter ignoredFieldRegex(String... regexes) {
+        for (String s : regexes) {
             addIgnoredFieldRegex(s);
         }
         return this;

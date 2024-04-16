@@ -5,7 +5,6 @@ import idea.verlif.mock.data.pool.template.*;
 import idea.verlif.reflection.domain.ClassGrc;
 
 import java.time.LocalDate;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,7 +33,9 @@ public class VirtualDataPool implements DataPool {
         replace("height", new LimitIntPool(140, 200, 150, 175));
         mapType("height", "height");
         replace("id", new ContinuousIntPool());
-        mapType("id", "id", "idCard", "identityCard");
+        mapType("id", "id");
+        replace("idCard", new IdNumberStringPool());
+        mapType("idCard", "idCard", "identityCard");
         replace("address", new AddressStringPool());
         mapType("address", "address", "addr");
         replace("email", new EmailStringPool());
@@ -49,6 +50,8 @@ public class VirtualDataPool implements DataPool {
         mapType("fruit", "fruit");
         replace("vegetable", new VegetableStringPool());
         mapType("vegetable", "vegetable");
+        replace("uuid", new UUIDStringPool());
+        mapType("uuid", "uuid", "guid");
 
         return this;
     }
@@ -97,16 +100,16 @@ public class VirtualDataPool implements DataPool {
     }
 
     @Override
-    public <T> T[] getValues(ClassGrc classGrc, String key) {
+    public Object[] getValues(ClassGrc classGrc, String key) {
         String type = aliasMap.get(key);
         if (type != null) {
             SimplePool simplePool = poolMap.get(type);
             if (simplePool != null) {
-                Object mock = simplePool.fetch(classGrc, null);
+                Object mock = simplePool.fetch(classGrc, key);
                 if (mock == null) {
                     return null;
                 }
-                return (T[]) Collections.singletonList(mock).toArray();
+                return new Object[]{mock};
             }
         }
         return null;

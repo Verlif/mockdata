@@ -9,6 +9,7 @@
 ```java
 public void mainTest() {
     MockDataCreator creator = new MockDataCreator();
+    // 启用虚拟数据池并启用预设模板
     creator.dataPool(new VirtualDataPool().withTemplate());
     System.out.println(JSONObject.toJSONString(creator.mock(Person.class)));
 }
@@ -52,6 +53,6 @@ public void diyTest() {
 }
 ```
 
-其中，`VirtualDataPool`包括了`type`和`alias`两个关键词，
-`type`与`SimplePool`一一对应，表示了数据的类型，
-`type`则可以对应多个`alias`，`alias`表示了属性名称。
+这里需要说明的是，`VirtualDataPool`包括了`type`和`alias`两个关键词，
+`type`与`SimplePool`一一对应，表示了数据的类型与其使用的数据生成池，
+`type`则可以对应多个`alias`，`alias`表示了属性名称与数据类型的关系。

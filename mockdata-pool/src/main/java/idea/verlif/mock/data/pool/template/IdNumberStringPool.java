@@ -10,7 +10,7 @@ import java.time.LocalDate;
  * 虚拟身份证号池，这里的区域编号是随机生成的，无法与现实库对应上。
  * 需要此业务的开发者可继承并重写{@link #buildAreaCode(StringBuilder)}方法
  */
-public class IdStringPool implements SimplePool {
+public class IdNumberStringPool implements SimplePool {
 
     // 校验码权重
     private static final int[] WEIGHT_FACTORS = {7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2};

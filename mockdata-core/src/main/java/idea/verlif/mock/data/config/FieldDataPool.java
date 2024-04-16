@@ -38,12 +38,12 @@ public class FieldDataPool implements DataPool {
         this.patternValuesMap.putAll(fieldDataPool.patternValuesMap);
     }
 
-    public <T> T[] getValues(ClassGrc classGrc) {
+    public Object[] getValues(ClassGrc classGrc) {
         return getValues(classGrc, EMPTY);
     }
 
     @Override
-    public <T> T[] getValues(ClassGrc classGrc, String key) {
+    public Object[] getValues(ClassGrc classGrc, String key) {
         // Map的key只支持包装类型
         Class<?> target = classGrc.getTarget();
         PatternValues<?> patternValues = patternValuesMap.get(target);
@@ -51,7 +51,7 @@ public class FieldDataPool implements DataPool {
             patternValues = patternValuesMap.get(null);
         }
         if (patternValues != null) {
-            return (T[]) patternValues.getValues(key);
+            return patternValues.getValues(key);
         }
         return null;
     }

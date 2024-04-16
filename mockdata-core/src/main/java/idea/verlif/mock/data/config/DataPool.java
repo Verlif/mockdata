@@ -14,5 +14,5 @@ public interface DataPool {
      * @param key      区分key值，一般key用于描述属性名。
      * @return 数据池中的值，允许为null
      */
-    <T> T[] getValues(ClassGrc classGrc, String key);
+    Object[] getValues(ClassGrc classGrc, String key);
 }

@@ -4,6 +4,8 @@ import idea.verlif.mock.data.MockDataCreator;
 import idea.verlif.mock.data.pool.SimplePool;
 import idea.verlif.mock.data.pool.VirtualDataPool;
 import idea.verlif.mock.data.pool.template.ContinuousIntPool;
+import idea.verlif.mock.data.pool.template.UUIDStringPool;
+import idea.verlif.mock.data.pool.template.WebsiteStringPool;
 import idea.verlif.reflection.domain.ClassGrc;
 import idea.verlif.test.entity.Person;
 import idea.verlif.test.entity.Pet;
@@ -14,10 +16,13 @@ public class DataTest {
     @Test
     public void mainTest() {
         MockDataCreator creator = new MockDataCreator();
-        creator.dataPool(new VirtualDataPool().withTemplate());
-        Person person = new Person();
+        VirtualDataPool dataPool = new VirtualDataPool().withTemplate();
+        dataPool.replace("uuid", new UUIDStringPool(false));
+//        dataPool.replace("website", new WebsiteStringPool("http://"));
+        creator.dataPool(dataPool);
         for (int i = 0; i < 100; i++) {
-            creator.mock(person);
+            Person person = creator.mock(Person.class);
+            System.out.println(person.getUuid().length());
         }
     }
 

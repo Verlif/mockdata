@@ -88,9 +88,9 @@ public class PoolTest {
 
     @Test
     public void IdStringPoolTest() {
-        IdStringPool idStringPool = new IdStringPool();
+        IdNumberStringPool idNumberStringPool = new IdNumberStringPool();
         for (int i = 0; i < 10; i++) {
-            System.out.println(idStringPool.mock());
+            System.out.println(idNumberStringPool.mock());
         }
     }
 

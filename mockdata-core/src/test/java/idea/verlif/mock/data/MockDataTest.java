@@ -417,6 +417,7 @@ public class MockDataTest {
             public Object trans(String s) {
                 return Person.FRUIT.valueOf(s.toUpperCase());
             }
+
             @Override
             public Class<?>[] targets() {
                 return new Class[]{Person.FRUIT.class};

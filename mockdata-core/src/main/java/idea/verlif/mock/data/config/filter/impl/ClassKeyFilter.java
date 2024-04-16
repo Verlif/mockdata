@@ -58,9 +58,15 @@ public class ClassKeyFilter implements ClassFilter {
 
     /**
      * 增加忽略的类key的正则表达
+     * @param regexes 需要忽略的正则表达式列表。此处的参数格式会被用于匹配demo.Person这种key值。<br/>
+     *                示例：
+     *                <ul>
+     *                <li>{@code .*Impl} - 所有的以Impl结尾的类会被忽略。</li>
+     *                <li>{@code demo.person.*} - demo.person包下的所有类会被忽略。</li>
+     *                </ul>
      */
-    public ClassKeyFilter ignoredClassRegex(String... regex) {
-        for (String s : regex) {
+    public ClassKeyFilter ignoredClassRegex(String... regexes) {
+        for (String s : regexes) {
             addIgnoredClassRegex(s);
         }
         return this;

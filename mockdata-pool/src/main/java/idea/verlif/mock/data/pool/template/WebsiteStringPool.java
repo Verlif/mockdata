@@ -10,16 +10,27 @@ import idea.verlif.reflection.domain.ClassGrc;
  */
 public class WebsiteStringPool implements SimplePool {
 
+    private static final String PREFIX = "";
     private static final char SPLIT = '.';
     private static final String[] SUFFIX = new String[]{"com", "cn", ".io"};
+    private final String prefix;
     private final String[] suffix;
     private final EnglishSecondNameRandom englishSecondNameRandom;
 
     public WebsiteStringPool() {
-        this(SUFFIX);
+        this(PREFIX, SUFFIX);
+    }
+
+    public WebsiteStringPool(String prefix) {
+        this(prefix, SUFFIX);
     }
 
     public WebsiteStringPool(String[] suffix) {
+        this(PREFIX, suffix);
+    }
+
+    public WebsiteStringPool(String prefix, String[] suffix) {
+        this.prefix = prefix;
         this.suffix = suffix;
         this.englishSecondNameRandom = EnglishSecondNameRandom.getInstance();
     }
@@ -39,7 +50,7 @@ public class WebsiteStringPool implements SimplePool {
         if (suffix != null && !suffix.isEmpty() && suffix.charAt(0) != SPLIT) {
             stb.append(SPLIT);
         }
-        stb.append(suffix);
+        stb.append(suffix).insert(0, prefix);
         return stb.toString();
     }
 

@@ -471,13 +471,13 @@ public class CommonConfig extends DataTranspiler {
         return dataPool;
     }
 
-    public <T> T randomDataFromDataPool(ClassGrc classGrc, String key) {
+    public Object randomDataFromDataPool(ClassGrc classGrc, String key) {
         if (dataPool == null) {
             return null;
         } else if (key == null) {
             key = "";
         }
-        T[] values = dataPool.getValues(classGrc, key);
+        Object[] values = dataPool.getValues(classGrc, key);
         if (values == null || values.length == 0) {
             return null;
         } else if (values.length == 1) {
