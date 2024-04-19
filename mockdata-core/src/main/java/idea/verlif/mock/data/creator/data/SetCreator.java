@@ -28,6 +28,7 @@ public class SetCreator extends GenericDataFiller<Set<?>> {
 
     @Override
     protected Set<?> mock(Class<?> target, ClassGrc[] generics, MockDataCreator.Creator creator) {
+        int size = getSize(creator);
         Set<Object> set = newInstance(target, creator);
         if (generics.length > 0) {
             for (int i = 0; i < size; i++) {

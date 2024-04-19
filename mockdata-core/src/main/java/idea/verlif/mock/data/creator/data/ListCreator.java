@@ -34,6 +34,7 @@ public class ListCreator extends GenericDataFiller<List<?>> {
 
     @Override
     protected List<?> mock(Class<?> target, ClassGrc[] generics, MockDataCreator.Creator creator) {
+        int size = getSize(creator);
         List<Object> list = newInstance(target, creator);
         if (generics.length > 0) {
             for (int i = 0; i < size; i++) {

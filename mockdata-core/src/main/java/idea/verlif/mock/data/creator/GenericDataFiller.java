@@ -23,10 +23,14 @@ public abstract class GenericDataFiller<T> implements DataCreator<T> {
     @Override
     public T mock(MockSrc src, MockDataCreator.Creator creator) {
         this.target = collectTarget(src);
-        if (this.size == null) {
-            this.size = creator.getMockConfig().getArraySize(this.target);
-        }
         return mock(target, getRealGenerics(src.getClassGrc()), creator);
+    }
+
+    protected int getSize(MockDataCreator.Creator creator) {
+        if (this.size != null) {
+            return this.size;
+        }
+        return creator.getMockConfig().getArraySize(this.target);
     }
 
     protected abstract Class<?> collectTarget(MockSrc src);

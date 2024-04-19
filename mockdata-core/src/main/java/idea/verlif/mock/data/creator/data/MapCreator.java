@@ -26,6 +26,7 @@ public class MapCreator extends GenericDataFiller<Map<?, ?>> {
 
     @Override
     protected Map<?, ?> mock(Class<?> target, ClassGrc[] generics, MockDataCreator.Creator creator) {
+        int size = getSize(creator);
         Map<Object, Object> map = newInstance(target, creator);
         if (generics.length > 1) {
             for (int i = 0; i < size; i++) {
