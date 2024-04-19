@@ -1,7 +1,7 @@
-package idea.verlif.mock.data.pool.template;
+package idea.verlif.mock.data.virtual.template;
 
-import idea.verlif.mock.data.pool.SimplePool;
 import idea.verlif.mock.data.pool.random.VegetableRandom;
+import idea.verlif.mock.data.virtual.SimplePool;
 import idea.verlif.reflection.domain.ClassGrc;
 
 /**

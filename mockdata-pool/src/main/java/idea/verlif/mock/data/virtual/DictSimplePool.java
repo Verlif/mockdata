@@ -1,6 +1,6 @@
-package idea.verlif.mock.data.pool;
+package idea.verlif.mock.data.virtual;
 
-import idea.verlif.mock.data.pool.util.RandomUtil;
+import idea.verlif.mock.data.util.RandomUtil;
 import idea.verlif.reflection.domain.ClassGrc;
 
 public class DictSimplePool<T> implements SimplePool {

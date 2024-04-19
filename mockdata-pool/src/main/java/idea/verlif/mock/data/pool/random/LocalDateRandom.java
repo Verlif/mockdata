@@ -1,7 +1,7 @@
 package idea.verlif.mock.data.pool.random;
 
 import idea.verlif.mock.data.pool.DataRandom;
-import idea.verlif.mock.data.pool.util.RandomUtil;
+import idea.verlif.mock.data.util.RandomUtil;
 
 import java.time.LocalDate;
 
@@ -29,12 +29,12 @@ public class LocalDateRandom implements DataRandom<LocalDate> {
         } else if (year == 1) {
             int dayOfYear = LocalDate.of(min.getYear(), 1, 1).lengthOfYear();
             int day = dayOfYear + max.getDayOfYear() - min.getDayOfYear() + 1;
-            return LocalDate.of(min.getYear(), 1, 1).plusDays(RandomUtil.next(day) + min.getDayOfYear() - 1);
+            return LocalDate.of(min.getYear(), 1, 1).plusDays(RandomUtil.nextInt(day) + min.getDayOfYear() - 1);
         } else {
             year -= 1;
             int dayOfYear = LocalDate.of(min.getYear(), 1, 1).lengthOfYear();
             int day = dayOfYear + max.getDayOfYear() - min.getDayOfYear();
-            return LocalDate.of(min.getYear() + RandomUtil.next(year), 1, 1).plusDays(RandomUtil.next(day + dayOfYear) + min.getDayOfYear() - 1);
+            return LocalDate.of(min.getYear() + RandomUtil.nextInt(year), 1, 1).plusDays(RandomUtil.nextInt(day + dayOfYear) + min.getDayOfYear() - 1);
         }
     }
 

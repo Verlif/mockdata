@@ -1,6 +1,6 @@
-package idea.verlif.mock.data.pool.template;
+package idea.verlif.mock.data.virtual.template;
 
-import idea.verlif.mock.data.pool.SimplePool;
+import idea.verlif.mock.data.virtual.SimplePool;
 import idea.verlif.reflection.domain.ClassGrc;
 
 import java.util.UUID;

@@ -1,7 +1,7 @@
-package idea.verlif.mock.data.pool.template;
+package idea.verlif.mock.data.virtual.template;
 
-import idea.verlif.mock.data.pool.SimplePool;
-import idea.verlif.mock.data.pool.util.RandomUtil;
+import idea.verlif.mock.data.util.RandomUtil;
+import idea.verlif.mock.data.virtual.SimplePool;
 import idea.verlif.reflection.domain.ClassGrc;
 
 /**
@@ -19,7 +19,7 @@ public class PhoneNumStringPool implements SimplePool {
         StringBuilder stb = new StringBuilder();
         stb.append(RandomUtil.next(this.operator.getPrefix()));
         for (int i = 11 - stb.length(); i > 0; i--) {
-            stb.append(RandomUtil.next(10));
+            stb.append(RandomUtil.nextInt(10));
         }
         return stb.toString();
     }

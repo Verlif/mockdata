@@ -1,7 +1,7 @@
 package idea.verlif.mock.data.pool.random;
 
 import idea.verlif.mock.data.pool.DataRandom;
-import idea.verlif.mock.data.pool.util.RandomUtil;
+import idea.verlif.mock.data.util.RandomUtil;
 
 /**
  * 常见花名随机器

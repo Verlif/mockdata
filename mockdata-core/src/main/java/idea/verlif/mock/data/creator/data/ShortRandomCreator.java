@@ -3,10 +3,10 @@ package idea.verlif.mock.data.creator.data;
 import idea.verlif.mock.data.MockDataCreator;
 import idea.verlif.mock.data.creator.DataCreator;
 import idea.verlif.mock.data.domain.MockSrc;
+import idea.verlif.mock.data.util.RandomUtil;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 /**
  * @author Verlif
@@ -17,8 +17,6 @@ public class ShortRandomCreator implements DataCreator<Short> {
 
     private final int point;
 
-    private final Random random;
-
     public ShortRandomCreator() {
         this(Short.MIN_VALUE, Short.MAX_VALUE);
     }
@@ -26,7 +24,6 @@ public class ShortRandomCreator implements DataCreator<Short> {
     public ShortRandomCreator(short min, short max) {
         offset = (max - min) / 2;
         point = (min + max) / 2;
-        random = new Random();
     }
 
     @Override
@@ -39,8 +36,8 @@ public class ShortRandomCreator implements DataCreator<Short> {
 
     @Override
     public Short mock(MockSrc src, MockDataCreator.Creator creator) {
-        int ran = random.nextInt(offset);
-        if (random.nextBoolean()) {
+        int ran = RandomUtil.nextInt(offset);
+        if (RandomUtil.nextBoolean()) {
             return (short) (point - ran);
         } else {
             return (short) (point + ran);

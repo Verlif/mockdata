@@ -1,7 +1,7 @@
-package idea.verlif.mock.data.pool.template;
+package idea.verlif.mock.data.virtual.template;
 
-import idea.verlif.mock.data.pool.SimplePool;
-import idea.verlif.mock.data.pool.util.RandomUtil;
+import idea.verlif.mock.data.util.RandomUtil;
+import idea.verlif.mock.data.virtual.SimplePool;
 import idea.verlif.reflection.domain.ClassGrc;
 
 import java.time.LocalDate;
@@ -24,7 +24,7 @@ public class IdNumberStringPool implements SimplePool {
 
         // 生成顺序码（后3位）
         for (int i = 0; i < 3; i++) {
-            idStb.append(RandomUtil.next(10));
+            idStb.append(RandomUtil.nextInt(10));
         }
 
         // 计算校验码（最后一位）
@@ -41,14 +41,14 @@ public class IdNumberStringPool implements SimplePool {
 
     protected void buildAreaCode(StringBuilder stb) {
         for (int i = 0; i < 6; i++) {
-            stb.append(RandomUtil.next(10));
+            stb.append(RandomUtil.nextInt(10));
         }
     }
 
     protected void buildBirthday(StringBuilder stb) {
         LocalDate localDate = LocalDate.now()
-                .plusYears(-RandomUtil.next(50))
-                .plusMonths(-RandomUtil.next(12))
+                .plusYears(-RandomUtil.nextInt(50))
+                .plusMonths(-RandomUtil.nextInt(12))
                 .plusDays(-31);
         stb.append(localDate.getYear());
         int monthValue = localDate.getMonthValue();

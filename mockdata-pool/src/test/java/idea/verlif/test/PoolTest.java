@@ -1,8 +1,8 @@
 package idea.verlif.test;
 
-import idea.verlif.mock.data.pool.VirtualDataPool;
 import idea.verlif.mock.data.pool.random.TypeStringRandom;
-import idea.verlif.mock.data.pool.template.*;
+import idea.verlif.mock.data.virtual.VirtualDataPool;
+import idea.verlif.mock.data.virtual.template.*;
 import org.junit.Test;
 
 import java.math.BigDecimal;

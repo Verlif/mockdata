@@ -1,8 +1,8 @@
-package idea.verlif.mock.data.pool.template;
+package idea.verlif.mock.data.virtual.template;
 
 import idea.verlif.mock.data.exception.MockDataException;
-import idea.verlif.mock.data.pool.SimplePool;
-import idea.verlif.mock.data.pool.util.RandomUtil;
+import idea.verlif.mock.data.util.RandomUtil;
+import idea.verlif.mock.data.virtual.SimplePool;
 import idea.verlif.reflection.domain.ClassGrc;
 
 import java.util.Arrays;

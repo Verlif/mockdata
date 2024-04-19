@@ -3,10 +3,10 @@ package idea.verlif.mock.data.creator.data;
 import idea.verlif.mock.data.MockDataCreator;
 import idea.verlif.mock.data.creator.DataCreator;
 import idea.verlif.mock.data.domain.MockSrc;
+import idea.verlif.mock.data.util.RandomUtil;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 /**
  * 字典型数据构建器
@@ -17,11 +17,8 @@ public class DictDataCreator<T> implements DataCreator<T> {
 
     protected final T[] arrays;
 
-    private final Random random;
-
     public DictDataCreator(T[] arrays) {
         this.arrays = arrays;
-        this.random = new Random();
     }
 
     @Override
@@ -32,7 +29,7 @@ public class DictDataCreator<T> implements DataCreator<T> {
         if (arrays.length == 1) {
             return arrays[0];
         }
-        return arrays[random.nextInt(arrays.length)];
+        return RandomUtil.next(arrays);
     }
 
     @Override

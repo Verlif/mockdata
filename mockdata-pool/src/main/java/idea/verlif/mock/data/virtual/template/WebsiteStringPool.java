@@ -1,8 +1,8 @@
-package idea.verlif.mock.data.pool.template;
+package idea.verlif.mock.data.virtual.template;
 
-import idea.verlif.mock.data.pool.SimplePool;
 import idea.verlif.mock.data.pool.random.EnglishSecondNameRandom;
-import idea.verlif.mock.data.pool.util.RandomUtil;
+import idea.verlif.mock.data.util.RandomUtil;
+import idea.verlif.mock.data.virtual.SimplePool;
 import idea.verlif.reflection.domain.ClassGrc;
 
 /**
@@ -38,7 +38,7 @@ public class WebsiteStringPool implements SimplePool {
     public String mock() {
         StringBuilder stb = new StringBuilder();
         stb.append(englishSecondNameRandom.next().toLowerCase()).append(SPLIT);
-        if (RandomUtil.bool()) {
+        if (RandomUtil.nextBoolean()) {
             stb.insert(0, SPLIT);
             int length = RandomUtil.range(2, 6);
             for (int i = 0; i < length; i++) {

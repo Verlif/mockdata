@@ -1,7 +1,7 @@
 package idea.verlif.mock.data.pool.random;
 
 import idea.verlif.mock.data.pool.DataRandom;
-import idea.verlif.mock.data.pool.util.RandomUtil;
+import idea.verlif.mock.data.util.RandomUtil;
 
 public class TypeStringRandom implements DataRandom<String> {
 
@@ -72,7 +72,7 @@ public class TypeStringRandom implements DataRandom<String> {
     public String next() {
         StringBuilder stb = new StringBuilder();
         for (int i = 0, length = RandomUtil.range(minLength, maxLength); i < length; i++) {
-            stb.append(allowedChars[RandomUtil.next(allowedChars.length)]);
+            stb.append(allowedChars[RandomUtil.nextInt(allowedChars.length)]);
         }
         return stb.toString();
     }

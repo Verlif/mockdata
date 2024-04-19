@@ -1,7 +1,7 @@
 package idea.verlif.mock.data.pool.random;
 
 import idea.verlif.mock.data.pool.DataRandom;
-import idea.verlif.mock.data.pool.util.RandomUtil;
+import idea.verlif.mock.data.util.RandomUtil;
 
 /**
  * 中文常见名随机器
@@ -39,7 +39,7 @@ public class ChineseSecondNameRandom implements DataRandom<String> {
     @Override
     public String next() {
         String next = RandomUtil.next(LAST);
-        if (RandomUtil.bool()) {
+        if (RandomUtil.nextBoolean()) {
             return next.substring(1);
         } else {
             return next;

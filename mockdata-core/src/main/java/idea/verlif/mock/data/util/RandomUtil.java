@@ -1,4 +1,4 @@
-package idea.verlif.mock.data.pool.util;
+package idea.verlif.mock.data.util;
 
 import java.util.Random;
 
@@ -6,11 +6,19 @@ public class RandomUtil {
 
     private static final Random RANDOM = new Random();
 
-    public static int next(int limit) {
+    public static int nextInt(int limit) {
         if (limit < 1) {
             return 0;
         }
         return RANDOM.nextInt(limit);
+    }
+
+    public static double nextDouble() {
+        return RANDOM.nextDouble();
+    }
+
+    public static long nextLong() {
+        return RANDOM.nextLong();
     }
 
     public static <T> T next(T[] ts) {
@@ -21,7 +29,11 @@ public class RandomUtil {
         return RANDOM.nextInt(max - min + 1) + min;
     }
 
-    public static boolean bool() {
+    public static boolean nextBoolean() {
         return RANDOM.nextBoolean();
+    }
+
+    public static float nextFloat() {
+        return RANDOM.nextFloat();
     }
 }

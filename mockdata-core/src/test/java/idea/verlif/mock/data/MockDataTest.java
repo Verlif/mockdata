@@ -12,6 +12,7 @@ import idea.verlif.mock.data.creator.data.DictDataCreator;
 import idea.verlif.mock.data.domain.*;
 import idea.verlif.mock.data.transfer.ObjectTranspiler;
 import org.junit.*;
+import org.junit.runners.MethodSorters;
 import stopwatch.Stopwatch;
 
 import java.lang.reflect.Modifier;
@@ -24,6 +25,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MockDataTest {
 
     private static int total;
@@ -256,11 +258,11 @@ public class MockDataTest {
     @Test
     public void customTest() {
         // 固定值测试
-        creator.getConfig()
-                .fieldObject(IEnum.class, IEnum.HELLO);
+        MockDataConfig config = creator.getConfig().copy();
+        config.fieldObject(IEnum.class, IEnum.HELLO);
         boolean flag = true;
         for (int i = 0; i < 20; i++) {
-            IEnum iEnum = creator.mock(IEnum.class);
+            IEnum iEnum = creator.mock(IEnum.class, config);
             if (iEnum != IEnum.HELLO) {
                 flag = false;
                 break;
@@ -270,33 +272,33 @@ public class MockDataTest {
 
         // 自定义数据构建器测试
         final String name = "测试生成数据";
-        creator.getConfig()
-                .fieldValue(AWithB.class, (src, creator) -> {
-                    AWithB a = new AWithB();
-                    a.setName(name);
-                    return a;
-                });
-        printlnFormatted("DataCreator testing result", name.equals(creator.mock(AWithB.class).getName()));
+        config = creator.getConfig().copy();
+        config.fieldValue(AWithB.class, (src, creator) -> {
+            AWithB a = new AWithB();
+            a.setName(name);
+            return a;
+        });
+        printlnFormatted("DataCreator testing result", name.equals(creator.mock(AWithB.class, config).getName()));
 
         // 特选属性固定值测试
-        creator.getConfig()
-                .fieldObject(AWithB::getName, name);
-        printlnFormatted("DataCreator testing result", name.equals(creator.mock(AWithB.class).getName()));
+        config = creator.getConfig().copy();
+        config.fieldObject(AWithB::getName, name);
+        printlnFormatted("DataCreator testing result", name.equals(creator.mock(AWithB.class, config).getName()));
 
         // 过滤器测试
-        creator.getConfig()
-                // 表示仅忽略属性中的Integer类型
-                .filter(new FieldKeyFilter()
+        config = creator.getConfig().copy();
+        // 表示仅忽略属性中的Integer类型
+        config.filter(new FieldKeyFilter()
                         .ignoredField(Integer.class))
                 .filter(new FieldModifierFilter()
                         .allowedModifiers(Modifier.PROTECTED, Modifier.PUBLIC)
                         .blockedModifiers(Modifier.PRIVATE));
-        check(creator.mock(ModifierObject.class), o -> o != null && o.getPubInt() == null && o.getPriInt() == null && o.getProDou() != null);
-        printlnFormatted("Integer not ignored testing result", creator.mock(Integer.class) != null);
-        creator.getConfig()
-                .filter(new ClassKeyFilter()
+        check(creator.mock(ModifierObject.class, config), o -> o != null && o.getPubInt() == null && o.getPriInt() == null && o.getProDou() != null);
+        printlnFormatted("Integer not ignored testing result", creator.mock(Integer.class, config) != null);
+        config = creator.getConfig().copy();
+        config.filter(new ClassKeyFilter()
                         .ignoredClass(Double.class));
-        printlnFormatted("Double ignored testing result", creator.mock(Double.class) == null);
+        printlnFormatted("Double ignored testing result", creator.mock(Double.class, config) == null);
         creator.clearClassFilter();
         creator.clearFieldFilter();
     }

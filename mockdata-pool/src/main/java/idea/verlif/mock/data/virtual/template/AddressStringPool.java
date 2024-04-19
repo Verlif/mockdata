@@ -1,11 +1,11 @@
-package idea.verlif.mock.data.pool.template;
+package idea.verlif.mock.data.virtual.template;
 
-import idea.verlif.mock.data.pool.SimplePool;
 import idea.verlif.mock.data.pool.random.FlowerRandom;
 import idea.verlif.mock.data.pool.random.FruitRandom;
 import idea.verlif.mock.data.pool.random.MineralRandom;
 import idea.verlif.mock.data.pool.random.VegetableRandom;
-import idea.verlif.mock.data.pool.util.RandomUtil;
+import idea.verlif.mock.data.util.RandomUtil;
+import idea.verlif.mock.data.virtual.SimplePool;
 import idea.verlif.reflection.domain.ClassGrc;
 
 /**
@@ -29,7 +29,7 @@ public class AddressStringPool implements SimplePool {
         return (fruitRandom.next() + "省"
                 + flowerRandom.next() + "市"
                 + vegetableRandom.next() + "区"
-                + mineralRandom.next() + (RandomUtil.bool() ? mineralRandom.next() : "") + "街道");
+                + mineralRandom.next() + (RandomUtil.nextBoolean() ? mineralRandom.next() : "") + "街道");
     }
 
     @Override

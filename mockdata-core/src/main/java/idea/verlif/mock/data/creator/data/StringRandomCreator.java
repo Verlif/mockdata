@@ -3,10 +3,10 @@ package idea.verlif.mock.data.creator.data;
 import idea.verlif.mock.data.MockDataCreator;
 import idea.verlif.mock.data.creator.DataCreator;
 import idea.verlif.mock.data.domain.MockSrc;
+import idea.verlif.mock.data.util.RandomUtil;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 /**
  * @author Verlif
@@ -29,8 +29,6 @@ public class StringRandomCreator implements DataCreator<String> {
      */
     private final int max;
 
-    private final Random random;
-
     public StringRandomCreator() {
         this(0, 9);
     }
@@ -46,7 +44,6 @@ public class StringRandomCreator implements DataCreator<String> {
         } else {
             this.max = max;
         }
-        this.random = new Random();
     }
 
     @Override
@@ -56,10 +53,10 @@ public class StringRandomCreator implements DataCreator<String> {
         if (min == max) {
             size = 5;
         } else {
-            size = random.nextInt(max - min) + min;
+            size = RandomUtil.nextInt(max - min) + min;
         }
         for (int i = 0; i < size; i++) {
-            sb.append(TABLE[random.nextInt(TABLE.length)]);
+            sb.append(TABLE[RandomUtil.nextInt(TABLE.length)]);
         }
         return sb.toString();
     }

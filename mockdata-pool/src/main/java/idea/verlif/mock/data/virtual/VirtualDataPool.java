@@ -1,13 +1,16 @@
-package idea.verlif.mock.data.pool;
+package idea.verlif.mock.data.virtual;
 
 import idea.verlif.mock.data.config.DataPool;
-import idea.verlif.mock.data.pool.template.*;
+import idea.verlif.mock.data.virtual.template.*;
 import idea.verlif.reflection.domain.ClassGrc;
 
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 虚拟数据池，提供了更多的模拟真实数据，让随机数据更加真实
+ */
 public class VirtualDataPool implements DataPool {
 
     private final Map<String, SimplePool> poolMap;

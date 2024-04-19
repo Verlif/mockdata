@@ -1,7 +1,7 @@
-package idea.verlif.mock.data.pool.template;
+package idea.verlif.mock.data.virtual.template;
 
-import idea.verlif.mock.data.pool.SimplePool;
-import idea.verlif.mock.data.pool.util.RandomUtil;
+import idea.verlif.mock.data.util.RandomUtil;
+import idea.verlif.mock.data.virtual.SimplePool;
 import idea.verlif.reflection.domain.ClassGrc;
 
 /**
@@ -19,13 +19,13 @@ public class IpStringPool implements SimplePool {
         StringBuilder stb = new StringBuilder();
         if (type == TYPE.IPV4) {
             for (int i = 0; i < 4; i++) {
-                stb.append(RandomUtil.next(255)).append(".");
+                stb.append(RandomUtil.nextInt(255)).append(".");
             }
             return stb.substring(0, stb.length() - 1);
         } else {
             for (int i = 0; i < 8; i++) {
                 for (int j = 0; j < 4; j++) {
-                    stb.append(Integer.toHexString(RandomUtil.next(16)));
+                    stb.append(Integer.toHexString(RandomUtil.nextInt(16)));
                 }
                 stb.append(":");
             }

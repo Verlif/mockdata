@@ -5,12 +5,14 @@ import idea.verlif.mock.data.config.filter.ClassFilter;
 import idea.verlif.mock.data.config.filter.FieldFilter;
 import idea.verlif.mock.data.creator.DataCreator;
 import idea.verlif.mock.data.creator.InstanceCreator;
+import idea.verlif.mock.data.creator.data.DictDataCreator;
 import idea.verlif.mock.data.domain.MockSrc;
 import idea.verlif.mock.data.exception.ClassNotMatchException;
 import idea.verlif.mock.data.exception.MockDataException;
 import idea.verlif.mock.data.transfer.DataTranspiler;
 import idea.verlif.mock.data.util.ContainsUtil;
 import idea.verlif.mock.data.util.NamingUtil;
+import idea.verlif.mock.data.util.RandomUtil;
 import idea.verlif.reflection.domain.ClassGrc;
 import idea.verlif.reflection.domain.SFunction;
 import idea.verlif.reflection.util.FieldUtil;
@@ -23,8 +25,6 @@ import java.util.regex.Pattern;
  * @author Verlif
  */
 public class CommonConfig extends DataTranspiler {
-
-    protected final Random random;
 
     /**
      * 属性创造器表
@@ -67,7 +67,6 @@ public class CommonConfig extends DataTranspiler {
     protected DataPool dataPool;
 
     public CommonConfig() {
-        random = new Random();
         fieldCreatorMap = new HashMap<>();
         interfaceCreatorMap = new HashMap<>();
         instanceCreatorMap = new HashMap<>();
@@ -108,10 +107,14 @@ public class CommonConfig extends DataTranspiler {
      * 添加或替换属性数据
      *
      * @param function 属性获取表达式
-     * @param o        属性对应数据
+     * @param os       属性对应数据
      */
-    public <T> CommonConfig fieldObject(SFunction<T, ?> function, Object o) {
-        addFieldValue(function, new StaticValueCreator(o));
+    public <T> CommonConfig fieldObject(SFunction<T, ?> function, Object... os) {
+        if (os.length > 1) {
+            addFieldValue(function, new DictDataCreator<>(os));
+        } else if (os.length == 1) {
+            addFieldValue(function, new StaticValueCreator(os[0]));
+        }
         return this;
     }
 
@@ -210,10 +213,15 @@ public class CommonConfig extends DataTranspiler {
      * 添加或替换属性数据
      *
      * @param cla 目标类
-     * @param o   属性对应数据
+     * @param ts  属性对应数据
      */
-    public <T> CommonConfig fieldObject(Class<T> cla, Object o) {
-        addFieldValue(cla, new StaticValueCreator(o));
+    @SafeVarargs
+    public final <T> CommonConfig fieldObject(Class<T> cla, T... ts) {
+        if (ts.length > 1) {
+            addFieldValue(cla, new DictDataCreator<>(ts));
+        } else if (ts.length == 1) {
+            addFieldValue(cla, new StaticValueCreator(ts[0]));
+        }
         return this;
     }
 
@@ -483,7 +491,7 @@ public class CommonConfig extends DataTranspiler {
         } else if (values.length == 1) {
             return values[0];
         }
-        return values[random.nextInt(values.length)];
+        return RandomUtil.next(values);
     }
 
     /**

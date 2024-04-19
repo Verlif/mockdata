@@ -1,4 +1,4 @@
-package idea.verlif.mock.data.pool;
+package idea.verlif.mock.data.virtual;
 
 import idea.verlif.mock.data.MockDataCreator;
 import idea.verlif.mock.data.creator.DataCreator;

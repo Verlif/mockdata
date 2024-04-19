@@ -1,11 +1,11 @@
 package idea.verlif.test;
 
+import com.alibaba.fastjson2.JSONObject;
 import idea.verlif.mock.data.MockDataCreator;
-import idea.verlif.mock.data.pool.SimplePool;
-import idea.verlif.mock.data.pool.VirtualDataPool;
-import idea.verlif.mock.data.pool.template.ContinuousIntPool;
-import idea.verlif.mock.data.pool.template.UUIDStringPool;
-import idea.verlif.mock.data.pool.template.WebsiteStringPool;
+import idea.verlif.mock.data.virtual.SimplePool;
+import idea.verlif.mock.data.virtual.VirtualDataPool;
+import idea.verlif.mock.data.virtual.template.ContinuousIntPool;
+import idea.verlif.mock.data.virtual.template.UUIDStringPool;
 import idea.verlif.reflection.domain.ClassGrc;
 import idea.verlif.test.entity.Person;
 import idea.verlif.test.entity.Pet;
@@ -54,6 +54,6 @@ public class DataTest {
         MockDataCreator creator = new MockDataCreator();
         creator.dataPool(new VirtualDataPool().withTemplate());
         Person person = creator.mock(Person.class);
-        System.out.println(person.getId());
+        System.out.println(JSONObject.toJSONString(person));
     }
 }

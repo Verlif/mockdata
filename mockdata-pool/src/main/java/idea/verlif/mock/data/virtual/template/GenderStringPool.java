@@ -1,6 +1,6 @@
-package idea.verlif.mock.data.pool.template;
+package idea.verlif.mock.data.virtual.template;
 
-import idea.verlif.mock.data.pool.DictSimplePool;
+import idea.verlif.mock.data.virtual.DictSimplePool;
 
 /**
  * 性别字符串池（男、女）

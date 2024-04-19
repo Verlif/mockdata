@@ -3,22 +3,19 @@ package idea.verlif.mock.data.creator.data;
 import idea.verlif.mock.data.MockDataCreator;
 import idea.verlif.mock.data.creator.DataCreator;
 import idea.verlif.mock.data.domain.MockSrc;
+import idea.verlif.mock.data.util.RandomUtil;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class BooleanRandomCreator implements DataCreator<Boolean> {
 
-    private final Random random;
-
     public BooleanRandomCreator() {
-        random = new Random();
     }
 
     @Override
     public Boolean mock(MockSrc src, MockDataCreator.Creator creator) {
-        return random.nextBoolean();
+        return RandomUtil.nextBoolean();
     }
 
     @Override

@@ -3,10 +3,10 @@ package idea.verlif.mock.data.creator.data;
 import idea.verlif.mock.data.MockDataCreator;
 import idea.verlif.mock.data.creator.DataCreator;
 import idea.verlif.mock.data.domain.MockSrc;
+import idea.verlif.mock.data.util.RandomUtil;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 /**
  * @author Verlif
@@ -15,22 +15,19 @@ public class ByteRandomCreator implements DataCreator<Byte> {
 
     private final int max;
 
-    private final Random random;
-
     public ByteRandomCreator() {
         this(Byte.MAX_VALUE);
     }
 
     public ByteRandomCreator(byte max) {
         this.max = max + 128;
-        random = new Random();
     }
 
     @Override
     public Byte mock(MockSrc src, MockDataCreator.Creator creator) {
-        int i = random.nextInt(max) - 128;
-        if (random.nextBoolean()) {
-            return (byte) (i + (random.nextBoolean() ? 0 : 1));
+        int i = RandomUtil.nextInt(max) - 128;
+        if (RandomUtil.nextBoolean()) {
+            return (byte) (i + (RandomUtil.nextBoolean() ? 0 : 1));
         } else {
             return (byte) -i;
         }
