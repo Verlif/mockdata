@@ -1,15 +1,16 @@
 package idea.verlif.mock.data.transfer.base;
 
-import idea.verlif.mock.data.transfer.ObjectTranspiler;
+import idea.verlif.mock.data.transfer.TypeTranspiler;
 
-public class ToStringTranspiler implements ObjectTranspiler<Object> {
+public class ToStringTranspiler implements TypeTranspiler<String> {
     @Override
-    public Object trans(Object o) {
+    public String trans(Object o) {
         return o.toString();
     }
 
     @Override
-    public Class<?>[] targets() {
-        return new Class[]{String.class};
+    public boolean support(Class<?> cla) {
+        return true;
     }
+
 }

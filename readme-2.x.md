@@ -169,8 +169,6 @@ __目前自动构建暂不支持非静态内部类，有需要请使用添加自
 
 2. 添加依赖
 
-   __lastVersion__ [![](https://jitpack.io/v/Verlif/mock-data.svg)](https://jitpack.io/#Verlif/mock-data)
-
    maven
 
    ```xml
@@ -178,7 +176,7 @@ __目前自动构建暂不支持非静态内部类，有需要请使用添加自
           <dependency>
               <groupId>com.github.Verlif</groupId>
               <artifactId>mock-data</artifactId>
-              <version>lastVersion</version>
+              <version>2.2.1</version>
           </dependency>
       </dependencies>
    ```
@@ -187,6 +185,6 @@ __目前自动构建暂不支持非静态内部类，有需要请使用添加自
 
    ```text
    dependencies {
-     implementation 'com.github.Verlif:mock-data:lastVersion'
+     implementation 'com.github.Verlif:mock-data:2.2.1'
    }
    ```

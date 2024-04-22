@@ -161,8 +161,6 @@
 
 2. 添加依赖
 
-   __lastVersion__ [![](https://jitpack.io/v/Verlif/mock-data.svg)](https://jitpack.io/#Verlif/mock-data)
-
    maven
 
    ```xml
@@ -170,7 +168,7 @@
           <dependency>
               <groupId>com.github.Verlif</groupId>
               <artifactId>mock-data</artifactId>
-              <version>lastVersion</version>
+              <version>3.5.1</version>
           </dependency>
       </dependencies>
    ```
@@ -179,6 +177,6 @@
 
    ```text
    dependencies {
-     implementation 'com.github.Verlif:mock-data:lastVersion'
+     implementation 'com.github.Verlif:mock-data:3.5.1'
    }
    ```

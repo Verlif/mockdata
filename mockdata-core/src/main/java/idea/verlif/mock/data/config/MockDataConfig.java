@@ -1,27 +1,36 @@
 package idea.verlif.mock.data.config;
 
+import idea.verlif.mock.data.config.creator.StaticSizeCreator;
 import idea.verlif.mock.data.domain.counter.StringCounter;
+import idea.verlif.mock.data.transfer.ObjectTranspiler;
 import idea.verlif.mock.data.util.NamingUtil;
 import idea.verlif.reflection.domain.SFunction;
 import idea.verlif.reflection.util.FieldUtil;
+
+import java.util.List;
 
 /**
  * @author Verlif
  */
 public class MockDataConfig extends CommonConfig {
 
-    private static final int ARRAY_SIZE = 5;
-    private static final int DEFAULT_DEPTH = 2;
+    private static final SizeCreator ARRAY_SIZE_CREATOR;
+    private static final StringCounter DEFAULT_DEPTH_COUNTER;
+
+    static {
+        ARRAY_SIZE_CREATOR = new StaticSizeCreator(5);
+        DEFAULT_DEPTH_COUNTER = new StringCounter(2);
+    }
 
     /**
      * 属性填充的循环次数
      */
-    private StringCounter depthCounter;
+    private StringCounter depthCounter = DEFAULT_DEPTH_COUNTER;
 
     /**
      * 构建数组时的填充长度
      */
-    private SizeCreator arraySizeCreator;
+    private SizeCreator arraySizeCreator = ARRAY_SIZE_CREATOR;
 
     /**
      * 自动级联构建
@@ -58,23 +67,19 @@ public class MockDataConfig extends CommonConfig {
         config.classFilters.addAll(this.classFilters);
         config.fieldOptions = this.fieldOptions;
         config.dataPool = this.dataPool;
+        List<ObjectTranspiler<?>> transpilerList = config.getObjectTranspilerList();
+        transpilerList.clear();
+        transpilerList.addAll(this.getObjectTranspilerList());
 
         return config;
     }
 
     public int getCreatingDepth(String key) {
-        if (depthCounter == null) {
-            return DEFAULT_DEPTH;
-        }
         return depthCounter.getCount(key);
     }
 
     public MockDataConfig creatingDepth(int defaultDepth) {
-        if (depthCounter == null) {
-            depthCounter = new StringCounter(defaultDepth);
-        } else {
-            depthCounter.setDefaultCount(defaultDepth);
-        }
+        depthCounter.setDefaultCount(defaultDepth);
         return this;
     }
 
@@ -101,17 +106,15 @@ public class MockDataConfig extends CommonConfig {
     }
 
     private void setKeyDepth(String key, int depth) {
-        if (depthCounter == null) {
-            depthCounter = new StringCounter(DEFAULT_DEPTH);
-        }
         depthCounter.setCount(key, depth);
     }
 
     public int getArraySize(Class<?> cla) {
-        if (arraySizeCreator == null) {
-            return ARRAY_SIZE;
-        }
         return arraySizeCreator.getSize(cla);
+    }
+
+    public SizeCreator getArraySizeCreator() {
+        return arraySizeCreator;
     }
 
     public MockDataConfig arraySize(int arraySize) {
@@ -230,23 +233,6 @@ public class MockDataConfig extends CommonConfig {
     @Override
     public boolean isCascadeCreate(String key) {
         return autoCascade || super.isCascadeCreate(key);
-    }
-
-    /**
-     * 固定大小创建器
-     */
-    private static final class StaticSizeCreator implements SizeCreator {
-
-        private final int size;
-
-        public StaticSizeCreator(int size) {
-            this.size = size;
-        }
-
-        @Override
-        public int getSize(Class<?> cla) {
-            return size;
-        }
     }
 
 }

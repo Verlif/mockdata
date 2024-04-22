@@ -1,7 +1,7 @@
 package idea.verlif.mock.data.creator.data;
 
 import idea.verlif.mock.data.MockDataCreator;
-import idea.verlif.mock.data.creator.GenericDataFiller;
+import idea.verlif.mock.data.creator.GenericDataCreator;
 import idea.verlif.mock.data.domain.MockSrc;
 import idea.verlif.reflection.domain.ClassGrc;
 
@@ -15,7 +15,7 @@ import java.util.Set;
  *
  * @author Verlif
  */
-public class SetCreator extends GenericDataFiller<Set<?>> {
+public class SetCreator extends GenericDataCreator<Set<?>> {
 
     @Override
     protected Class<?> collectTarget(MockSrc src) {

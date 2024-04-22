@@ -1,33 +1,14 @@
 package idea.verlif.mock.data.transfer;
 
-import idea.verlif.mock.data.exception.MockDataException;
-import idea.verlif.reflection.domain.ClassGrc;
-import idea.verlif.reflection.util.ReflectUtil;
-
-import java.util.Map;
-
-public interface ObjectTranspiler<T> {
-
-    String GENERICS_KEY = "T";
-
-    Object trans(T t);
+public interface ObjectTranspiler<R> {
 
     /**
-     * 转义器支持的类型
+     * 转义对象到目标类型
+     *
+     * @param t      源对象
+     * @param target 目标类型
+     * @return 转义后的对象；为null则表示转义失败，继续后续流程
      */
-    default Class<?> handled() {
-        Map<String, ClassGrc> genericsMap;
-        try {
-            genericsMap = ReflectUtil.getGenericsMap(this.getClass());
-        } catch (NoSuchFieldException | IllegalAccessException exception) {
-            throw new MockDataException(exception);
-        }
-        ClassGrc grc = genericsMap.get(GENERICS_KEY);
-        if (grc != null) {
-            return grc.getTarget();
-        }
-        return null;
-    }
+    R trans(Object t, Class<R> target);
 
-    Class<?>[] targets();
 }

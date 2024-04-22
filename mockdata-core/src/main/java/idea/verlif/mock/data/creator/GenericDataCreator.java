@@ -1,6 +1,8 @@
 package idea.verlif.mock.data.creator;
 
 import idea.verlif.mock.data.MockDataCreator;
+import idea.verlif.mock.data.config.SizeCreator;
+import idea.verlif.mock.data.config.creator.StaticSizeCreator;
 import idea.verlif.mock.data.domain.MockSrc;
 import idea.verlif.reflection.domain.ClassGrc;
 import idea.verlif.reflection.util.ReflectUtil;
@@ -8,29 +10,33 @@ import idea.verlif.reflection.util.ReflectUtil;
 import java.lang.reflect.Type;
 import java.util.List;
 
-public abstract class GenericDataFiller<T> implements DataCreator<T> {
+public abstract class GenericDataCreator<T> implements DataCreator<T> {
 
-    protected Integer size;
+    protected SizeCreator sizeCreator;
     protected Class<?> target;
 
-    public GenericDataFiller() {
+    public GenericDataCreator() {
     }
 
-    public GenericDataFiller(int size) {
-        this.size = size;
+    public GenericDataCreator(int size) {
+        this.sizeCreator = new StaticSizeCreator(size);
+    }
+
+    public GenericDataCreator(SizeCreator sizeCreator) {
+        this.sizeCreator = sizeCreator;
     }
 
     @Override
     public T mock(MockSrc src, MockDataCreator.Creator creator) {
         this.target = collectTarget(src);
+        if (this.sizeCreator == null) {
+            this.sizeCreator = creator.getMockConfig().getArraySizeCreator();
+        }
         return mock(target, getRealGenerics(src.getClassGrc()), creator);
     }
 
     protected int getSize(MockDataCreator.Creator creator) {
-        if (this.size != null) {
-            return this.size;
-        }
-        return creator.getMockConfig().getArraySize(this.target);
+        return sizeCreator.getSize(this.target);
     }
 
     protected abstract Class<?> collectTarget(MockSrc src);

@@ -1,7 +1,7 @@
 package idea.verlif.mock.data.creator.data;
 
 import idea.verlif.mock.data.MockDataCreator;
-import idea.verlif.mock.data.creator.GenericDataFiller;
+import idea.verlif.mock.data.creator.GenericDataCreator;
 import idea.verlif.mock.data.domain.MockSrc;
 import idea.verlif.reflection.domain.ClassGrc;
 
@@ -13,7 +13,7 @@ import java.util.Map;
 /**
  * @author Verlif
  */
-public class MapCreator extends GenericDataFiller<Map<?, ?>> {
+public class MapCreator extends GenericDataCreator<Map<?, ?>> {
 
     @Override
     protected Class<?> collectTarget(MockSrc src) {

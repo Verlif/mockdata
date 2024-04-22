@@ -9,7 +9,7 @@
 - 各种场景下的随机数据测试
 - 场景演示下生成随机数据展示
 
-以下内容基于4.x版本，1.x版本请参考 [这里](readme-1.x.md)，2.x版本请参考 [这里](readme-2.x.md)，2.x版本请参考 [这里](readme-3.x.md)。
+以下内容基于**4.x**版本，**1.x**版本请参考 [这里](readme-1.x.md)，**2.x**版本请参考 [这里](readme-2.x.md)，**3.x**版本请参考 [这里](readme-3.x.md)。
 
 如果还想知道其他的用法，可以看 [这里](docs/4.x/Directions.md)，或是直接查阅 [配置说明](docs/4.x/MockConfig.md)。
 
@@ -57,6 +57,10 @@
 
 更多用法请参考 [使用手册](docs/4.x/Directions.md)
 
+### 图示
+
+![图示](/docs/4.x/imgs/mockDebugger.png)
+
 ## 更多特性
 
 1. 多配置，`MockDataCreator`自带有全局配置，也可以在`mock`的时候指定本次构建使用的临时配置而不影响其他`mock`。
@@ -89,14 +93,17 @@
    MockDataCreator creator = new MockDataCreator();
    // 使用属性池的方式
    DataPool dataPool = new FieldDataPool()
-            // 只对所有的名为name的String属性填充["小明", "小红", "小刚", "小丽"]
+           // 只对所有的名为name的String属性填充["小明", "小红", "小刚", "小丽"]
            .typeName(String.class, "name", "小明", "小红", "小刚", "小丽")
            .next()
-            // 只对所有的名称中带有address的String属性填充["这里", "那里"]
+           // 只对所有的名称中带有address的String属性填充["这里", "那里"]
            .likeName(String.class, "address", "这里", "那里")
            .next();
    // 设置属性数据池
-   creator.fieldDataPool(dataPool);
+   creator.dataPool(dataPool);
+   // 与下面的方式类似，但数据池方式更灵活
+   creator.fieldValue(Person::getName, new DictDataCreator<>(new String[]{"小明", "小红", "小刚", "小丽"}))
+           .fieldValue(Person::getAddress, new DictDataCreator<>(new String[]{"这里", "那里"}));
    // 开始构建
    Person person = creator.mock(Person.class);
    ```

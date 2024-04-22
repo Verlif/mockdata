@@ -1,11 +1,11 @@
 # 数据转义器
 
-数据转义器的目的是为了协助自定义的数据生成器适配更多的场景。
+数据转义器的目的是为了协助自定义的数据生成器适配更多的场景，会在生成的数据与属性不匹配时生效。
 
 举例：
 
-1. 有两个类都叫**id**，但是一个是`int`类型，一个是`String`类型。
-2. 使用了数据池，而多个类型的属性都需要使用同一个生成池。
+1. 有两个属性都叫**id**，但是一个是`int`类型，一个是`String`类型。
+2. 使用了数据池，而多个类型的属性都需要使用同一个生成池，此生成池生成的数据需要对每个类型做适配。
 
 对于以上的情况，通常是对不同的类型都定义一个数据生成器。但是这样不仅麻烦，兼容性也不佳。
 为此，就有必要定义一个数据转义器（`DataTranspiler`）。
@@ -18,29 +18,30 @@
 @Test
 public void DataTranspilerTest() {
     MockDataConfig config = creator.getConfig().copy();
+    // 定义数据池
     FieldDataPool dataPool = new FieldDataPool();
-    // 定义一个对Fruit属性填充的数据池，并设置成"apple"
     dataPool.likeName(".*Fruit", Person.FRUIT.APPLE.name());
     config.dataPool(dataPool);
-    // 定义一个将String转换到FRUIT枚举的转义器
-    ObjectTranspiler<String> transpiler = new ObjectTranspiler<String>() {
+    // 添加转义器，将部分String类型的数据转成Person.FRUIT枚举类
+    ObjectTranspiler<Person.FRUIT> transpiler = new TypeTranspiler<Person.FRUIT>() {
         @Override
-        public Object trans(String s) {
-            return Person.FRUIT.valueOf(s.toUpperCase());
+        public Person.FRUIT trans(Object t) {
+            return Person.FRUIT.valueOf(t.toString().toUpperCase());
         }
+
         @Override
-        public Class<?>[] targets() {
-            return new Class[]{Person.FRUIT.class};
+        public boolean support(Class<?> cla) {
+            return cla == String.class;
         }
     };
-    // 添加转义器
     config.addTranspiler(transpiler);
+    // 此时生成的数据中，所有名字中带有Fruit的枚举类型属性也可以使用定义的数据池
     Person person = creator.mock(Person.class, config);
 }
 ```
 
-其中`trans`方法就是将源类型`String.class`转义成目标类型`Person.FRUIT.class`，其中的泛型就是源类型，也就是接受的类型。
-`targets`则表示转义器支持的目标类型，构建器会将不匹配的支持类型传入，由转义器转义后返回。
+其中`trans`方法就是将源对象转义成目标类型`Person.FRUIT.class`。
+`support`则用于判定转义器是否支持目标类型，构建器只会将匹配的类型对象传入到`trans`方法中，由转义器转义后返回。
 
 ## 过程
 

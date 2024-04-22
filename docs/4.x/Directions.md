@@ -7,19 +7,7 @@
    ```java
    MockDataCreator creator = new MockDataCreator();
    ```
-
-2. 对`MockDataCreator`进行自定义的初始化
-
-   ```java
-   // 如果需要对类进行级联构建则需要开启级联构建选项，如下
-   // 添加需要级联构造的类，让创造器可以对其内部属性进行构造
-   config.cascadeCreateKey(Person.class);
-   // 或者使用自动级联构建
-   config.autoCascade(true);
-   // 以及一些其他的例如构建值的生成规则等设定
-   ```
-
-3. 使用`MockDataCreator`的`mock`方法
+2. 使用`MockDataCreator`的`mock`方法
 
    ```java
    // 使用类的方式构建Person实例

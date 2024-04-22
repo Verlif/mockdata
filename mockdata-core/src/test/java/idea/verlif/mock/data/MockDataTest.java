@@ -11,6 +11,7 @@ import idea.verlif.mock.data.creator.InstanceCreator;
 import idea.verlif.mock.data.creator.data.DictDataCreator;
 import idea.verlif.mock.data.domain.*;
 import idea.verlif.mock.data.transfer.ObjectTranspiler;
+import idea.verlif.mock.data.transfer.TypeTranspiler;
 import org.junit.*;
 import org.junit.runners.MethodSorters;
 import stopwatch.Stopwatch;
@@ -297,7 +298,7 @@ public class MockDataTest {
         printlnFormatted("Integer not ignored testing result", creator.mock(Integer.class, config) != null);
         config = creator.getConfig().copy();
         config.filter(new ClassKeyFilter()
-                        .ignoredClass(Double.class));
+                .ignoredClass(Double.class));
         printlnFormatted("Double ignored testing result", creator.mock(Double.class, config) == null);
         creator.clearClassFilter();
         creator.clearFieldFilter();
@@ -407,27 +408,41 @@ public class MockDataTest {
     }
 
     @Test
-    public void DataTranspilerTest() {
+    public void dataTranspilerTest() {
         MockDataConfig config = creator.getConfig().copy();
         FieldDataPool dataPool = new FieldDataPool();
         dataPool.likeName(".*Fruit", Person.FRUIT.APPLE.name());
         config.dataPool(dataPool);
         check(creator.mock(Person.class, config), person -> person.getFavouriteFruit() == null
                 && Person.FRUIT.APPLE.name().equals(person.getUnlikeFruit()));
-        ObjectTranspiler<String> transpiler = new ObjectTranspiler<String>() {
+        ObjectTranspiler<Person.FRUIT> transpiler = new TypeTranspiler<Person.FRUIT>() {
             @Override
-            public Object trans(String s) {
-                return Person.FRUIT.valueOf(s.toUpperCase());
+            public Person.FRUIT trans(Object t) {
+                return Person.FRUIT.valueOf(t.toString().toUpperCase());
             }
 
             @Override
-            public Class<?>[] targets() {
-                return new Class[]{Person.FRUIT.class};
+            public boolean support(Class<?> cla) {
+                return cla == String.class;
             }
         };
         config.addTranspiler(transpiler);
         check(creator.mock(Person.class, config), person -> person.getFavouriteFruit() == Person.FRUIT.APPLE
                 && Person.FRUIT.APPLE.name().equals(person.getUnlikeFruit()));
+        config.fieldValue(int.class, new DictDataCreator<>(new Object[]{12.2}));
+        check(creator.mock(Person.class, config), person -> person.getAge() != 12);
+        config.addTranspiler(new TypeTranspiler<Integer>() {
+            @Override
+            public Integer trans(Object t) {
+                return ((Number) t).intValue();
+            }
+
+            @Override
+            public boolean support(Class<?> cla) {
+                return Number.class.isAssignableFrom(cla);
+            }
+        });
+        check(creator.mock(Person.class, config), person -> person.getAge() == 12);
     }
 
     private <T> void check(T t, Predicate<T> predicate) {
@@ -455,8 +470,10 @@ public class MockDataTest {
         }
     }
 
+    private final StringBuilder builder = new StringBuilder();
+
     private void printlnFormatted(String desc, Object o) {
-        StringBuilder builder = new StringBuilder(desc);
+        builder.append(desc);
         for (int i = desc.length(); i < 50; i++) {
             builder.append(" ");
         }
@@ -465,6 +482,7 @@ public class MockDataTest {
         } else {
             System.out.println(builder + "\t--->\t" + JSONObject.toJSONString(o));
         }
+        builder.setLength(0);
     }
 
     @Before
