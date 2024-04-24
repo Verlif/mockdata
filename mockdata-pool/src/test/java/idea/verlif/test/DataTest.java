@@ -2,10 +2,11 @@ package idea.verlif.test;
 
 import com.alibaba.fastjson2.JSONObject;
 import idea.verlif.mock.data.MockDataCreator;
-import idea.verlif.mock.data.virtual.SimplePool;
-import idea.verlif.mock.data.virtual.VirtualDataPool;
-import idea.verlif.mock.data.virtual.template.ContinuousIntPool;
-import idea.verlif.mock.data.virtual.template.UUIDStringPool;
+import idea.verlif.mock.data.tagpool.TagSelector;
+import idea.verlif.mock.data.virtualpool.SimplePool;
+import idea.verlif.mock.data.virtualpool.VirtualDataPool;
+import idea.verlif.mock.data.virtualpool.template.ContinuousIntPool;
+import idea.verlif.mock.data.virtualpool.template.UUIDStringPool;
 import idea.verlif.reflection.domain.ClassGrc;
 import idea.verlif.test.entity.Person;
 import idea.verlif.test.entity.Pet;
@@ -24,6 +25,7 @@ public class DataTest {
             Person person = creator.mock(Person.class);
             System.out.println(person.getUuid().length());
         }
+        System.out.println(TagSelector.getTag());
     }
 
     @Test

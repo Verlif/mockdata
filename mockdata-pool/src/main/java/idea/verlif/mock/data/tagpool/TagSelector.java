@@ -7,7 +7,6 @@ public class TagSelector {
         LOCAL_TAG = new ThreadLocal<>();
     }
 
-
     public static String getTag() {
         return LOCAL_TAG.get();
     }
