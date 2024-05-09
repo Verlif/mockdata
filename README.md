@@ -176,19 +176,21 @@
    maven
 
    ```xml
-      <dependencies>
-          <dependency>
-              <groupId>com.github.Verlif</groupId>
-              <artifactId>mock-data</artifactId>
-              <version>lastVersion</version>
-          </dependency>
-      </dependencies>
+   <dependencies>
+       <dependency>
+           <groupId>com.github.Verlif.mockdata</groupId>
+           <artifactId>mockdata-core</artifactId>
+           <!--<artifactId>mockdata-pool</artifactId>-->
+           <version>lastVersion</version>
+       </dependency>
+   </dependencies>
    ```
 
    Gradle
 
    ```text
    dependencies {
-     implementation 'com.github.Verlif:mock-data:lastVersion'
+     implementation 'com.github.Verlif.mock-data:mockdata:lastVersion'
    }
    ```
+
