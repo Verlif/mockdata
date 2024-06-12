@@ -8,7 +8,9 @@ import idea.verlif.mock.data.creator.InstanceCreator;
 import idea.verlif.mock.data.creator.data.*;
 import idea.verlif.mock.data.domain.MockSrc;
 import idea.verlif.mock.data.domain.counter.StringCounter;
+import idea.verlif.mock.data.exception.GetValueException;
 import idea.verlif.mock.data.exception.MockDataException;
+import idea.verlif.mock.data.exception.SetValueException;
 import idea.verlif.mock.data.util.NamingUtil;
 import idea.verlif.reflection.domain.ClassGrc;
 import idea.verlif.reflection.domain.FieldGrc;
@@ -390,18 +392,18 @@ public class MockDataCreator extends CommonConfig {
         private Object getField(Object t, Field field) {
             if (mockConfig.isUseGetter()) {
                 Method getter = MethodUtil.getGetter(field);
-                try {
-                    if (getter != null) {
+                if (getter != null) {
+                    try {
                         return getter.invoke(t);
+                    } catch (IllegalAccessException | InvocationTargetException e) {
+                        throw new GetValueException(e);
                     }
-                } catch (IllegalAccessException | InvocationTargetException e) {
-                    throw new MockDataException(e);
                 }
             }
             try {
                 return field.get(t);
             } catch (IllegalAccessException e) {
-                throw new MockDataException(e);
+                throw new GetValueException(e);
             }
         }
 
@@ -427,19 +429,19 @@ public class MockDataCreator extends CommonConfig {
             }
             if (mockConfig.isUseSetter()) {
                 Method setter = MethodUtil.getSetter(cla, field);
-                try {
-                    if (setter != null) {
+                if (setter != null) {
+                    try {
                         setter.invoke(t, value);
                         return;
+                    } catch (IllegalAccessException | InvocationTargetException e) {
+                        throw new SetValueException(e);
                     }
-                } catch (IllegalAccessException | InvocationTargetException e) {
-                    throw new MockDataException(e);
                 }
             }
             try {
                 field.set(t, value);
             } catch (IllegalAccessException e) {
-                throw new MockDataException(e);
+                throw new SetValueException(e);
             } catch (IllegalArgumentException ignored) {
                 // 类型错误直接忽略
             }
